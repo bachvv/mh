@@ -11,6 +11,9 @@ function HomePage() {
         <button className="cta-button" onClick={() => navigate('/credit-calculator')}>
           Go to Credit Calculator
         </button>
+        <button className="cta-button" style={{ marginTop: '1rem' }} onClick={() => navigate('/rotation')}>
+          Sales Rotation
+        </button>
       </div>
     </div>
   )
