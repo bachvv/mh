@@ -15,6 +15,9 @@ function HomePage() {
           <button className="cta-button cta-gold" onClick={() => navigate('/gold-club-tracker')}>
             Gold Club Tracker
           </button>
+          <button className="cta-button" onClick={() => navigate('/rotation')}>
+            Sales Rotation
+          </button>
         </div>
       </div>
     </div>

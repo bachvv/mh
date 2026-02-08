@@ -590,6 +590,123 @@
   border-top-color: #4caf50;
 }
 
+/* Rotation Page */
+.rotation-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  min-height: 100vh;
+}
+
+.rotation-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.rotation-header h1 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  flex: 1;
+}
+
+.rotate-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rotate-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.rotate-btn:active {
+  transform: scale(0.95);
+}
+
+.rotation-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.rotation-current {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.current-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+.current-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+}
+
+.rotation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.rotation-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rotation-position {
+  width: 28px;
+  height: 28px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.rotation-input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.rotation-input:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .hero h1 {
