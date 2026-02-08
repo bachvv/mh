@@ -6,11 +6,16 @@ function HomePage() {
   return (
     <div className="home-page">
       <div className="hero">
-        <h1>MH Credit Calculator</h1>
-        <p>Calculate monthly payments for Flexiti and MHC financing options</p>
-        <button className="cta-button" onClick={() => navigate('/credit-calculator')}>
-          Go to Credit Calculator
-        </button>
+        <h1>MH Tools</h1>
+        <p>Sales tools for Mattress Hub professionals</p>
+        <div className="home-buttons">
+          <button className="cta-button" onClick={() => navigate('/credit-calculator')}>
+            Credit Calculator
+          </button>
+          <button className="cta-button cta-gold" onClick={() => navigate('/gold-club-tracker')}>
+            Gold Club Tracker
+          </button>
+        </div>
       </div>
     </div>
   )
