@@ -1,9 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --color-primary: #010101;
+  --color-text: #282829;
+  --color-text-light: #666;
+  --color-text-muted: #999;
+  --color-bg: #fafafc;
+  --color-bg-warm: #fdfaf2;
+  --color-white: #ffffff;
+  --color-border: #e5e5e5;
+  --color-border-light: #f0f0f0;
+  --color-accent: #4c6335;
+  --color-accent-light: #ecfac5;
+  --color-success: #4c6335;
+  --color-warning: #c49a3c;
+  --color-danger: #8b2525;
+  --color-info: #2c5282;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  font-family: var(--font-body);
   line-height: 1.5;
   font-weight: 400;
-  color: #1a1a2e;
-  background-color: #f5f7fa;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

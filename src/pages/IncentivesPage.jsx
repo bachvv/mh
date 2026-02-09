@@ -4,7 +4,9 @@ import { fourWeekTiers, fiveWeekTiers, gpPercentTiers } from '../data/incentiveT
 
 function IncentivesPage() {
   const navigate = useNavigate()
-  const [monthType, setMonthType] = useState('4week')
+  const currentMonth = new Date().getMonth() // 0-indexed
+  const isFiveWeek = [1, 4, 7, 10].includes(currentMonth) // Feb, May, Aug, Nov
+  const [monthType, setMonthType] = useState(isFiveWeek ? '5week' : '4week')
   const [gpDollars, setGpDollars] = useState('')
   const [gpPercent, setGpPercent] = useState('')
 
@@ -87,13 +89,13 @@ function IncentivesPage() {
               className={monthType === '4week' ? 'active' : ''}
               onClick={() => setMonthType('4week')}
             >
-              4-Week (Apr/Jun)
+              4-Week (Other)
             </button>
             <button
               className={monthType === '5week' ? 'active' : ''}
               onClick={() => setMonthType('5week')}
             >
-              5-Week (May)
+              5-Week (Feb/May/Aug/Nov)
             </button>
           </div>
         </div>
