@@ -4,7 +4,8 @@ function PaymentTable({ rows, terms, taxRate, type }) {
     if (totalWithTax < term.minAmount && term.minAmount > 0) {
       return null
     }
-    const totalWithFees = totalWithTax + term.adminFee
+    const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12)
+    const totalWithFees = totalWithTax + term.adminFee + annualFeeTotal
     return totalWithFees / term.months
   }
 
@@ -20,6 +21,9 @@ function PaymentTable({ rows, terms, taxRate, type }) {
                 {t.months} mo
                 {t.adminFee > 0 && (
                   <div className="admin-fee-note">+${t.adminFee} fee</div>
+                )}
+                {t.annualFee > 0 && (
+                  <div className="admin-fee-note">${t.annualFee}/yr fee</div>
                 )}
               </th>
             ))}

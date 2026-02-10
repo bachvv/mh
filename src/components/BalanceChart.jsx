@@ -45,7 +45,8 @@ function BalanceChart({ totalWithTax, terms, adminFees, label, colorScheme }) {
     const labels = Array.from({ length: maxMonths + 1 }, (_, i) => `Month ${i}`)
 
     const datasets = eligibleTerms.map((term, idx) => {
-      const totalOwed = totalWithTax + (adminFees ? term.adminFee : 0)
+      const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12)
+      const totalOwed = totalWithTax + (adminFees ? term.adminFee : 0) + annualFeeTotal
       const monthlyPayment = totalOwed / term.months
       const balances = []
 
