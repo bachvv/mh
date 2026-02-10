@@ -2,9 +2,9 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const TIERS = [
-  { name: 'Silver', target: 230000, color: '#9e9e9e', bg: '#f5f5f5' },
-  { name: 'Gold', target: 250000, color: '#ffc107', bg: '#fff8e1' },
-  { name: 'Emerald', target: 320000, color: '#4caf50', bg: '#e8f5e9' },
+  { name: 'Gold', target: 280000, color: '#ffc107', bg: '#fff8e1' },
+  { name: 'Ruby', target: 450000, color: '#e91e63', bg: '#fce4ec' },
+  { name: 'Emerald', target: 750000, color: '#4caf50', bg: '#e8f5e9' },
 ]
 
 function getDayOfYear(date) {
@@ -76,7 +76,7 @@ function GoldClubTracker() {
       <div className="tracker-input-section">
         <h2>Enter Your Current Gross Profit</h2>
         <p className="tracker-subtitle">
-          Track your progress toward Silver, Gold, and Emerald club tiers
+          Track your progress toward Gold, Ruby, and Emerald club tiers
         </p>
         <div className="tracker-input-row">
           <div className="amount-input tracker-amount">
@@ -194,9 +194,9 @@ function GoldClubTracker() {
             {tierResults[2].projectedYear >= tierResults[2].target
               ? ' You are on pace for all three tiers including Emerald Club!'
               : tierResults[1].projectedYear >= tierResults[1].target
-                ? ' You are on pace for Gold Club but need to increase for Emerald.'
+                ? ' You are on pace for Ruby Club but need to increase for Emerald.'
                 : tierResults[0].projectedYear >= tierResults[0].target
-                  ? ' You are on pace for Silver Club. Push harder for Gold and Emerald!'
+                  ? ' You are on pace for Gold Club. Push harder for Ruby and Emerald!'
                   : ' You need to increase your daily GP to reach any club tier.'}
           </p>
         </div>
