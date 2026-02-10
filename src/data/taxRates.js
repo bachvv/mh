@@ -24,8 +24,8 @@ export const flexitiTerms = [
 ]
 
 export const mhcTerms = [
-  { months: 6, adminFee: 0, minAmount: 500 },
-  { months: 12, adminFee: 0, minAmount: 1000 },
-  { months: 18, adminFee: 0, minAmount: 1500 },
-  { months: 24, adminFee: 0, minAmount: 2000 },
+  { months: 6, adminFee: 0, annualFee: 25, minAmount: 500 },
+  { months: 12, adminFee: 0, annualFee: 25, minAmount: 1000 },
+  { months: 18, adminFee: 0, annualFee: 25, minAmount: 1500 },
+  { months: 24, adminFee: 0, annualFee: 25, minAmount: 2000 },
 ]
