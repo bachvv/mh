@@ -28,7 +28,7 @@ function HomePage() {
           <path d="M12 14v4" />
         </svg>
       ),
-      description: 'Silver, Gold & Emerald tiers',
+      description: 'Gold, Ruby & Emerald tiers',
       accent: true,
     },
     {
