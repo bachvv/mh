@@ -173,6 +173,42 @@
   letter-spacing: -0.01em;
 }
 
+/* Longest Plan Block */
+.longest-plan-block {
+  margin-left: auto;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 1rem 1.25rem;
+  min-width: 130px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.longest-plan-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+.longest-plan-amount {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.longest-plan-detail {
+  font-size: 0.7rem;
+  font-weight: 400;
+  opacity: 0.8;
+  letter-spacing: 0.03em;
+}
+
 /* Input Section */
 .input-section {
   background: var(--color-white);
@@ -1110,6 +1146,16 @@
   .calc-header h1,
   .page-header h1 {
     font-size: 1.4rem;
+  }
+
+  .longest-plan-block {
+    align-self: flex-start;
+    min-width: 110px;
+    padding: 0.75rem 1rem;
+  }
+
+  .longest-plan-amount {
+    font-size: 1.3rem;
   }
 
   .item-row {

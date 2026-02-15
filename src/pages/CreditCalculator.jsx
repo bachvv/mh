@@ -53,6 +53,20 @@ function CreditCalculator() {
   const totalBeforeTax = cumulativeRows.length > 0 ? cumulativeRows[cumulativeRows.length - 1].subtotal : 0
   const totalWithTax = totalBeforeTax * (1 + taxRate)
 
+  const longestPlan = useMemo(() => {
+    if (totalWithTax <= 0) return null
+    const allTerms = [
+      ...flexitiTerms.map((t) => ({ ...t, type: 'Flexiti' })),
+      ...mhcTerms.map((t) => ({ ...t, type: 'MHC' })),
+    ]
+    const eligible = allTerms.filter((t) => totalWithTax >= t.minAmount)
+    if (eligible.length === 0) return null
+    const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
+    const annualFeeTotal = (best.annualFee || 0) * Math.ceil(best.months / 12)
+    const monthly = (totalWithTax + best.adminFee + annualFeeTotal) / best.months
+    return { ...best, monthly }
+  }, [totalWithTax])
+
   return (
     <div className="calculator-page">
       <div className="calc-header">
@@ -60,6 +74,13 @@ function CreditCalculator() {
           &larr; Back to Home
         </button>
         <h1>Credit Payment Calculator</h1>
+        {longestPlan && (
+          <div className="longest-plan-block">
+            <span className="longest-plan-label">Lowest Monthly</span>
+            <span className="longest-plan-amount">${longestPlan.monthly.toFixed(2)}</span>
+            <span className="longest-plan-detail">{longestPlan.months} mo &middot; {longestPlan.type}</span>
+          </div>
+        )}
       </div>
 
       <div className="input-section">
