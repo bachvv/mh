@@ -173,37 +173,64 @@
   letter-spacing: -0.01em;
 }
 
-/* Longest Plan Block */
+/* Input Section Wrapper */
+.input-section-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+}
+
+.input-section-wrapper .input-section {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Longest Plan Blocks */
+.longest-plan-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-width: 200px;
+}
+
 .longest-plan-block {
-  margin-left: auto;
-  background: var(--color-primary);
-  color: var(--color-white);
-  padding: 1rem 1.25rem;
-  min-width: 130px;
+  background: #d4edda;
+  color: #1a3e1a;
+  padding: 1.5rem 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.longest-plan-block--mhc {
+  background: #2d5a2d;
+  color: var(--color-white);
 }
 
 .longest-plan-label {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .longest-plan-amount {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 2.6rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
 .longest-plan-detail {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 400;
   opacity: 0.8;
   letter-spacing: 0.03em;
@@ -1148,10 +1175,20 @@
     font-size: 1.4rem;
   }
 
+  .input-section-wrapper {
+    flex-direction: column;
+  }
+
+  .longest-plan-blocks {
+    flex-direction: row;
+    min-width: auto;
+    align-self: stretch;
+  }
+
   .longest-plan-block {
-    align-self: flex-start;
-    min-width: 110px;
+    min-width: 0;
     padding: 0.75rem 1rem;
+    flex: 1;
   }
 
   .longest-plan-amount {

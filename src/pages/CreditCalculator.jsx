@@ -53,17 +53,22 @@ function CreditCalculator() {
   const totalBeforeTax = cumulativeRows.length > 0 ? cumulativeRows[cumulativeRows.length - 1].subtotal : 0
   const totalWithTax = totalBeforeTax * (1 + taxRate)
 
-  const longestPlan = useMemo(() => {
+  const longestFlexiti = useMemo(() => {
     if (totalWithTax <= 0) return null
-    const allTerms = [
-      ...flexitiTerms.map((t) => ({ ...t, type: 'Flexiti' })),
-      ...mhcTerms.map((t) => ({ ...t, type: 'MHC' })),
-    ]
-    const eligible = allTerms.filter((t) => totalWithTax >= t.minAmount)
+    const eligible = flexitiTerms.filter((t) => totalWithTax >= t.minAmount)
+    if (eligible.length === 0) return null
+    const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
+    const monthly = (totalWithTax + best.adminFee) / best.months
+    return { ...best, monthly }
+  }, [totalWithTax])
+
+  const longestMhc = useMemo(() => {
+    if (totalWithTax <= 0) return null
+    const eligible = mhcTerms.filter((t) => totalWithTax >= t.minAmount)
     if (eligible.length === 0) return null
     const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
     const annualFeeTotal = (best.annualFee || 0) * Math.ceil(best.months / 12)
-    const monthly = (totalWithTax + best.adminFee + annualFeeTotal) / best.months
+    const monthly = (totalWithTax + annualFeeTotal) / best.months
     return { ...best, monthly }
   }, [totalWithTax])
 
@@ -74,16 +79,10 @@ function CreditCalculator() {
           &larr; Back to Home
         </button>
         <h1>Credit Payment Calculator</h1>
-        {longestPlan && (
-          <div className="longest-plan-block">
-            <span className="longest-plan-label">Lowest Monthly</span>
-            <span className="longest-plan-amount">${longestPlan.monthly.toFixed(2)}</span>
-            <span className="longest-plan-detail">{longestPlan.months} mo &middot; {longestPlan.type}</span>
-          </div>
-        )}
       </div>
 
-      <div className="input-section">
+      <div className="input-section-wrapper">
+        <div className="input-section">
         <div className="province-selector">
           <label htmlFor="province">Province:</label>
           <select id="province" value={province} onChange={(e) => setProvince(e.target.value)}>
@@ -134,6 +133,26 @@ function CreditCalculator() {
             <p>Subtotal: <strong>${totalBeforeTax.toFixed(2)}</strong></p>
             <p>Tax ({(taxRate * 100).toFixed(taxRate * 100 % 1 === 0 ? 0 : 3)}%): <strong>${(totalBeforeTax * taxRate).toFixed(2)}</strong></p>
             <p>Total (incl. tax): <strong>${totalWithTax.toFixed(2)}</strong></p>
+          </div>
+        )}
+        </div>
+
+        {(longestFlexiti || longestMhc) && (
+          <div className="longest-plan-blocks">
+            {longestFlexiti && (
+              <div className="longest-plan-block">
+                <span className="longest-plan-label">Flexiti</span>
+                <span className="longest-plan-amount">${longestFlexiti.monthly.toFixed(2)}</span>
+                <span className="longest-plan-detail">{longestFlexiti.months} mo</span>
+              </div>
+            )}
+            {longestMhc && (
+              <div className="longest-plan-block longest-plan-block--mhc">
+                <span className="longest-plan-label">MHC</span>
+                <span className="longest-plan-amount">${longestMhc.monthly.toFixed(2)}</span>
+                <span className="longest-plan-detail">{longestMhc.months} mo</span>
+              </div>
+            )}
           </div>
         )}
       </div>
