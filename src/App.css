@@ -429,6 +429,12 @@
   margin-top: 0.5rem;
 }
 
+.down-payment-label-text {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  white-space: nowrap;
+}
+
 .down-payment-label {
   display: flex;
   align-items: center;

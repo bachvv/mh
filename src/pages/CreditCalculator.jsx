@@ -12,8 +12,8 @@ function CreditCalculator() {
     { name: 'Item 2', amount: '' },
     { name: 'Item 3', amount: '' },
   ])
-  const [includeDownPayment, setIncludeDownPayment] = useState(false)
   const [downPaymentInput, setDownPaymentInput] = useState('')
+  const [is20Percent, setIs20Percent] = useState(false)
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
 
@@ -57,12 +57,11 @@ function CreditCalculator() {
 
   useEffect(() => {
     setDownPaymentInput('')
+    setIs20Percent(false)
   }, [totalWithTax])
 
   const defaultDownPayment = totalWithTax * 0.20
-  const downPayment = includeDownPayment
-    ? (downPaymentInput !== '' ? (parseFloat(downPaymentInput) || 0) : defaultDownPayment)
-    : 0
+  const downPayment = parseFloat(downPaymentInput) || 0
   const creditAmount = Math.max(0, totalWithTax - downPayment)
 
   const longestFlexiti = useMemo(() => {
@@ -146,33 +145,34 @@ function CreditCalculator() {
             <p>Tax ({(taxRate * 100).toFixed(taxRate * 100 % 1 === 0 ? 0 : 3)}%): <strong>${(totalBeforeTax * taxRate).toFixed(2)}</strong></p>
             <p>Total (incl. tax): <strong>${totalWithTax.toFixed(2)}</strong></p>
             <div className="down-payment-row">
+              <span className="down-payment-label-text">Down Payment:</span>
+              <div className="amount-input down-payment-input">
+                <span className="dollar-sign">$</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={downPaymentInput}
+                  onChange={(e) => {
+                    setDownPaymentInput(e.target.value)
+                    setIs20Percent(false)
+                  }}
+                  placeholder="0.00"
+                />
+              </div>
               <label className="down-payment-label">
                 <input
                   type="checkbox"
-                  checked={includeDownPayment}
+                  checked={is20Percent}
                   onChange={(e) => {
-                    setIncludeDownPayment(e.target.checked)
-                    if (e.target.checked) setDownPaymentInput(defaultDownPayment.toFixed(2))
-                    else setDownPaymentInput('')
+                    setIs20Percent(e.target.checked)
+                    setDownPaymentInput(e.target.checked ? defaultDownPayment.toFixed(2) : '')
                   }}
                 />
-                Down Payment (20%)
+                20%
               </label>
-              {includeDownPayment && (
-                <div className="amount-input down-payment-input">
-                  <span className="dollar-sign">$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={downPaymentInput}
-                    onChange={(e) => setDownPaymentInput(e.target.value)}
-                    placeholder={defaultDownPayment.toFixed(2)}
-                  />
-                </div>
-              )}
             </div>
-            {includeDownPayment && (
+            {downPayment > 0 && (
               <p className="credit-amount-line">Credit Amount: <strong>${creditAmount.toFixed(2)}</strong></p>
             )}
           </div>
