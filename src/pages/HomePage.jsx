@@ -51,7 +51,7 @@ function HomePage() {
     <div className="home-page">
       <div className="hero">
         <h1>MH Tools</h1>
-        <p>Sales tools for Mattress Hub professionals</p>
+        <p>Sales tools for Michael Hill professionals</p>
         <div className="tool-cards">
           {tools.map((tool) => (
             <button
