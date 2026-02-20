@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { provinces, flexitiTerms, mhcTerms } from '../data/taxRates'
 import PaymentTable from '../components/PaymentTable'
@@ -54,6 +54,10 @@ function CreditCalculator() {
 
   const totalBeforeTax = cumulativeRows.length > 0 ? cumulativeRows[cumulativeRows.length - 1].subtotal : 0
   const totalWithTax = totalBeforeTax * (1 + taxRate)
+
+  useEffect(() => {
+    setDownPaymentInput('')
+  }, [totalWithTax])
 
   const defaultDownPayment = totalWithTax * 0.20
   const downPayment = includeDownPayment
