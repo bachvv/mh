@@ -161,7 +161,7 @@ function CreditCalculator() {
                     type="number"
                     min="0"
                     step="0.01"
-                    value={downPaymentInput !== '' ? downPaymentInput : defaultDownPayment.toFixed(2)}
+                    value={downPaymentInput}
                     onChange={(e) => setDownPaymentInput(e.target.value)}
                     placeholder={defaultDownPayment.toFixed(2)}
                   />
