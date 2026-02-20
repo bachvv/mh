@@ -64,11 +64,13 @@ function IncentivesPage() {
       const potentialAdjusted = potentialIncentive * (accelerator / 100)
       const potentialEffective = effectiveGpActive ? potentialAdjusted : potentialIncentive
       const potentialFinal = potentialEffective * storeBonus
+      const salesNeeded = gpPct > 0 ? needed / (gpPct / 100) : null
       return {
         tier: t.tier,
         commission: t.commission,
         benchmark: t.benchmark,
         gpNeeded: needed,
+        salesNeeded,
         potentialIncentive,
         potentialAdjusted,
         potentialEffective,
@@ -275,7 +277,11 @@ function IncentivesPage() {
                     <span className="upcoming-tier-rate">{ut.commission}%</span>
                   </div>
                   <div className="upcoming-tier-details">
-                    <span className="upcoming-gp-needed">{fmt(ut.gpNeeded)} more needed</span>
+                    <span className="upcoming-gp-needed">
+                      {inputMode === 'sales' && ut.salesNeeded != null
+                        ? `${fmt(ut.salesNeeded)} sales more needed`
+                        : `${fmt(ut.gpNeeded)} GP$ needed`}
+                    </span>
                     <span className="upcoming-potential">
                       {fmt(storeStatus !== 'red' ? ut.potentialFinal : ut.potentialEffective)} potential
                     </span>
