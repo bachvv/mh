@@ -12,7 +12,7 @@ function CreditCalculator() {
     { name: 'Item 2', amount: '' },
     { name: 'Item 3', amount: '' },
   ])
-  const [includeDownPayment, setIncludeDownPayment] = useState(true)
+  const [includeDownPayment, setIncludeDownPayment] = useState(false)
   const [downPaymentInput, setDownPaymentInput] = useState('')
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
