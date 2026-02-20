@@ -7,14 +7,19 @@ function IncentivesPage() {
   const currentMonth = new Date().getMonth() // 0-indexed
   const isFiveWeek = [1, 4, 7, 10].includes(currentMonth) // Feb, May, Aug, Nov
   const [monthType, setMonthType] = useState(isFiveWeek ? '5week' : '4week')
+  const [inputMode, setInputMode] = useState('sales') // 'gp' | 'sales'
   const [gpDollars, setGpDollars] = useState('')
+  const [salesDollars, setSalesDollars] = useState('')
   const [gpPercent, setGpPercent] = useState('')
+  const [storeStatus, setStoreStatus] = useState('red')
 
   const tiers = monthType === '4week' ? fourWeekTiers : fiveWeekTiers
 
   const result = useMemo(() => {
-    const gp = parseFloat(gpDollars) || 0
     const gpPct = parseFloat(gpPercent) || 0
+    const gp = inputMode === 'sales'
+      ? (parseFloat(salesDollars) || 0) * (gpPct / 100)
+      : parseFloat(gpDollars) || 0
 
     // Find current tier (highest tier where benchmark <= gp)
     let currentTierIndex = 0
@@ -43,11 +48,22 @@ function IncentivesPage() {
     const baseIncentive = gp * (currentTier.commission / 100)
     const adjustedIncentive = baseIncentive * (accelerator / 100)
 
+    // Store status bonus
+    const storeBonus = storeStatus === 'pearl' ? 1.10 : storeStatus === 'gold' ? 1.15 : 1.0
+    const storeBonusPct = storeStatus === 'pearl' ? 10 : storeStatus === 'gold' ? 15 : 0
+
+    // When accelerator is 0 (GP% below minimum threshold), fall back to base incentive
+    const effectiveGpActive = gpPct > 0 && accelerator > 0
+    const effectiveBase = effectiveGpActive ? adjustedIncentive : baseIncentive
+    const finalIncentive = effectiveBase * storeBonus
+
     // Build upcoming tiers with potential commission info
     const upcomingTiers = tiers.slice(currentTierIndex + 1).map((t) => {
       const needed = t.benchmark - gp
       const potentialIncentive = t.benchmark * (t.commission / 100)
       const potentialAdjusted = potentialIncentive * (accelerator / 100)
+      const potentialEffective = effectiveGpActive ? potentialAdjusted : potentialIncentive
+      const potentialFinal = potentialEffective * storeBonus
       return {
         tier: t.tier,
         commission: t.commission,
@@ -55,6 +71,8 @@ function IncentivesPage() {
         gpNeeded: needed,
         potentialIncentive,
         potentialAdjusted,
+        potentialEffective,
+        potentialFinal,
       }
     })
 
@@ -65,14 +83,21 @@ function IncentivesPage() {
       baseIncentive,
       accelerator,
       adjustedIncentive,
+      effectiveGpActive,
+      effectiveBase,
+      storeBonus,
+      storeBonusPct,
+      finalIncentive,
       nextTier: nextTier ? nextTier.tier : null,
       gpNeeded,
       nextCommission: nextTier ? nextTier.commission : null,
       upcomingTiers,
     }
-  }, [gpDollars, gpPercent, tiers])
+  }, [gpDollars, salesDollars, gpPercent, inputMode, tiers, storeStatus])
 
   const fmt = (n) => n.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })
+  const hasGp = parseFloat(gpPercent) > 0
+  const { effectiveGpActive } = result
 
   return (
     <div className="incentives-page">
@@ -101,18 +126,52 @@ function IncentivesPage() {
         </div>
 
         <div className="incentives-row">
-          <label htmlFor="gp-input">Your GP$</label>
-          <div className="amount-input">
-            <span className="dollar-sign">$</span>
-            <input
-              id="gp-input"
-              type="number"
-              placeholder="0"
-              value={gpDollars}
-              onChange={(e) => setGpDollars(e.target.value)}
-            />
+          <label>Input Mode</label>
+          <div className="month-toggle">
+            <button
+              className={inputMode === 'sales' ? 'active' : ''}
+              onClick={() => setInputMode('sales')}
+            >
+              Enter Sales$
+            </button>
+            <button
+              className={inputMode === 'gp' ? 'active' : ''}
+              onClick={() => setInputMode('gp')}
+            >
+              Enter GP$
+            </button>
           </div>
         </div>
+
+        {inputMode === 'gp' ? (
+          <div className="incentives-row">
+            <label htmlFor="gp-input">Your GP$</label>
+            <div className="amount-input">
+              <span className="dollar-sign">$</span>
+              <input
+                id="gp-input"
+                type="number"
+                placeholder="0"
+                value={gpDollars}
+                onChange={(e) => setGpDollars(e.target.value)}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="incentives-row">
+            <label htmlFor="sales-input">Your Sales$</label>
+            <div className="amount-input">
+              <span className="dollar-sign">$</span>
+              <input
+                id="sales-input"
+                type="number"
+                placeholder="0"
+                value={salesDollars}
+                onChange={(e) => setSalesDollars(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="incentives-row">
           <label htmlFor="gp-pct-input">Your GP%</label>
@@ -128,9 +187,45 @@ function IncentivesPage() {
             <span className="dollar-sign">%</span>
           </div>
         </div>
+
+        <div className="incentives-row">
+          <label>Store Status</label>
+          <div className="store-status-toggle">
+            <button
+              className={`store-btn store-btn--red${storeStatus === 'red' ? ' active' : ''}`}
+              onClick={() => setStoreStatus('red')}
+            >
+              Red
+            </button>
+            <button
+              className={`store-btn store-btn--pearl${storeStatus === 'pearl' ? ' active' : ''}`}
+              onClick={() => setStoreStatus('pearl')}
+            >
+              Pearl +10%
+            </button>
+            <button
+              className={`store-btn store-btn--gold${storeStatus === 'gold' ? ' active' : ''}`}
+              onClick={() => setStoreStatus('gold')}
+            >
+              Gold +15%
+            </button>
+          </div>
+        </div>
+
+        {inputMode === 'sales' && parseFloat(salesDollars) > 0 && parseFloat(gpPercent) > 0 && (
+          <div className="incentives-row">
+            <label>Computed GP$</label>
+            <div className="amount-input amount-input--readonly">
+              <span className="dollar-sign">$</span>
+              <span className="computed-value">
+                {((parseFloat(salesDollars) || 0) * (parseFloat(gpPercent) || 0) / 100).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {parseFloat(gpDollars) > 0 && (
+      {result.baseIncentive > 0 && (
         <div className="incentives-result-card">
           <div className="result-tier-badge">Tier {result.currentTier}</div>
           <div className="result-details">
@@ -142,15 +237,29 @@ function IncentivesPage() {
               <span>Base Incentive</span>
               <strong>{fmt(result.baseIncentive)}</strong>
             </div>
-            {parseFloat(gpPercent) > 0 && (
+            {hasGp && (
               <>
                 <div className="result-line">
                   <span>Accelerator/Decelerator</span>
                   <strong>{result.accelerator}%</strong>
                 </div>
-                <div className="result-line highlight">
+                <div className={`result-line${storeStatus === 'red' ? ' highlight' : ''}`}>
                   <span>Adjusted Incentive</span>
                   <strong>{fmt(result.adjustedIncentive)}</strong>
+                </div>
+              </>
+            )}
+            {storeStatus !== 'red' && (
+              <>
+                <div className="result-line">
+                  <span>Store Bonus (+{result.storeBonusPct}%)</span>
+                  <strong className={`store-bonus-amount store-bonus-${storeStatus}`}>
+                    +{fmt(result.effectiveBase * (result.storeBonus - 1))}
+                  </strong>
+                </div>
+                <div className={`result-line highlight highlight--${storeStatus}`}>
+                  <span>Final Incentive</span>
+                  <strong>{fmt(result.finalIncentive)}</strong>
                 </div>
               </>
             )}
@@ -168,10 +277,7 @@ function IncentivesPage() {
                   <div className="upcoming-tier-details">
                     <span className="upcoming-gp-needed">{fmt(ut.gpNeeded)} more needed</span>
                     <span className="upcoming-potential">
-                      {parseFloat(gpPercent) > 0
-                        ? fmt(ut.potentialAdjusted)
-                        : fmt(ut.potentialIncentive)
-                      } potential
+                      {fmt(storeStatus !== 'red' ? ut.potentialFinal : ut.potentialEffective)} potential
                     </span>
                   </div>
                 </div>
@@ -201,7 +307,7 @@ function IncentivesPage() {
               {tiers.map((t) => (
                 <tr
                   key={t.tier}
-                  className={t.tier === result.currentTier && parseFloat(gpDollars) > 0 ? 'active-tier-row' : ''}
+                  className={t.tier === result.currentTier && result.baseIncentive > 0 ? 'active-tier-row' : ''}
                 >
                   <td>Tier {t.tier}</td>
                   <td>{fmt(t.benchmark)}</td>

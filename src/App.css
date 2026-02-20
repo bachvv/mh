@@ -320,6 +320,20 @@
   border-color: var(--color-primary);
 }
 
+.amount-input--readonly {
+  background: var(--color-bg-warm);
+  border-color: var(--color-border);
+}
+
+.computed-value {
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  flex: 1;
+}
+
 .dollar-sign {
   background: var(--color-bg);
   padding: 0.6rem 0.75rem;
@@ -1012,6 +1026,67 @@
 
 .active-tier-row td {
   color: var(--color-accent);
+}
+
+.store-status-toggle {
+  display: flex;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.store-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-text-light);
+  transition: background 0.2s, color 0.2s;
+}
+
+.store-btn:last-child {
+  border-right: none;
+}
+
+.store-btn--red.active {
+  background: #c0392b;
+  color: #fff;
+  font-weight: 600;
+}
+
+.store-btn--pearl.active {
+  background: #8e9eab;
+  color: #fff;
+  font-weight: 600;
+}
+
+.store-btn--gold.active {
+  background: #c9a227;
+  color: #fff;
+  font-weight: 600;
+}
+
+.store-bonus-amount {
+  font-weight: 600;
+}
+
+.store-bonus-pearl {
+  color: #6b7f8c;
+}
+
+.store-bonus-gold {
+  color: #c9a227;
+}
+
+.result-line.highlight--pearl strong {
+  color: #6b7f8c;
+}
+
+.result-line.highlight--gold strong {
+  color: #c9a227;
 }
 
 /* ============================================
