@@ -150,7 +150,11 @@ function CreditCalculator() {
                 <input
                   type="checkbox"
                   checked={includeDownPayment}
-                  onChange={(e) => setIncludeDownPayment(e.target.checked)}
+                  onChange={(e) => {
+                    setIncludeDownPayment(e.target.checked)
+                    if (e.target.checked) setDownPaymentInput(defaultDownPayment.toFixed(2))
+                    else setDownPaymentInput('')
+                  }}
                 />
                 Down Payment (20%)
               </label>
