@@ -421,6 +421,49 @@
   font-weight: 600;
 }
 
+.down-payment-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.down-payment-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.down-payment-label input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.down-payment-input {
+  max-width: 140px;
+}
+
+.credit-amount-line {
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  border-top: 1px dashed var(--color-border);
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.credit-amount-line strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 /* Tables Section */
 .tables-section {
   display: flex;

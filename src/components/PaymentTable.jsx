@@ -1,11 +1,12 @@
-function PaymentTable({ rows, terms, taxRate, type }) {
+function PaymentTable({ rows, terms, taxRate, type, downPayment = 0 }) {
   const calculateMonthly = (subtotal, term) => {
     const totalWithTax = subtotal * (1 + taxRate)
-    if (totalWithTax < term.minAmount && term.minAmount > 0) {
+    const creditAmount = Math.max(0, totalWithTax - downPayment)
+    if (creditAmount < term.minAmount && term.minAmount > 0) {
       return null
     }
     const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12)
-    const totalWithFees = totalWithTax + term.adminFee + annualFeeTotal
+    const totalWithFees = creditAmount + term.adminFee + annualFeeTotal
     return totalWithFees / term.months
   }
 
@@ -15,7 +16,7 @@ function PaymentTable({ rows, terms, taxRate, type }) {
         <thead>
           <tr>
             <th>Items</th>
-            <th>Subtotal (incl. tax)</th>
+            <th>{downPayment > 0 ? 'Credit Amount' : 'Subtotal (incl. tax)'}</th>
             {terms.map((t) => (
               <th key={t.months}>
                 {t.months} mo
@@ -32,10 +33,11 @@ function PaymentTable({ rows, terms, taxRate, type }) {
         <tbody>
           {rows.map((row, idx) => {
             const totalWithTax = row.subtotal * (1 + taxRate)
+            const creditAmount = Math.max(0, totalWithTax - downPayment)
             return (
               <tr key={idx}>
                 <td className="items-label">{row.label}</td>
-                <td className="subtotal-cell">${totalWithTax.toFixed(2)}</td>
+                <td className="subtotal-cell">${creditAmount.toFixed(2)}</td>
                 {terms.map((t) => {
                   const monthly = calculateMonthly(row.subtotal, t)
                   return (

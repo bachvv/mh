@@ -31,12 +31,13 @@ const greenColors = [
   'rgba(144, 238, 144, 1)',
 ]
 
-function BalanceChart({ totalWithTax, terms, adminFees, label, colorScheme }) {
+function BalanceChart({ totalWithTax, terms, adminFees, label, colorScheme, downPayment = 0 }) {
   const colors = colorScheme === 'blue' ? blueColors : greenColors
+  const creditAmount = Math.max(0, totalWithTax - downPayment)
 
   const data = useMemo(() => {
     const eligibleTerms = terms.filter(
-      (t) => t.minAmount === 0 || totalWithTax >= t.minAmount
+      (t) => t.minAmount === 0 || creditAmount >= t.minAmount
     )
 
     if (eligibleTerms.length === 0) return null
@@ -46,7 +47,7 @@ function BalanceChart({ totalWithTax, terms, adminFees, label, colorScheme }) {
 
     const datasets = eligibleTerms.map((term, idx) => {
       const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12)
-      const totalOwed = totalWithTax + (adminFees ? term.adminFee : 0) + annualFeeTotal
+      const totalOwed = creditAmount + (adminFees ? term.adminFee : 0) + annualFeeTotal
       const monthlyPayment = totalOwed / term.months
       const balances = []
 
@@ -69,7 +70,7 @@ function BalanceChart({ totalWithTax, terms, adminFees, label, colorScheme }) {
     })
 
     return { labels, datasets }
-  }, [totalWithTax, terms, adminFees, colors])
+  }, [creditAmount, terms, adminFees, colors])
 
   if (!data) {
     return <p className="no-data">Total amount does not meet minimum requirements for any term.</p>

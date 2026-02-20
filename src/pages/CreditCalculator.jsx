@@ -12,6 +12,8 @@ function CreditCalculator() {
     { name: 'Item 2', amount: '' },
     { name: 'Item 3', amount: '' },
   ])
+  const [includeDownPayment, setIncludeDownPayment] = useState(true)
+  const [downPaymentInput, setDownPaymentInput] = useState('')
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
 
@@ -53,24 +55,30 @@ function CreditCalculator() {
   const totalBeforeTax = cumulativeRows.length > 0 ? cumulativeRows[cumulativeRows.length - 1].subtotal : 0
   const totalWithTax = totalBeforeTax * (1 + taxRate)
 
+  const defaultDownPayment = totalWithTax * 0.20
+  const downPayment = includeDownPayment
+    ? (downPaymentInput !== '' ? (parseFloat(downPaymentInput) || 0) : defaultDownPayment)
+    : 0
+  const creditAmount = Math.max(0, totalWithTax - downPayment)
+
   const longestFlexiti = useMemo(() => {
-    if (totalWithTax <= 0) return null
-    const eligible = flexitiTerms.filter((t) => totalWithTax >= t.minAmount)
+    if (creditAmount <= 0) return null
+    const eligible = flexitiTerms.filter((t) => creditAmount >= t.minAmount)
     if (eligible.length === 0) return null
     const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
-    const monthly = (totalWithTax + best.adminFee) / best.months
+    const monthly = (creditAmount + best.adminFee) / best.months
     return { ...best, monthly }
-  }, [totalWithTax])
+  }, [creditAmount])
 
   const longestMhc = useMemo(() => {
-    if (totalWithTax <= 0) return null
-    const eligible = mhcTerms.filter((t) => totalWithTax >= t.minAmount)
+    if (creditAmount <= 0) return null
+    const eligible = mhcTerms.filter((t) => creditAmount >= t.minAmount)
     if (eligible.length === 0) return null
     const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
     const annualFeeTotal = (best.annualFee || 0) * Math.ceil(best.months / 12)
-    const monthly = (totalWithTax + annualFeeTotal) / best.months
+    const monthly = (creditAmount + annualFeeTotal) / best.months
     return { ...best, monthly }
-  }, [totalWithTax])
+  }, [creditAmount])
 
   return (
     <div className="calculator-page">
@@ -133,6 +141,32 @@ function CreditCalculator() {
             <p>Subtotal: <strong>${totalBeforeTax.toFixed(2)}</strong></p>
             <p>Tax ({(taxRate * 100).toFixed(taxRate * 100 % 1 === 0 ? 0 : 3)}%): <strong>${(totalBeforeTax * taxRate).toFixed(2)}</strong></p>
             <p>Total (incl. tax): <strong>${totalWithTax.toFixed(2)}</strong></p>
+            <div className="down-payment-row">
+              <label className="down-payment-label">
+                <input
+                  type="checkbox"
+                  checked={includeDownPayment}
+                  onChange={(e) => setIncludeDownPayment(e.target.checked)}
+                />
+                Down Payment (20%)
+              </label>
+              {includeDownPayment && (
+                <div className="amount-input down-payment-input">
+                  <span className="dollar-sign">$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={downPaymentInput !== '' ? downPaymentInput : defaultDownPayment.toFixed(2)}
+                    onChange={(e) => setDownPaymentInput(e.target.value)}
+                    placeholder={defaultDownPayment.toFixed(2)}
+                  />
+                </div>
+              )}
+            </div>
+            {includeDownPayment && (
+              <p className="credit-amount-line">Credit Amount: <strong>${creditAmount.toFixed(2)}</strong></p>
+            )}
           </div>
         )}
         </div>
@@ -166,6 +200,7 @@ function CreditCalculator() {
               terms={flexitiTerms}
               taxRate={taxRate}
               type="flexiti"
+              downPayment={downPayment}
             />
             <BalanceChart
               totalWithTax={totalWithTax}
@@ -173,6 +208,7 @@ function CreditCalculator() {
               adminFees={true}
               label="Flexiti"
               colorScheme="blue"
+              downPayment={downPayment}
             />
           </section>
 
@@ -183,6 +219,7 @@ function CreditCalculator() {
               terms={mhcTerms}
               taxRate={taxRate}
               type="mhc"
+              downPayment={downPayment}
             />
             <BalanceChart
               totalWithTax={totalWithTax}
@@ -190,6 +227,7 @@ function CreditCalculator() {
               adminFees={false}
               label="MHC"
               colorScheme="green"
+              downPayment={downPayment}
             />
           </section>
         </div>
