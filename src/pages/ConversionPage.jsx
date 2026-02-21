@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 
 const STORAGE_KEY = 'mh_conversion_data'
 
+function today() {
+  return new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
+}
+
 function loadData() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
@@ -15,6 +19,13 @@ function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 }
 
+// Returns today's counts for a name, resetting to 0 if it's a new day
+function getEntryForToday(data, name) {
+  const entry = data[name]
+  if (!entry || entry.date !== today()) return { wins: 0, losses: 0, date: today() }
+  return entry
+}
+
 function ConversionPage() {
   const navigate = useNavigate()
   const [nameInput, setNameInput] = useState('')
@@ -22,22 +33,30 @@ function ConversionPage() {
     const d = loadData()
     return d.__lastActive || ''
   })
-  const [wins, setWins] = useState(0)
-  const [losses, setLosses] = useState(0)
+  const [wins, setWins] = useState(() => {
+    const d = loadData()
+    const name = d.__lastActive || ''
+    return name ? getEntryForToday(d, name).wins : 0
+  })
+  const [losses, setLosses] = useState(() => {
+    const d = loadData()
+    const name = d.__lastActive || ''
+    return name ? getEntryForToday(d, name).losses : 0
+  })
   const [flash, setFlash] = useState(null) // 'win' | 'loss'
 
-  // Load counts whenever activeName changes
+  // Load today's counts whenever activeName changes
   useEffect(() => {
     if (!activeName) return
     const d = loadData()
-    const entry = d[activeName] || { wins: 0, losses: 0 }
+    const entry = getEntryForToday(d, activeName)
     setWins(entry.wins)
     setLosses(entry.losses)
   }, [activeName])
 
   const persist = (w, l) => {
     const d = loadData()
-    d[activeName] = { wins: w, losses: l }
+    d[activeName] = { wins: w, losses: l, date: today() }
     d.__lastActive = activeName
     saveData(d)
   }
@@ -47,7 +66,7 @@ function ConversionPage() {
     const trimmed = nameInput.trim()
     if (!trimmed) return
     const d = loadData()
-    const entry = d[trimmed] || { wins: 0, losses: 0 }
+    const entry = getEntryForToday(d, trimmed)
     d.__lastActive = trimmed
     saveData(d)
     setActiveName(trimmed)
