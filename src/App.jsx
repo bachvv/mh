@@ -4,6 +4,7 @@ import CreditCalculator from './pages/CreditCalculator'
 import GoldClubTracker from './pages/GoldClubTracker'
 import RotationPage from './pages/RotationPage'
 import IncentivesPage from './pages/IncentivesPage'
+import ConversionPage from './pages/ConversionPage'
 import './App.css'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/gold-club-tracker" element={<GoldClubTracker />} />
       <Route path="/rotation" element={<RotationPage />} />
       <Route path="/incentives" element={<IncentivesPage />} />
+      <Route path="/conversion" element={<ConversionPage />} />
     </Routes>
   )
 }
