@@ -45,6 +45,20 @@ function HomePage() {
       ),
       description: 'Spiffs & bonus programs',
     },
+    {
+      label: 'Observation',
+      path: '/observation',
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="8" y="2" width="8" height="4" rx="1" />
+          <path d="M8 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2" />
+          <line x1="9" y1="11" x2="15" y2="11" />
+          <line x1="9" y1="15" x2="15" y2="15" />
+          <polyline points="9 8 10 9 12 7" />
+        </svg>
+      ),
+      description: 'Sales Standards checklist',
+    },
   ]
 
   return (
