@@ -1799,3 +1799,49 @@
   color: var(--color-danger);
   border-color: var(--color-danger);
 }
+
+/* ============================================
+   Dev Page
+   ============================================ */
+
+.dev-page {
+  min-height: 100dvh;
+  padding: 1rem;
+}
+
+.dev-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dev-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.dev-tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.dev-tool-panel {
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dev-tool-panel .rotation-page,
+.dev-tool-panel .conversion-page {
+  min-height: unset;
+  padding: 1rem;
+}
+
+@media (max-width: 640px) {
+  .dev-tools-grid {
+    grid-template-columns: 1fr;
+  }
+}

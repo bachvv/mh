@@ -5,6 +5,7 @@ import GoldClubTracker from './pages/GoldClubTracker'
 import RotationPage from './pages/RotationPage'
 import IncentivesPage from './pages/IncentivesPage'
 import ConversionPage from './pages/ConversionPage'
+import DevPage from './pages/DevPage'
 import './App.css'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Route path="/rotation" element={<RotationPage />} />
       <Route path="/incentives" element={<IncentivesPage />} />
       <Route path="/conversion" element={<ConversionPage />} />
+      <Route path="/dev" element={<DevPage />} />
     </Routes>
   )
 }

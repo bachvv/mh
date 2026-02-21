@@ -26,7 +26,7 @@ function getEntryForToday(data, name) {
   return entry
 }
 
-function ConversionPage() {
+function ConversionPage({ embedded = false }) {
   const navigate = useNavigate()
   const [nameInput, setNameInput] = useState('')
   const [activeName, setActiveName] = useState(() => {
@@ -112,10 +112,17 @@ function ConversionPage() {
 
   return (
     <div className={`conversion-page${flash ? ` conversion-flash--${flash}` : ''}`}>
-      <div className="conversion-header">
-        <button className="back-button" onClick={() => navigate('/')}>Home</button>
-        <h1 className="conversion-title">Conversion</h1>
-      </div>
+      {!embedded && (
+        <div className="conversion-header">
+          <button className="back-button" onClick={() => navigate('/')}>Home</button>
+          <h1 className="conversion-title">Conversion</h1>
+        </div>
+      )}
+      {embedded && (
+        <div className="conversion-header">
+          <h2 style={{ margin: 0 }}>Conversion</h2>
+        </div>
+      )}
 
       {!activeName ? (
         <div className="conversion-name-card">

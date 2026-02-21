@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function RotationPage() {
+function RotationPage({ embedded = false }) {
   const navigate = useNavigate()
   const [names, setNames] = useState(['', ''])
 
@@ -28,6 +28,7 @@ function RotationPage() {
 
   return (
     <div className="rotation-page">
+      {!embedded && (
       <div className="rotation-header">
         <button className="back-button" onClick={() => navigate('/')}>
           Home
@@ -37,6 +38,15 @@ function RotationPage() {
           &#x27A1;
         </button>
       </div>
+      )}
+      {embedded && (
+        <div className="rotation-header">
+          <h2 style={{ margin: 0 }}>Sales Rotation</h2>
+          <button className="rotate-btn" onClick={rotate} title="Next person">
+            &#x27A1;
+          </button>
+        </div>
+      )}
 
       <div className="rotation-card">
         <div className="rotation-current">
