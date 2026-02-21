@@ -7,6 +7,7 @@ import IncentivesPage from './pages/IncentivesPage'
 import ConversionPage from './pages/ConversionPage'
 import DevPage from './pages/DevPage'
 import ObservationPage from './pages/ObservationPage'
+import ClockworkPage from './pages/ClockworkPage'
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
       <Route path="/conversion" element={<ConversionPage />} />
       <Route path="/dev" element={<DevPage />} />
       <Route path="/observation" element={<ObservationPage />} />
+      <Route path="/clockwork" element={<ClockworkPage />} />
     </Routes>
   )
 }
