@@ -1848,6 +1848,20 @@
   background: var(--color-bg);
 }
 
+.dev-dot {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(128, 128, 128, 0.3);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
 /* ============================================
    Observation Page
    ============================================ */

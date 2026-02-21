@@ -66,6 +66,7 @@ function HomePage() {
           ))}
         </div>
       </div>
+      <button className="dev-dot" onClick={() => navigate('/dev')} aria-label="Dev tools" />
     </div>
   )
 }
