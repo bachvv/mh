@@ -126,7 +126,7 @@ function ClockworkPage() {
   return (
     <div className="cw-page">
       <div className="cw-header">
-        <button className="back-button" onClick={() => navigate('/')}>Home</button>
+        <button className="back-button" onClick={() => navigate('/dev')}>Dev</button>
         <h1 className="cw-title">Clockwork</h1>
       </div>
 

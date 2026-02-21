@@ -30,8 +30,8 @@ function RotationPage({ embedded = false }) {
     <div className="rotation-page">
       {!embedded && (
       <div className="rotation-header">
-        <button className="back-button" onClick={() => navigate('/')}>
-          Home
+        <button className="back-button" onClick={() => navigate('/dev')}>
+          Dev
         </button>
         <h1>Sales Rotation</h1>
         <button className="rotate-btn" onClick={rotate} title="Next person">

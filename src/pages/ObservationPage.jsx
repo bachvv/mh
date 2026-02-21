@@ -170,7 +170,7 @@ function ObservationPage() {
   return (
     <div className="obs-page">
       <div className="obs-header">
-        <button className="back-button" onClick={() => navigate('/')}>Home</button>
+        <button className="back-button" onClick={() => navigate('/dev')}>Dev</button>
         <h1 className="obs-title">Observation</h1>
       </div>
 

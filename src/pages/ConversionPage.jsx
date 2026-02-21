@@ -114,7 +114,7 @@ function ConversionPage({ embedded = false }) {
     <div className={`conversion-page${flash ? ` conversion-flash--${flash}` : ''}`}>
       {!embedded && (
         <div className="conversion-header">
-          <button className="back-button" onClick={() => navigate('/')}>Home</button>
+          <button className="back-button" onClick={() => navigate('/dev')}>Dev</button>
           <h1 className="conversion-title">Conversion</h1>
         </div>
       )}
