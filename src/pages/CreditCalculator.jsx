@@ -15,6 +15,7 @@ function CreditCalculator() {
   const [downPaymentInput, setDownPaymentInput] = useState('')
   const [is20Percent, setIs20Percent] = useState(false)
   const [maxMonths, setMaxMonths] = useState(6)
+  const [showChart, setShowChart] = useState(false)
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
 
@@ -225,14 +226,16 @@ function CreditCalculator() {
               type="flexiti"
               downPayment={downPayment}
             />
-            <BalanceChart
-              totalWithTax={totalWithTax}
-              terms={filteredFlexitiTerms}
-              adminFees={true}
-              label="Flexiti"
-              colorScheme="blue"
-              downPayment={downPayment}
-            />
+            {showChart && (
+              <BalanceChart
+                totalWithTax={totalWithTax}
+                terms={filteredFlexitiTerms}
+                adminFees={true}
+                label="Flexiti"
+                colorScheme="blue"
+                downPayment={downPayment}
+              />
+            )}
           </section>
 
           <section className="table-section">
@@ -244,15 +247,23 @@ function CreditCalculator() {
               type="mhc"
               downPayment={downPayment}
             />
-            <BalanceChart
-              totalWithTax={totalWithTax}
-              terms={filteredMhcTerms}
-              adminFees={false}
-              label="MHC"
-              colorScheme="green"
-              downPayment={downPayment}
-            />
+            {showChart && (
+              <BalanceChart
+                totalWithTax={totalWithTax}
+                terms={filteredMhcTerms}
+                adminFees={false}
+                label="MHC"
+                colorScheme="green"
+                downPayment={downPayment}
+              />
+            )}
           </section>
+
+          <div className="show-chart-row">
+            <button className="show-chart-btn" onClick={() => setShowChart((v) => !v)}>
+              {showChart ? 'Hide Projected Balance' : 'Show Projected Balance'}
+            </button>
+          </div>
         </div>
       )}
     </div>
