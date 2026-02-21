@@ -1845,3 +1845,330 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   Observation Page
+   ============================================ */
+
+.obs-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 1.5rem 1rem 3rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.obs-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.obs-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Name entry */
+.obs-name-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.obs-name-prompt {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.obs-name-form {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.obs-name-input {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border: 1px solid var(--color-border);
+  padding: 0.65rem 1rem;
+  border-radius: 0;
+  flex: 1;
+  max-width: 240px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.obs-name-input:focus {
+  border-color: var(--color-primary);
+}
+
+.obs-name-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.obs-name-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Who bar */
+.obs-who {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.obs-who-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.obs-who-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.obs-change-btn {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-light);
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.obs-change-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Progress bar */
+.obs-progress {
+  margin-bottom: 1.5rem;
+}
+
+.obs-progress-bar {
+  height: 4px;
+  background: var(--color-border-light);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.obs-progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.obs-progress-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* Section */
+.obs-section {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  margin-bottom: 1rem;
+}
+
+.obs-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--color-border-light);
+  gap: 0.75rem;
+}
+
+.obs-section-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.obs-section-focus {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.obs-section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.obs-section-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.obs-section-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
+}
+
+/* Behaviour list */
+.obs-behaviour-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.obs-behaviour {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background 0.15s;
+}
+
+.obs-behaviour:last-child {
+  border-bottom: none;
+}
+
+.obs-behaviour--checked {
+  background: #f4faf0;
+}
+
+.obs-behaviour-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  cursor: pointer;
+}
+
+.obs-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.obs-behaviour-text {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.obs-behaviour--checked .obs-behaviour-text {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-accent);
+}
+
+/* Tooltip */
+.obs-tip {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.obs-tip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: default;
+  user-select: none;
+  transition: border-color 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.obs-tip:hover .obs-tip-icon {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.obs-tip-popup {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  width: 240px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  padding: 0.65rem 0.85rem;
+  border-radius: 2px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.obs-tip-popup strong {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+  opacity: 0.7;
+}
+
+.obs-tip-popup p {
+  margin: 0;
+}
+
+.obs-tip-popup--left {
+  right: auto;
+  left: 0;
+}
+
+.obs-tip:hover .obs-tip-popup {
+  display: block;
+}
+
+@media (max-width: 400px) {
+  .obs-tip-popup {
+    width: 200px;
+  }
+}
