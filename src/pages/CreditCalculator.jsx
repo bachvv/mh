@@ -14,6 +14,7 @@ function CreditCalculator() {
   ])
   const [downPaymentInput, setDownPaymentInput] = useState('')
   const [is20Percent, setIs20Percent] = useState(false)
+  const [maxMonths, setMaxMonths] = useState(12)
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
 
@@ -64,24 +65,27 @@ function CreditCalculator() {
   const downPayment = parseFloat(downPaymentInput) || 0
   const creditAmount = Math.max(0, totalWithTax - downPayment)
 
+  const filteredFlexitiTerms = flexitiTerms.filter((t) => t.months <= maxMonths)
+  const filteredMhcTerms = mhcTerms.filter((t) => t.months <= maxMonths)
+
   const longestFlexiti = useMemo(() => {
     if (creditAmount <= 0) return null
-    const eligible = flexitiTerms.filter((t) => creditAmount >= t.minAmount)
+    const eligible = filteredFlexitiTerms.filter((t) => creditAmount >= t.minAmount)
     if (eligible.length === 0) return null
     const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
     const monthly = (creditAmount + best.adminFee) / best.months
     return { ...best, monthly }
-  }, [creditAmount])
+  }, [creditAmount, filteredFlexitiTerms])
 
   const longestMhc = useMemo(() => {
     if (creditAmount <= 0) return null
-    const eligible = mhcTerms.filter((t) => creditAmount >= t.minAmount)
+    const eligible = filteredMhcTerms.filter((t) => creditAmount >= t.minAmount)
     if (eligible.length === 0) return null
     const best = eligible.reduce((a, b) => (b.months > a.months ? b : a))
     const annualFeeTotal = (best.annualFee || 0) * Math.ceil(best.months / 12)
     const monthly = (creditAmount + annualFeeTotal) / best.months
     return { ...best, monthly }
-  }, [creditAmount])
+  }, [creditAmount, filteredMhcTerms])
 
   return (
     <div className="calculator-page">
@@ -94,6 +98,16 @@ function CreditCalculator() {
 
       <div className="input-section-wrapper">
         <div className="input-section">
+        <div className="province-selector">
+          <label htmlFor="maxMonths">Max Plan Length:</label>
+          <select id="maxMonths" value={maxMonths} onChange={(e) => setMaxMonths(Number(e.target.value))}>
+            <option value={12}>12 months or less</option>
+            <option value={18}>18 months or less</option>
+            <option value={24}>24 months or less</option>
+            <option value={45}>45 months or less</option>
+          </select>
+        </div>
+
         <div className="province-selector">
           <label htmlFor="province">Province:</label>
           <select id="province" value={province} onChange={(e) => setProvince(e.target.value)}>
@@ -205,14 +219,14 @@ function CreditCalculator() {
             <h2>Flexiti Financing</h2>
             <PaymentTable
               rows={cumulativeRows}
-              terms={flexitiTerms}
+              terms={filteredFlexitiTerms}
               taxRate={taxRate}
               type="flexiti"
               downPayment={downPayment}
             />
             <BalanceChart
               totalWithTax={totalWithTax}
-              terms={flexitiTerms}
+              terms={filteredFlexitiTerms}
               adminFees={true}
               label="Flexiti"
               colorScheme="blue"
@@ -224,14 +238,14 @@ function CreditCalculator() {
             <h2>MHC Financing</h2>
             <PaymentTable
               rows={cumulativeRows}
-              terms={mhcTerms}
+              terms={filteredMhcTerms}
               taxRate={taxRate}
               type="mhc"
               downPayment={downPayment}
             />
             <BalanceChart
               totalWithTax={totalWithTax}
-              terms={mhcTerms}
+              terms={filteredMhcTerms}
               adminFees={false}
               label="MHC"
               colorScheme="green"
