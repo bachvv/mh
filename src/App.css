@@ -1138,6 +1138,79 @@
   color: #c9a227;
 }
 
+/* DFO Outlet checkbox */
+.dfo-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dfo-checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.dfo-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-light);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.dfo-badge--active {
+  background: #1a3a5c;
+  color: #fff;
+  border-color: #1a3a5c;
+}
+
+.dfo-table-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #1a3a5c;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 0.75rem;
+}
+
+/* GP% qualifier result line */
+.result-line.gp-qualifier-line strong {
+  font-size: 0.95rem;
+}
+
+.result-line.gp-qualified strong {
+  color: var(--color-success);
+}
+
+.result-line.gp-not-qualified {
+  background: #fff5f5;
+  margin: 0.25rem -0.75rem 0;
+  padding: 0.6rem 0.75rem;
+}
+
+.result-line.gp-not-qualified strong {
+  color: var(--color-danger);
+}
+
+/* GP% qualifier note */
+.gp-qualifier-note {
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
 /* ============================================
    Rotation Page
    ============================================ */

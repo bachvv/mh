@@ -1,6 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fourWeekTiers, fiveWeekTiers, gpPercentTiers } from '../data/incentiveTiers'
+import {
+  fourWeekTiers,
+  fiveWeekTiers,
+  gpPercentTiers,
+  dfoFourWeekTiers,
+  dfoFiveWeekTiers,
+  dfoGpPercentTiers,
+} from '../data/incentiveTiers'
 
 function IncentivesPage() {
   const navigate = useNavigate()
@@ -12,8 +19,13 @@ function IncentivesPage() {
   const [salesDollars, setSalesDollars] = useState('')
   const [gpPercent, setGpPercent] = useState('')
   const [storeStatus, setStoreStatus] = useState('red')
+  const [isDfo, setIsDfo] = useState(false)
 
-  const tiers = monthType === '4week' ? fourWeekTiers : fiveWeekTiers
+  const tiers = isDfo
+    ? (monthType === '4week' ? dfoFourWeekTiers : dfoFiveWeekTiers)
+    : (monthType === '4week' ? fourWeekTiers : fiveWeekTiers)
+
+  const gpTiers = isDfo ? dfoGpPercentTiers : gpPercentTiers
 
   const result = useMemo(() => {
     const gpPct = parseFloat(gpPercent) || 0
@@ -34,35 +46,42 @@ function IncentivesPage() {
     const nextTier = currentTierIndex < tiers.length - 1 ? tiers[currentTierIndex + 1] : null
     const gpNeeded = nextTier ? nextTier.benchmark - gp : 0
 
-    // Find GP% tier
+    // Find GP% qualifier tier
     let gpPctTierIndex = 0
-    for (let i = gpPercentTiers.length - 1; i >= 0; i--) {
-      if (gpPct >= gpPercentTiers[i].gpRange) {
+    for (let i = gpTiers.length - 1; i >= 0; i--) {
+      if (gpPct >= gpTiers[i].gpRange) {
         gpPctTierIndex = i
         break
       }
     }
-    const accelerator = gpPercentTiers[gpPctTierIndex].accelerator
+    const accelerator = gpTiers[gpPctTierIndex].accelerator
 
-    // Calculate adjusted incentive
+    // GP% is now a binary qualifier: meet threshold = 100%, below = 0%
+    const gpEntered = gpPct > 0
+    const gpQualified = gpEntered && accelerator > 0
+
+    // Calculate incentive
     const baseIncentive = gp * (currentTier.commission / 100)
-    const adjustedIncentive = baseIncentive * (accelerator / 100)
+
+    // When GP% entered: qualified = full incentive, not qualified = 0
+    // When GP% not entered: show base as estimate
+    const effectiveBase = gpEntered
+      ? (gpQualified ? baseIncentive : 0)
+      : baseIncentive
 
     // Store status bonus
     const storeBonus = storeStatus === 'pearl' ? 1.10 : storeStatus === 'gold' ? 1.15 : 1.0
     const storeBonusPct = storeStatus === 'pearl' ? 10 : storeStatus === 'gold' ? 15 : 0
-
-    // When accelerator is 0 (GP% below minimum threshold), fall back to base incentive
-    const effectiveGpActive = gpPct > 0 && accelerator > 0
-    const effectiveBase = effectiveGpActive ? adjustedIncentive : baseIncentive
     const finalIncentive = effectiveBase * storeBonus
 
     // Build upcoming tiers with potential commission info
     const upcomingTiers = tiers.slice(currentTierIndex + 1).map((t) => {
       const needed = t.benchmark - gp
       const potentialIncentive = t.benchmark * (t.commission / 100)
-      const potentialAdjusted = potentialIncentive * (accelerator / 100)
-      const potentialEffective = effectiveGpActive ? potentialAdjusted : potentialIncentive
+      // With all accelerators = 100%, potential is same as base when qualified
+      const potentialEffective = gpEntered
+        ? (gpQualified ? potentialIncentive : 0)
+        : potentialIncentive
       const potentialFinal = potentialEffective * storeBonus
       const salesNeeded = gpPct > 0 ? needed / (gpPct / 100) : null
       return {
@@ -72,7 +91,6 @@ function IncentivesPage() {
         gpNeeded: needed,
         salesNeeded,
         potentialIncentive,
-        potentialAdjusted,
         potentialEffective,
         potentialFinal,
       }
@@ -83,9 +101,10 @@ function IncentivesPage() {
       currentTierIndex,
       commission: currentTier.commission,
       baseIncentive,
+      gpEntered,
+      gpQualified,
       accelerator,
-      adjustedIncentive,
-      effectiveGpActive,
+      gpPctTier: gpPctTierIndex,
       effectiveBase,
       storeBonus,
       storeBonusPct,
@@ -95,11 +114,9 @@ function IncentivesPage() {
       nextCommission: nextTier ? nextTier.commission : null,
       upcomingTiers,
     }
-  }, [gpDollars, salesDollars, gpPercent, inputMode, tiers, storeStatus])
+  }, [gpDollars, salesDollars, gpPercent, inputMode, tiers, gpTiers, storeStatus])
 
   const fmt = (n) => n.toLocaleString('en-CA', { style: 'currency', currency: 'CAD' })
-  const hasGp = parseFloat(gpPercent) > 0
-  const { effectiveGpActive } = result
 
   return (
     <div className="incentives-page">
@@ -214,6 +231,19 @@ function IncentivesPage() {
           </div>
         </div>
 
+        <div className="incentives-row">
+          <label>Store Type</label>
+          <label className="dfo-checkbox-label">
+            <input
+              type="checkbox"
+              className="dfo-checkbox"
+              checked={isDfo}
+              onChange={(e) => setIsDfo(e.target.checked)}
+            />
+            <span className={`dfo-badge${isDfo ? ' dfo-badge--active' : ''}`}>DFO Outlet</span>
+          </label>
+        </div>
+
         {inputMode === 'sales' && parseFloat(salesDollars) > 0 && parseFloat(gpPercent) > 0 && (
           <div className="incentives-row">
             <label>Computed GP$</label>
@@ -239,19 +269,19 @@ function IncentivesPage() {
               <span>Base Incentive</span>
               <strong>{fmt(result.baseIncentive)}</strong>
             </div>
-            {hasGp && (
-              <>
-                <div className="result-line">
-                  <span>Accelerator/Decelerator</span>
-                  <strong>{result.accelerator}%</strong>
-                </div>
-                <div className={`result-line${storeStatus === 'red' ? ' highlight' : ''}`}>
-                  <span>Adjusted Incentive</span>
-                  <strong>{fmt(result.adjustedIncentive)}</strong>
-                </div>
-              </>
+            {result.gpEntered && (
+              <div className={`result-line gp-qualifier-line${result.gpQualified ? ' gp-qualified' : ' gp-not-qualified'}`}>
+                <span>GP% Qualifier</span>
+                <strong>{result.gpQualified ? 'Met ✓' : 'Not Met ✗'}</strong>
+              </div>
             )}
-            {storeStatus !== 'red' && (
+            {result.gpEntered && !result.gpQualified && (
+              <div className="result-line highlight">
+                <span>Effective Incentive</span>
+                <strong>$0.00</strong>
+              </div>
+            )}
+            {storeStatus !== 'red' && result.effectiveBase > 0 && (
               <>
                 <div className="result-line">
                   <span>Store Bonus (+{result.storeBonusPct}%)</span>
@@ -264,6 +294,12 @@ function IncentivesPage() {
                   <strong>{fmt(result.finalIncentive)}</strong>
                 </div>
               </>
+            )}
+            {(storeStatus === 'red' || result.effectiveBase === 0) && result.gpEntered && result.gpQualified && (
+              <div className="result-line highlight">
+                <span>Final Incentive</span>
+                <strong>{fmt(result.finalIncentive)}</strong>
+              </div>
             )}
           </div>
 
@@ -298,7 +334,10 @@ function IncentivesPage() {
       )}
 
       <div className="incentives-table-card">
-        <h2>{monthType === '4week' ? '4-Week Month' : '5-Week Month'} Tiers</h2>
+        <h2>
+          {monthType === '4week' ? '4-Week' : '5-Week'} Tiers
+          {isDfo && <span className="dfo-table-badge">DFO Outlet</span>}
+        </h2>
         <div className="payment-table-wrapper">
           <table className="payment-table">
             <thead>
@@ -327,30 +366,35 @@ function IncentivesPage() {
       </div>
 
       <div className="incentives-table-card">
-        <h2>GP% Accelerator / Decelerator</h2>
+        <h2>
+          GP% Qualifier
+          {isDfo && <span className="dfo-table-badge">DFO Outlet</span>}
+        </h2>
+        <p className="gp-qualifier-note">
+          Meet the minimum GP% threshold to earn your commission at 100%. Below the minimum, no incentive is paid.
+        </p>
         <div className="payment-table-wrapper">
           <table className="payment-table">
             <thead>
               <tr>
                 <th>Tier</th>
-                <th>GP% Range</th>
-                <th>Accelerator/Decelerator</th>
+                <th>Min. GP% Required</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {gpPercentTiers.map((t) => (
+              {gpTiers.map((t) => (
                 <tr
                   key={t.tier}
                   className={
-                    parseFloat(gpPercent) > 0 &&
-                    t.accelerator === result.accelerator
+                    parseFloat(gpPercent) > 0 && t.tier === result.gpPctTier
                       ? 'active-tier-row'
                       : ''
                   }
                 >
                   <td>Tier {t.tier}</td>
-                  <td>{t.gpRange > 0 ? t.gpRange.toFixed(2) + '%' : '0%'}</td>
-                  <td>{t.accelerator}%</td>
+                  <td>{t.gpRange > 0 ? t.gpRange.toFixed(1) + '%' : '—'}</td>
+                  <td>{t.accelerator > 0 ? 'Qualifies ✓' : 'No incentive'}</td>
                 </tr>
               ))}
             </tbody>
