@@ -14,7 +14,7 @@ function CreditCalculator() {
   ])
   const [downPaymentInput, setDownPaymentInput] = useState('')
   const [is20Percent, setIs20Percent] = useState(false)
-  const [maxMonths, setMaxMonths] = useState(12)
+  const [maxMonths, setMaxMonths] = useState(6)
 
   const taxRate = provinces.find((p) => p.code === province)?.rate || 0.12
 
@@ -101,6 +101,7 @@ function CreditCalculator() {
         <div className="province-selector">
           <label htmlFor="maxMonths">Max Plan Length:</label>
           <select id="maxMonths" value={maxMonths} onChange={(e) => setMaxMonths(Number(e.target.value))}>
+            <option value={6}>6 months or less</option>
             <option value={12}>12 months or less</option>
             <option value={18}>18 months or less</option>
             <option value={24}>24 months or less</option>
