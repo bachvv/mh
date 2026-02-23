@@ -140,6 +140,41 @@ function OptionPicker({ label, options, selected, onSelect }) {
   )
 }
 
+// ── Upload slot per style ──────────────────────────────────────────
+function StyleUploadSlot({ style, image, onAssign, onClear }) {
+  const inputRef = useRef(null)
+  return (
+    <div className={`wedder-upload-thumb${image ? '' : ' wedder-upload-thumb--empty'}`}>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => { if (e.target.files[0]) onAssign(e.target.files[0]); e.target.value = '' }}
+      />
+      {image ? (
+        <>
+          <img
+            src={image}
+            alt={style.name}
+            className="wedder-upload-thumb-img"
+            onClick={() => inputRef.current?.click()}
+            title="Click to replace"
+          />
+          <button className="wedder-upload-thumb-remove" onClick={onClear} title="Remove">&times;</button>
+        </>
+      ) : (
+        <div
+          className="wedder-upload-thumb-placeholder"
+          onClick={() => inputRef.current?.click()}
+          title="Click to upload"
+        />
+      )}
+      <span className="wedder-upload-thumb-name">{style.name}</span>
+    </div>
+  )
+}
+
 // ── Main page ─────────────────────────────────────────────────────
 function WeddersPage() {
   const navigate = useNavigate()
@@ -194,6 +229,18 @@ function WeddersPage() {
       setUploadMsg(parts.join(' — '))
       setTimeout(() => setUploadMsg(null), 5000)
     })
+  }
+
+  // Assign a file directly to a specific style
+  function handleAssignImage(styleId, file) {
+    if (!file || !file.type.startsWith('image/')) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const next = { ...styleImages, [styleId]: e.target.result }
+      setStyleImages(next)
+      saveStyleImages(next)
+    }
+    reader.readAsDataURL(file)
   }
 
   function handleClearImage(id) {
@@ -327,17 +374,13 @@ function WeddersPage() {
           {uploadMsg && <p className="wedder-upload-msg">{uploadMsg}</p>}
           <div className="wedder-upload-grid">
             {wedderStyles.map((s) => (
-              <div key={s.id} className={`wedder-upload-thumb${styleImages[s.id] ? '' : ' wedder-upload-thumb--empty'}`}>
-                {styleImages[s.id] ? (
-                  <>
-                    <img src={styleImages[s.id]} alt={s.name} className="wedder-upload-thumb-img" />
-                    <button className="wedder-upload-thumb-remove" onClick={() => handleClearImage(s.id)} title="Remove">&times;</button>
-                  </>
-                ) : (
-                  <div className="wedder-upload-thumb-placeholder" />
-                )}
-                <span className="wedder-upload-thumb-name" title={s.id.toLowerCase().replace(/\s+/g, '-') + '.png'}>{s.name}</span>
-              </div>
+              <StyleUploadSlot
+                key={s.id}
+                style={s}
+                image={styleImages[s.id]}
+                onAssign={(file) => handleAssignImage(s.id, file)}
+                onClear={() => handleClearImage(s.id)}
+              />
             ))}
           </div>
         </div>

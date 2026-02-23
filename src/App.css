@@ -2748,6 +2748,17 @@
   border: 1px dashed var(--color-border);
   background: var(--color-bg);
   border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.wedder-upload-thumb-placeholder:hover {
+  border-color: var(--color-warning);
+  background: #fdf9ef;
+}
+
+.wedder-upload-thumb-img {
+  cursor: pointer;
 }
 
 .wedder-upload-thumb-name {
