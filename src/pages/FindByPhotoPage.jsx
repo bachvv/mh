@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import earringsData from '../data/earrings.json'
 
 const IMAGES_KEY = 'wedder-style-images'
 const SKU_KEY = 'wedder-skus'
@@ -70,6 +71,11 @@ function imageToHistogram(src) {
   })
 }
 
+const CATEGORIES = [
+  { id: 'earrings', label: 'Earrings' },
+  { id: 'wedders', label: 'Wedders' },
+]
+
 function FindByPhotoPage() {
   const navigate = useNavigate()
   const inputRef = useRef(null)
@@ -77,6 +83,7 @@ function FindByPhotoPage() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const [category, setCategory] = useState('earrings')
 
   const processFile = useCallback(async (file) => {
     if (!file || !file.type.startsWith('image/')) return
@@ -88,16 +95,6 @@ function FindByPhotoPage() {
       setLoading(true)
       setResults(null)
 
-      const styleImages = loadStyleImages()
-      const skuMap = loadSkuMap()
-      const entries = Object.entries(styleImages)
-
-      if (entries.length === 0) {
-        setResults([])
-        setLoading(false)
-        return
-      }
-
       // Get histogram of uploaded photo
       const uploadHist = await imageToHistogram(src)
       if (!uploadHist) {
@@ -106,22 +103,43 @@ function FindByPhotoPage() {
         return
       }
 
-      // Compare against each stored style image
-      const matches = []
-      for (const [styleId, imgSrc] of entries) {
-        const hist = await imageToHistogram(imgSrc)
-        if (!hist) continue
-        const score = compareHistograms(uploadHist, hist)
+      let matches = []
 
-        // Find SKUs associated with this style
-        const styleSkus = []
-        for (const [pKey, sku] of Object.entries(skuMap)) {
-          if (pKey.startsWith(styleId + '|') && sku) {
-            styleSkus.push(sku)
-          }
+      if (category === 'earrings') {
+        // Compare against earring product images
+        for (const item of earringsData) {
+          const hist = await imageToHistogram(item.image)
+          if (!hist) continue
+          const score = compareHistograms(uploadHist, hist)
+          matches.push({
+            styleId: item.pNumber,
+            name: item.name,
+            score,
+            image: item.image,
+            pNumber: item.pNumber,
+            sourceUrl: item.sourceUrl,
+          })
         }
+      } else {
+        // Compare against wedder style images from localStorage
+        const styleImages = loadStyleImages()
+        const skuMap = loadSkuMap()
+        const entries = Object.entries(styleImages)
 
-        matches.push({ styleId, score, image: imgSrc, skus: styleSkus })
+        for (const [styleId, imgSrc] of entries) {
+          const hist = await imageToHistogram(imgSrc)
+          if (!hist) continue
+          const score = compareHistograms(uploadHist, hist)
+
+          const styleSkus = []
+          for (const [pKey, sku] of Object.entries(skuMap)) {
+            if (pKey.startsWith(styleId + '|') && sku) {
+              styleSkus.push(sku)
+            }
+          }
+
+          matches.push({ styleId, name: styleId, score, image: imgSrc, skus: styleSkus })
+        }
       }
 
       matches.sort((a, b) => b.score - a.score)
@@ -129,7 +147,7 @@ function FindByPhotoPage() {
       setLoading(false)
     }
     reader.readAsDataURL(file)
-  }, [])
+  }, [category])
 
   function handleDrop(e) {
     e.preventDefault()
@@ -138,11 +156,27 @@ function FindByPhotoPage() {
     if (file) processFile(file)
   }
 
+  const hintText = category === 'earrings'
+    ? `Matches against ${earringsData.length} earring products`
+    : 'Matches against saved wedder style images'
+
   return (
     <div className="fbp-page">
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
         <h1>Find by Photo</h1>
+      </div>
+
+      <div className="fbp-category-toggle">
+        {CATEGORIES.map(c => (
+          <button
+            key={c.id}
+            className={`fbp-cat-btn${category === c.id ? ' fbp-cat-btn--active' : ''}`}
+            onClick={() => { setCategory(c.id); setResults(null) }}
+          >
+            {c.label}
+          </button>
+        ))}
       </div>
 
       <div className="fbp-upload-card">
@@ -172,7 +206,7 @@ function FindByPhotoPage() {
                 </svg>
               </div>
               <span className="fbp-dropzone-text">Drop a photo here or tap to upload</span>
-              <span className="fbp-dropzone-hint">Matches against saved wedder style images</span>
+              <span className="fbp-dropzone-hint">{hintText}</span>
             </>
           )}
         </div>
@@ -192,7 +226,9 @@ function FindByPhotoPage() {
 
       {results && results.length === 0 && !loading && (
         <div className="fbp-empty">
-          No style images saved yet. Upload style images on the Wedders page first.
+          {category === 'earrings'
+            ? 'No earring images available.'
+            : 'No style images saved yet. Upload style images on the Wedders page first.'}
         </div>
       )}
 
@@ -200,15 +236,18 @@ function FindByPhotoPage() {
         <div className="fbp-results">
           <div className="wedder-step-label">Best Matches</div>
           <div className="fbp-results-grid">
-            {results.map((m) => (
-              <div key={m.styleId} className="fbp-result-card">
+            {results.map((m, i) => (
+              <div key={m.styleId + '-' + i} className="fbp-result-card">
                 <div className="fbp-result-img-wrap">
-                  <img src={m.image} alt={m.styleId} className="fbp-result-img" />
+                  <img src={m.image} alt={m.name} className="fbp-result-img" />
                 </div>
                 <div className="fbp-result-info">
-                  <span className="fbp-result-name">{m.styleId}</span>
+                  <span className="fbp-result-name">{m.name}</span>
                   <span className="fbp-result-score">{Math.round(m.score * 100)}% match</span>
-                  {m.skus.length > 0 && (
+                  {m.pNumber && (
+                    <span className="fbp-result-skus">{m.pNumber}</span>
+                  )}
+                  {m.skus && m.skus.length > 0 && (
                     <span className="fbp-result-skus">
                       {m.skus.slice(0, 3).join(', ')}
                       {m.skus.length > 3 && ` +${m.skus.length - 3}`}

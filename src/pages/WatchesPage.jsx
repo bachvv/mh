@@ -55,6 +55,9 @@ function WatchesPage() {
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
         <h1>Watches</h1>
+        {isAdmin && (
+          <button className="watches-pair-btn" onClick={() => navigate('/watch-pair')}>Pair</button>
+        )}
       </div>
 
       <div className="watches-lookup-card">
