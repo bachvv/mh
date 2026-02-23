@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { wedderStyles, wedderPNumbers } from '../data/wedders'
+import { useAuth } from '../auth/AuthContext'
 
 const STORAGE_KEY = 'wedder-skus'
 const IMAGES_KEY  = 'wedder-style-images'
@@ -178,6 +179,7 @@ function StyleUploadSlot({ style, image, onAssign, onClear }) {
 // ── Main page ─────────────────────────────────────────────────────
 function WeddersPage() {
   const navigate = useNavigate()
+  const { isAdmin } = useAuth()
 
   const [styleId, setStyleId] = useState(null)
   const [metal,   setMetal]   = useState(null)
@@ -333,15 +335,26 @@ function WeddersPage() {
   return (
     <div className="wedders-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/concierge')}>Concierge</button>
-        <h1>Concierge</h1>
-        <button
-          className="wedder-upload-toggle"
-          onClick={() => setShowUpload(!showUpload)}
-          title="Upload style images"
-        >
-          {showUpload ? 'Hide Images' : 'Images'}
-        </button>
+        <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
+        <h1>SKU Finder</h1>
+        {isAdmin && (
+          <>
+            <button
+              className="wedder-upload-toggle"
+              onClick={() => navigate('/wedder-crop')}
+              title="Crop style images"
+            >
+              Crop
+            </button>
+            <button
+              className="wedder-upload-toggle"
+              onClick={() => setShowUpload(!showUpload)}
+              title="Upload style images"
+            >
+              {showUpload ? 'Hide Images' : 'Images'}
+            </button>
+          </>
+        )}
       </div>
 
       {/* ── Image upload panel ── */}
@@ -395,7 +408,7 @@ function WeddersPage() {
             type="text"
             value={skuSearch}
             onChange={(e) => handleSkuSearch(e.target.value)}
-            placeholder="Enter Sample SKU to find combination..."
+            placeholder="Enter Sample SKU"
           />
           {skuSearch && !buildSkuIndex(skuMap)[skuSearch.trim().toUpperCase()] && (
             <span className="wedder-sku-search-miss">Not found</span>
@@ -480,7 +493,7 @@ function WeddersPage() {
           </div>
 
           {/* ── SKU input ── */}
-          {allSelected && pNumber && (
+          {isAdmin && allSelected && pNumber && (
             <div className="wedder-sku-entry">
               <div className="wedder-step-label">Sample SKU</div>
               <div className="wedder-sku-entry-row">

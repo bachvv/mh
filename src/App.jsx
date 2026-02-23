@@ -11,6 +11,9 @@ import ClockworkPage from './pages/ClockworkPage'
 import ConciergePage from './pages/ConciergePage'
 import WeddersPage from './pages/WeddersPage'
 import WedderCropPage from './pages/WedderCropPage'
+import WatchesPage from './pages/WatchesPage'
+import FindByPhotoPage from './pages/FindByPhotoPage'
+import ImageAdminPage from './pages/ImageAdminPage'
 import './App.css'
 
 function App() {
@@ -28,6 +31,9 @@ function App() {
       <Route path="/concierge" element={<ConciergePage />} />
       <Route path="/wedders" element={<WeddersPage />} />
       <Route path="/wedder-crop" element={<WedderCropPage />} />
+      <Route path="/watches" element={<WatchesPage />} />
+      <Route path="/find-by-photo" element={<FindByPhotoPage />} />
+      <Route path="/image-admin" element={<ImageAdminPage />} />
     </Routes>
   )
 }
