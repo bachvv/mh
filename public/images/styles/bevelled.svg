@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Bevelled cross section: flat with angled chamfered edges -->
+  <polygon points="42,22 78,22 86,30 86,50 78,58 42,58 34,50 34,30" fill="none" stroke="#c49a3c" stroke-width="5" stroke-linejoin="round"/>
+  <text x="60" y="75" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.08em" fill="#666">BEVELLED</text>
+</svg>

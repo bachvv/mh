@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Half Round: full semi-circle dome outside, flat inside -->
+  <path d="M30,55 L90,55 Q90,55 90,40 Q90,20 60,20 Q30,20 30,40 Q30,55 30,55 Z" fill="none" stroke="#c49a3c" stroke-width="5" stroke-linejoin="round"/>
+  <line x1="30" y1="55" x2="90" y2="55" stroke="#010101" stroke-width="2"/>
+  <text x="60" y="73" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.08em" fill="#666">HALF ROUND</text>
+</svg>
