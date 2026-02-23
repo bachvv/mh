@@ -6,6 +6,11 @@ import { useAuth } from '../auth/AuthContext'
 const STORAGE_KEY = 'wedder-skus'
 const IMAGES_KEY  = 'wedder-style-images'
 
+const TIERS = [
+  { id: 'Gold',    label: 'Gold Wedders' },
+  { id: 'Diamond', label: 'Diamond Wedders' },
+]
+
 function loadSkuMap() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
@@ -16,7 +21,6 @@ function saveSkuMap(map) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(map))
 }
 
-// Style images stored as { "style-id": "data:image/png;base64,..." }
 function loadStyleImages() {
   try {
     return JSON.parse(localStorage.getItem(IMAGES_KEY)) || {}
@@ -27,23 +31,19 @@ function saveStyleImages(map) {
   localStorage.setItem(IMAGES_KEY, JSON.stringify(map))
 }
 
-// Normalize filename to match style id: "flat-bevel.png" → "Flat Bevel"
 function filenameToStyleId(filename) {
   const name = filename.replace(/\.[^.]+$/, '').toLowerCase().trim()
   const slug = name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ')
 
-  // Exact match on id
   const exact = wedderStyles.find((s) => s.id.toLowerCase() === name || s.id.toLowerCase() === slug)
   if (exact) return exact.id
 
-  // Partial match: filename is contained in style id or vice versa
   const partial = wedderStyles.find((s) => {
     const sid = s.id.toLowerCase()
     return sid.startsWith(slug) || slug.startsWith(sid)
   })
   if (partial) return partial.id
 
-  // Fuzzy: remove common filler words, compare core words
   const coreWords = (str) => str.replace(/\b(the|and|of|a|an)\b/g, '').replace(/\s+/g, ' ').trim()
   const slugCore = coreWords(slug)
   const fuzzy = wedderStyles.find((s) => {
@@ -55,7 +55,6 @@ function filenameToStyleId(filename) {
   return null
 }
 
-// Build reverse lookup: SKU → { styleId, metal, width, finish }
 function buildSkuIndex(skuMap) {
   const idx = {}
   for (const [pKey, sku] of Object.entries(skuMap)) {
@@ -64,7 +63,6 @@ function buildSkuIndex(skuMap) {
   return idx
 }
 
-// Parse a pKey back into selection fields
 function parsePKey(pKey) {
   const parts = pKey.split('|')
   const style = wedderStyles.find((s) => s.id === parts[0])
@@ -79,23 +77,35 @@ function parsePKey(pKey) {
 }
 
 // ── Style selector cards ──────────────────────────────────────────
-function StylePicker({ selected, onSelect, styleImages }) {
-  const plain     = wedderStyles.filter((s) => s.category === 'Plain')
-  const patterned = wedderStyles.filter((s) => s.category === 'Patterned')
+function StylePicker({ styles, selected, onSelect, styleImages }) {
+  const plain     = styles.filter((s) => s.category === 'Plain')
+  const patterned = styles.filter((s) => s.category === 'Patterned')
 
   return (
     <div className="wedder-step">
       <div className="wedder-step-label">Style / Profile</div>
 
-      <div className="wedder-style-category-label">Plain</div>
-      <div className="wedder-style-grid">
-        {plain.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} customImage={styleImages[s.id]} />)}
-      </div>
+      {plain.length > 0 && (
+        <>
+          <div className="wedder-style-category-label">Plain</div>
+          <div className="wedder-style-grid">
+            {plain.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} customImage={styleImages[s.id]} />)}
+          </div>
+        </>
+      )}
 
-      <div className="wedder-style-category-label" style={{ marginTop: '0.75rem' }}>Patterned</div>
-      <div className="wedder-style-grid">
-        {patterned.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} customImage={styleImages[s.id]} />)}
-      </div>
+      {patterned.length > 0 && (
+        <>
+          <div className="wedder-style-category-label" style={{ marginTop: '0.75rem' }}>Patterned</div>
+          <div className="wedder-style-grid">
+            {patterned.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} customImage={styleImages[s.id]} />)}
+          </div>
+        </>
+      )}
+
+      {plain.length === 0 && patterned.length === 0 && (
+        <p className="wedder-result-prompt">No styles in this tier yet</p>
+      )}
     </div>
   )
 }
@@ -120,7 +130,6 @@ function StyleCard({ style, selected, onSelect, customImage }) {
   )
 }
 
-// ── Generic button group ──────────────────────────────────────────
 function OptionPicker({ label, options, selected, onSelect }) {
   if (!options || options.length === 0) return null
   return (
@@ -141,7 +150,6 @@ function OptionPicker({ label, options, selected, onSelect }) {
   )
 }
 
-// ── Upload slot per style ──────────────────────────────────────────
 function StyleUploadSlot({ style, image, onAssign, onClear }) {
   const inputRef = useRef(null)
   return (
@@ -186,6 +194,21 @@ function WeddersPage() {
   const [width,   setWidth]   = useState(null)
   const [finish,  setFinish]  = useState(null)
 
+  // Tier collapse state – both collapsed by default
+  const [openTiers, setOpenTiers] = useState({})
+  // Per-tier image upload panel visibility
+  const [showUpload, setShowUpload] = useState({})
+  const [uploadMsg, setUploadMsg]   = useState({})
+  const uploadRefs = useRef({})
+
+  function toggleTier(tierId) {
+    setOpenTiers((prev) => ({ ...prev, [tierId]: !prev[tierId] }))
+  }
+
+  function toggleUpload(tierId) {
+    setShowUpload((prev) => ({ ...prev, [tierId]: !prev[tierId] }))
+  }
+
   // SKU state
   const [skuMap, setSkuMap]       = useState(loadSkuMap)
   const [skuInput, setSkuInput]   = useState('')
@@ -194,27 +217,25 @@ function WeddersPage() {
 
   // Style images state
   const [styleImages, setStyleImages] = useState(loadStyleImages)
-  const [showUpload, setShowUpload]   = useState(false)
-  const [uploadMsg, setUploadMsg]     = useState(null)
-  const uploadRef = useRef(null)
 
-  function handleImageFiles(files) {
+  function handleImageFiles(files, tierStyles, tierId) {
     const next = { ...styleImages }
     let matched = 0
     let unmatched = []
     const pending = []
+    const tierIds = new Set(tierStyles.map((s) => s.id))
 
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue
-      const styleId = filenameToStyleId(file.name)
-      if (!styleId) {
+      const sid = filenameToStyleId(file.name)
+      if (!sid || !tierIds.has(sid)) {
         unmatched.push(file.name)
         continue
       }
       pending.push(new Promise((resolve) => {
         const reader = new FileReader()
         reader.onload = (e) => {
-          next[styleId] = e.target.result
+          next[sid] = e.target.result
           matched++
           resolve()
         }
@@ -228,17 +249,17 @@ function WeddersPage() {
       const parts = []
       if (matched) parts.push(`${matched} image${matched > 1 ? 's' : ''} saved`)
       if (unmatched.length) parts.push(`${unmatched.length} not matched: ${unmatched.join(', ')}`)
-      setUploadMsg(parts.join(' — '))
-      setTimeout(() => setUploadMsg(null), 5000)
+      const msg = parts.join(' — ')
+      setUploadMsg((prev) => ({ ...prev, [tierId]: msg }))
+      setTimeout(() => setUploadMsg((prev) => ({ ...prev, [tierId]: null })), 5000)
     })
   }
 
-  // Assign a file directly to a specific style
-  function handleAssignImage(styleId, file) {
+  function handleAssignImage(sid, file) {
     if (!file || !file.type.startsWith('image/')) return
     const reader = new FileReader()
     reader.onload = (e) => {
-      const next = { ...styleImages, [styleId]: e.target.result }
+      const next = { ...styleImages, [sid]: e.target.result }
       setStyleImages(next)
       saveStyleImages(next)
     }
@@ -254,20 +275,14 @@ function WeddersPage() {
 
   const selectedStyle = wedderStyles.find((s) => s.id === styleId) ?? null
   const noFinish      = selectedStyle && selectedStyle.finishes.length === 0
+  const activeTier    = selectedStyle?.tier ?? null
 
-  // Apply defaults (10K, Polished) when style changes
   function handleStyleSelect(id) {
     const s = wedderStyles.find((st) => st.id === id)
     setStyleId(id)
-
-    // Default metal to 10K if available
     const newMetal = s.metals.includes('10K') ? '10K' : (metal && s.metals.includes(metal) ? metal : null)
     setMetal(newMetal)
-
-    // Keep width if valid, else clear
     if (width && !s.widths.includes(width)) setWidth(null)
-
-    // Default finish to Polished if available
     if (s.finishes.length > 0) {
       const newFinish = s.finishes.includes('Polished') ? 'Polished' : (finish && s.finishes.includes(finish) ? finish : null)
       setFinish(newFinish)
@@ -276,7 +291,6 @@ function WeddersPage() {
     }
   }
 
-  // Build P-number key
   const allSelected = selectedStyle && metal && width && (noFinish || finish)
   let pKey = null
   if (allSelected) {
@@ -285,17 +299,13 @@ function WeddersPage() {
       : `${styleId}|${metal}|${width}|${finish}`
   }
   const pNumber = pKey ? wedderPNumbers[pKey] : null
-
-  // Get existing SKU for this combination
   const existingSku = pKey ? (skuMap[pKey] || '') : ''
 
-  // Pre-fill SKU input when combination changes
   useEffect(() => {
     setSkuInput(existingSku)
     setSkuMsg(null)
   }, [pKey])
 
-  // Save SKU
   function handleSaveSku() {
     if (!pKey || !skuInput.trim()) return
     const next = { ...skuMap, [pKey]: skuInput.trim() }
@@ -305,7 +315,6 @@ function WeddersPage() {
     setTimeout(() => setSkuMsg(null), 2000)
   }
 
-  // SKU search
   const handleSkuSearch = useCallback((value) => {
     setSkuSearch(value)
     if (!value.trim()) return
@@ -318,6 +327,8 @@ function WeddersPage() {
         setMetal(sel.metal)
         setWidth(sel.width)
         setFinish(sel.finish)
+        const foundStyle = wedderStyles.find((s) => s.id === sel.styleId)
+        if (foundStyle) setOpenTiers((prev) => ({ ...prev, [foundStyle.tier]: true }))
       }
     }
   }, [skuMap])
@@ -332,72 +343,18 @@ function WeddersPage() {
 
   const anythingSelected = styleId || metal || width || finish
 
+  // Group styles by tier
+  const stylesByTier = {}
+  for (const tier of TIERS) {
+    stylesByTier[tier.id] = wedderStyles.filter((s) => s.tier === tier.id)
+  }
+
   return (
     <div className="wedders-page">
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
         <h1>SKU Finder</h1>
-        {isAdmin && (
-          <>
-            <button
-              className="wedder-upload-toggle"
-              onClick={() => navigate('/wedder-crop')}
-              title="Crop style images"
-            >
-              Crop
-            </button>
-            <button
-              className="wedder-upload-toggle"
-              onClick={() => setShowUpload(!showUpload)}
-              title="Upload style images"
-            >
-              {showUpload ? 'Hide Images' : 'Images'}
-            </button>
-          </>
-        )}
       </div>
-
-      {/* ── Image upload panel ── */}
-      {showUpload && (
-        <div className="wedder-upload-panel">
-          <div
-            className="wedder-upload-dropzone"
-            onClick={() => uploadRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              handleImageFiles(e.dataTransfer.files)
-            }}
-          >
-            <input
-              ref={uploadRef}
-              type="file"
-              accept="image/*"
-              multiple
-              hidden
-              onChange={(e) => { handleImageFiles(e.target.files); e.target.value = '' }}
-            />
-            <span className="wedder-upload-dropzone-text">
-              Drop cropped images here or click to upload
-            </span>
-            <span className="wedder-upload-dropzone-hint">
-              Filenames must match style names (e.g. flat.png, high-dome.png, bevel-two-tone.png)
-            </span>
-          </div>
-          {uploadMsg && <p className="wedder-upload-msg">{uploadMsg}</p>}
-          <div className="wedder-upload-grid">
-            {wedderStyles.map((s) => (
-              <StyleUploadSlot
-                key={s.id}
-                style={s}
-                image={styleImages[s.id]}
-                onAssign={(file) => handleAssignImage(s.id, file)}
-                onClear={() => handleClearImage(s.id)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* ── SKU Search ── */}
       <div className="wedder-sku-search">
@@ -419,109 +376,205 @@ function WeddersPage() {
         </div>
       </div>
 
-      <div className="wedder-finder-v2">
-        {/* ── Left: style preview image ── */}
-        <div className="wedder-preview-col">
-          <div className="wedder-preview-img-wrap">
-            {selectedStyle ? (
-              <img
-                src={styleImages[selectedStyle.id] || selectedStyle.image}
-                alt={selectedStyle.name}
-                className="wedder-preview-img"
-                onError={(e) => { e.target.style.display = 'none' }}
-              />
-            ) : (
-              <div className="wedder-preview-placeholder">
-                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="8" />
-                  <circle cx="12" cy="12" r="4" />
-                </svg>
-                <span>Select a style</span>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* ── Tier sections ── */}
+      {TIERS.map((tier) => {
+        const tierStyles = stylesByTier[tier.id]
+        const isOpen = !!openTiers[tier.id]
+        const isEmpty = tierStyles.length === 0
+        const isTierActive = activeTier === tier.id
 
-        {/* ── Right: selectors ── */}
-        <div className="wedder-selectors-col">
-          <StylePicker selected={styleId} onSelect={handleStyleSelect} styleImages={styleImages} />
+        return (
+          <div key={tier.id} className={`wedder-tier${isOpen ? ' wedder-tier--open' : ''}`}>
+            <button className="wedder-tier-header" onClick={() => toggleTier(tier.id)}>
+              <span className="wedder-tier-chevron">{isOpen ? '▾' : '▸'}</span>
+              <span className="wedder-tier-label">{tier.label}</span>
+              <span className="wedder-tier-count">
+                {isEmpty ? 'Coming soon' : `${tierStyles.length} style${tierStyles.length !== 1 ? 's' : ''}`}
+              </span>
+            </button>
 
-          <OptionPicker
-            label="Metal"
-            options={selectedStyle?.metals ?? []}
-            selected={metal}
-            onSelect={setMetal}
-          />
+            {isOpen && (
+              <div className="wedder-tier-body">
+                {isEmpty ? (
+                  <p className="wedder-result-prompt" style={{ padding: '0.5rem 0' }}>No styles in this tier yet</p>
+                ) : (
+                  <>
+                    {/* Per-tier admin actions */}
+                    {isAdmin && (
+                      <div className="wedder-tier-actions">
+                        <button
+                          className="wedder-upload-toggle"
+                          onClick={() => navigate(`/wedder-crop?tier=${tier.id}`)}
+                          title={`Crop ${tier.label} images`}
+                        >
+                          Crop
+                        </button>
+                        <button
+                          className="wedder-upload-toggle"
+                          onClick={() => toggleUpload(tier.id)}
+                          title={`Upload ${tier.label} images`}
+                        >
+                          {showUpload[tier.id] ? 'Hide Images' : 'Images'}
+                        </button>
+                      </div>
+                    )}
 
-          <OptionPicker
-            label="Width"
-            options={selectedStyle?.widths ?? []}
-            selected={width}
-            onSelect={setWidth}
-          />
+                    {/* Per-tier upload panel */}
+                    {showUpload[tier.id] && (
+                      <div className="wedder-upload-panel">
+                        <div
+                          className="wedder-upload-dropzone"
+                          onClick={() => uploadRefs.current[tier.id]?.click()}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault()
+                            handleImageFiles(e.dataTransfer.files, tierStyles, tier.id)
+                          }}
+                        >
+                          <input
+                            ref={(el) => { uploadRefs.current[tier.id] = el }}
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            hidden
+                            onChange={(e) => { handleImageFiles(e.target.files, tierStyles, tier.id); e.target.value = '' }}
+                          />
+                          <span className="wedder-upload-dropzone-text">
+                            Drop cropped images here or click to upload
+                          </span>
+                          <span className="wedder-upload-dropzone-hint">
+                            Filenames must match style names (e.g. flat.png, high-dome.png)
+                          </span>
+                        </div>
+                        {uploadMsg[tier.id] && <p className="wedder-upload-msg">{uploadMsg[tier.id]}</p>}
+                        <div className="wedder-upload-grid">
+                          {tierStyles.map((s) => (
+                            <StyleUploadSlot
+                              key={s.id}
+                              style={s}
+                              image={styleImages[s.id]}
+                              onAssign={(file) => handleAssignImage(s.id, file)}
+                              onClear={() => handleClearImage(s.id)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-          {!noFinish && (
-            <OptionPicker
-              label="Finish"
-              options={selectedStyle?.finishes ?? []}
-              selected={finish}
-              onSelect={setFinish}
-            />
-          )}
+                    {/* Finder for this tier */}
+                    <div className="wedder-finder-v2">
+                      <div className="wedder-preview-col">
+                        <div className="wedder-preview-img-wrap">
+                          {selectedStyle && isTierActive ? (
+                            <img
+                              src={styleImages[selectedStyle.id] || selectedStyle.image}
+                              alt={selectedStyle.name}
+                              className="wedder-preview-img"
+                              onError={(e) => { e.target.style.display = 'none' }}
+                            />
+                          ) : (
+                            <div className="wedder-preview-placeholder">
+                              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="8" />
+                                <circle cx="12" cy="12" r="4" />
+                              </svg>
+                              <span>Select a style</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
 
-          {/* ── Result ── */}
-          <div className="wedder-result">
-            {!allSelected && (
-              <p className="wedder-result-prompt">
-                {selectedStyle
-                  ? 'Select all options above to find the P number'
-                  : 'Choose a style to begin'}
-              </p>
-            )}
-            {allSelected && pNumber && (
-              <div className="wedder-result-found">
-                <span className="wedder-result-label">P Number</span>
-                <span className="wedder-result-p">{pNumber}</span>
-                {existingSku && (
-                  <span className="wedder-result-sku-existing">Sample SKU: {existingSku}</span>
+                      <div className="wedder-selectors-col">
+                        <StylePicker
+                          styles={tierStyles}
+                          selected={isTierActive ? styleId : null}
+                          onSelect={handleStyleSelect}
+                          styleImages={styleImages}
+                        />
+
+                        {isTierActive && (
+                          <>
+                            <OptionPicker
+                              label="Metal"
+                              options={selectedStyle?.metals ?? []}
+                              selected={metal}
+                              onSelect={setMetal}
+                            />
+
+                            <OptionPicker
+                              label="Width"
+                              options={selectedStyle?.widths ?? []}
+                              selected={width}
+                              onSelect={setWidth}
+                            />
+
+                            {!noFinish && (
+                              <OptionPicker
+                                label="Finish"
+                                options={selectedStyle?.finishes ?? []}
+                                selected={finish}
+                                onSelect={setFinish}
+                              />
+                            )}
+
+                            <div className="wedder-result">
+                              {!allSelected && (
+                                <p className="wedder-result-prompt">
+                                  Select all options above to find the P number
+                                </p>
+                              )}
+                              {allSelected && pNumber && (
+                                <div className="wedder-result-found">
+                                  <span className="wedder-result-label">P Number</span>
+                                  <span className="wedder-result-p">{pNumber}</span>
+                                  {existingSku && (
+                                    <span className="wedder-result-sku-existing">Sample SKU: {existingSku}</span>
+                                  )}
+                                </div>
+                              )}
+                              {allSelected && !pNumber && (
+                                <p className="wedder-result-not-found">No P number found for this combination</p>
+                              )}
+                            </div>
+
+                            {isAdmin && allSelected && pNumber && (
+                              <div className="wedder-sku-entry">
+                                <div className="wedder-step-label">Sample SKU</div>
+                                <div className="wedder-sku-entry-row">
+                                  <input
+                                    className="wedder-sku-entry-input"
+                                    type="text"
+                                    value={skuInput}
+                                    onChange={(e) => setSkuInput(e.target.value)}
+                                    placeholder="Enter Sample SKU..."
+                                    onKeyDown={(e) => { if (e.key === 'Enter') handleSaveSku() }}
+                                  />
+                                  <button
+                                    className="wedder-sku-save-btn"
+                                    onClick={handleSaveSku}
+                                    disabled={!skuInput.trim()}
+                                  >
+                                    Save
+                                  </button>
+                                  {skuMsg && <span className="wedder-sku-msg">{skuMsg}</span>}
+                                </div>
+                              </div>
+                            )}
+
+                            {anythingSelected && (
+                              <button className="wedder-reset-btn" onClick={handleReset}>Reset</button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}
-            {allSelected && !pNumber && (
-              <p className="wedder-result-not-found">No P number found for this combination</p>
-            )}
           </div>
-
-          {/* ── SKU input ── */}
-          {isAdmin && allSelected && pNumber && (
-            <div className="wedder-sku-entry">
-              <div className="wedder-step-label">Sample SKU</div>
-              <div className="wedder-sku-entry-row">
-                <input
-                  className="wedder-sku-entry-input"
-                  type="text"
-                  value={skuInput}
-                  onChange={(e) => setSkuInput(e.target.value)}
-                  placeholder="Enter Sample SKU..."
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleSaveSku() }}
-                />
-                <button
-                  className="wedder-sku-save-btn"
-                  onClick={handleSaveSku}
-                  disabled={!skuInput.trim()}
-                >
-                  Save
-                </button>
-                {skuMsg && <span className="wedder-sku-msg">{skuMsg}</span>}
-              </div>
-            </div>
-          )}
-
-          {anythingSelected && (
-            <button className="wedder-reset-btn" onClick={handleReset}>Reset</button>
-          )}
-        </div>
-      </div>
+        )
+      })}
 
       {/* ── Price lookup iframe ── */}
       {pNumber && (
