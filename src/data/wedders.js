@@ -1,4 +1,4 @@
-// Gold Wedders P-number lookup
+// Wedders Concierge P-number lookup
 // Key format: "style|metal|width|finish"
 // P numbers sourced from Michael Hill catalog
 

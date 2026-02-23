@@ -81,7 +81,7 @@ function WeddersPage() {
     <div className="wedders-page">
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/dev')}>Dev</button>
-        <h1>Gold Wedders</h1>
+        <h1>Wedders Concierge</h1>
       </div>
 
       <div className="wedder-finder-v2">

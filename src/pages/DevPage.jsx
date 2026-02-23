@@ -8,7 +8,7 @@ function DevPage() {
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
-    { label: 'Wedders', path: '/wedders' },
+    { label: 'Wedders Concierge', path: '/wedders' },
   ]
 
   return (
