@@ -10,6 +10,7 @@ import ObservationPage from './pages/ObservationPage'
 import ClockworkPage from './pages/ClockworkPage'
 import ConciergePage from './pages/ConciergePage'
 import WeddersPage from './pages/WeddersPage'
+import WedderCropPage from './pages/WedderCropPage'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
       <Route path="/clockwork" element={<ClockworkPage />} />
       <Route path="/concierge" element={<ConciergePage />} />
       <Route path="/wedders" element={<WeddersPage />} />
+      <Route path="/wedder-crop" element={<WedderCropPage />} />
     </Routes>
   )
 }
