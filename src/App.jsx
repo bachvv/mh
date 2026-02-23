@@ -8,6 +8,7 @@ import ConversionPage from './pages/ConversionPage'
 import DevPage from './pages/DevPage'
 import ObservationPage from './pages/ObservationPage'
 import ClockworkPage from './pages/ClockworkPage'
+import WeddersPage from './pages/WeddersPage'
 import './App.css'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Route path="/dev" element={<DevPage />} />
       <Route path="/observation" element={<ObservationPage />} />
       <Route path="/clockwork" element={<ClockworkPage />} />
+      <Route path="/wedders" element={<WeddersPage />} />
     </Routes>
   )
 }
