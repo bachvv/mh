@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Flat cross section: rectangular, flat on all sides -->
+  <rect x="34" y="26" width="52" height="28" fill="none" stroke="#c49a3c" stroke-width="5" stroke-linejoin="miter"/>
+  <text x="60" y="75" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.08em" fill="#666">FLAT</text>
+</svg>

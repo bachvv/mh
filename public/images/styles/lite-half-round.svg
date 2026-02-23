@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Lite Half Round: shallower dome outside, flat inside -->
+  <path d="M30,52 L90,52 Q90,52 85,38 Q75,26 60,26 Q45,26 35,38 Q30,52 30,52 Z" fill="none" stroke="#c49a3c" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="30" y1="52" x2="90" y2="52" stroke="#010101" stroke-width="2"/>
+  <text x="60" y="72" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="600" letter-spacing="0.06em" fill="#666">LITE HALF ROUND</text>
+</svg>

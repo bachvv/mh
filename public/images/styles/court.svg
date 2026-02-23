@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Court cross section: curved on both inside and outside (oval/ellipse) -->
+  <ellipse cx="60" cy="40" rx="26" ry="20" fill="none" stroke="#c49a3c" stroke-width="5"/>
+  <text x="60" y="75" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.08em" fill="#666">COURT</text>
+</svg>
