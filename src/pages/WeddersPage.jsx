@@ -28,14 +28,29 @@ function saveStyleImages(map) {
 
 // Normalize filename to match style id: "flat-bevel.png" → "Flat Bevel"
 function filenameToStyleId(filename) {
-  const name = filename.replace(/\.[^.]+$/, '').toLowerCase()
-  // Try exact match first
-  const exact = wedderStyles.find((s) => s.id.toLowerCase() === name)
+  const name = filename.replace(/\.[^.]+$/, '').toLowerCase().trim()
+  const slug = name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ')
+
+  // Exact match on id
+  const exact = wedderStyles.find((s) => s.id.toLowerCase() === name || s.id.toLowerCase() === slug)
   if (exact) return exact.id
-  // Try slug match: "flat-bevel" → "Flat Bevel"
-  const slug = name.replace(/-/g, ' ')
-  const slugMatch = wedderStyles.find((s) => s.id.toLowerCase() === slug)
-  if (slugMatch) return slugMatch.id
+
+  // Partial match: filename is contained in style id or vice versa
+  const partial = wedderStyles.find((s) => {
+    const sid = s.id.toLowerCase()
+    return sid.startsWith(slug) || slug.startsWith(sid)
+  })
+  if (partial) return partial.id
+
+  // Fuzzy: remove common filler words, compare core words
+  const coreWords = (str) => str.replace(/\b(the|and|of|a|an)\b/g, '').replace(/\s+/g, ' ').trim()
+  const slugCore = coreWords(slug)
+  const fuzzy = wedderStyles.find((s) => {
+    const sidCore = coreWords(s.id.toLowerCase())
+    return sidCore === slugCore || sidCore.startsWith(slugCore) || slugCore.startsWith(sidCore)
+  })
+  if (fuzzy) return fuzzy.id
+
   return null
 }
 
@@ -321,7 +336,7 @@ function WeddersPage() {
                 ) : (
                   <div className="wedder-upload-thumb-placeholder" />
                 )}
-                <span className="wedder-upload-thumb-name">{s.name}</span>
+                <span className="wedder-upload-thumb-name" title={s.id.toLowerCase().replace(/\s+/g, '-') + '.png'}>{s.name}</span>
               </div>
             ))}
           </div>
