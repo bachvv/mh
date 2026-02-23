@@ -1,43 +1,51 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  wedderStyles,
-  wedderMetals,
-  wedderWidths,
-  wedderFinishes,
-  wedderPNumbers,
-} from '../data/wedders'
+import { wedderStyles, wedderPNumbers } from '../data/wedders'
 
-// Step 1 — pick a style/profile
+// ── Style selector cards ──────────────────────────────────────────
 function StylePicker({ selected, onSelect }) {
+  const plain     = wedderStyles.filter((s) => s.category === 'Plain')
+  const patterned = wedderStyles.filter((s) => s.category === 'Patterned')
+
   return (
     <div className="wedder-step">
       <div className="wedder-step-label">Style / Profile</div>
+
+      <div className="wedder-style-category-label">Plain</div>
       <div className="wedder-style-grid">
-        {wedderStyles.map((s) => (
-          <button
-            key={s.id}
-            className={`wedder-style-card${selected === s.id ? ' wedder-style-card--active' : ''}`}
-            onClick={() => onSelect(s.id)}
-          >
-            <div className="wedder-style-img-wrap">
-              <img
-                src={s.image}
-                alt={s.name}
-                className="wedder-style-img"
-                onError={(e) => { e.target.style.display = 'none' }}
-              />
-            </div>
-            <span className="wedder-style-name">{s.name}</span>
-          </button>
-        ))}
+        {plain.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} />)}
+      </div>
+
+      <div className="wedder-style-category-label" style={{ marginTop: '0.75rem' }}>Patterned</div>
+      <div className="wedder-style-grid">
+        {patterned.map((s) => <StyleCard key={s.id} style={s} selected={selected} onSelect={onSelect} />)}
       </div>
     </div>
   )
 }
 
-// Generic button-group selector
+function StyleCard({ style, selected, onSelect }) {
+  return (
+    <button
+      className={`wedder-style-card${selected === style.id ? ' wedder-style-card--active' : ''}`}
+      onClick={() => onSelect(style.id)}
+    >
+      <div className="wedder-style-img-wrap">
+        <img
+          src={style.image}
+          alt={style.name}
+          className="wedder-style-img"
+          onError={(e) => { e.target.style.display = 'none' }}
+        />
+      </div>
+      <span className="wedder-style-name">{style.name}</span>
+    </button>
+  )
+}
+
+// ── Generic button group ──────────────────────────────────────────
 function OptionPicker({ label, options, selected, onSelect }) {
+  if (!options || options.length === 0) return null
   return (
     <div className="wedder-step">
       <div className="wedder-step-label">{label}</div>
@@ -56,26 +64,45 @@ function OptionPicker({ label, options, selected, onSelect }) {
   )
 }
 
+// ── Main page ─────────────────────────────────────────────────────
 function WeddersPage() {
   const navigate = useNavigate()
 
-  const [style, setStyle]   = useState(null)
-  const [metal, setMetal]   = useState(null)
-  const [width, setWidth]   = useState(null)
-  const [finish, setFinish] = useState(null)
+  const [styleId, setStyleId] = useState(null)
+  const [metal,   setMetal]   = useState(null)
+  const [width,   setWidth]   = useState(null)
+  const [finish,  setFinish]  = useState(null)
 
-  const allSelected = style && metal && width && finish
-  const pKey    = allSelected ? `${style}|${metal}|${width}|${finish}` : null
+  const selectedStyle = wedderStyles.find((s) => s.id === styleId) ?? null
+  const noFinish      = selectedStyle && selectedStyle.finishes.length === 0
+
+  // Reset downstream selections when style changes
+  function handleStyleSelect(id) {
+    const s = wedderStyles.find((st) => st.id === id)
+    setStyleId(id)
+    if (metal  && !s.metals.includes(metal))    setMetal(null)
+    if (width  && !s.widths.includes(width))    setWidth(null)
+    if (finish && !s.finishes.includes(finish)) setFinish(null)
+  }
+
+  // Build P-number key
+  const allSelected = selectedStyle && metal && width && (noFinish || finish)
+  let pKey = null
+  if (allSelected) {
+    pKey = noFinish
+      ? `${styleId}|${metal}|${width}`
+      : `${styleId}|${metal}|${width}|${finish}`
+  }
   const pNumber = pKey ? wedderPNumbers[pKey] : null
 
   function handleReset() {
-    setStyle(null)
+    setStyleId(null)
     setMetal(null)
     setWidth(null)
     setFinish(null)
   }
 
-  const selectedStyle = wedderStyles.find((s) => s.id === style)
+  const anythingSelected = styleId || metal || width || finish
 
   return (
     <div className="wedders-page">
@@ -85,7 +112,7 @@ function WeddersPage() {
       </div>
 
       <div className="wedder-finder-v2">
-        {/* ── Left column: style image preview ── */}
+        {/* ── Left: style preview image ── */}
         <div className="wedder-preview-col">
           <div className="wedder-preview-img-wrap">
             {selectedStyle ? (
@@ -107,35 +134,41 @@ function WeddersPage() {
           </div>
         </div>
 
-        {/* ── Right column: selectors ── */}
+        {/* ── Right: selectors ── */}
         <div className="wedder-selectors-col">
-          <StylePicker selected={style} onSelect={(v) => { setStyle(v) }} />
+          <StylePicker selected={styleId} onSelect={handleStyleSelect} />
 
           <OptionPicker
             label="Metal"
-            options={wedderMetals}
+            options={selectedStyle?.metals ?? []}
             selected={metal}
             onSelect={setMetal}
           />
 
           <OptionPicker
             label="Width"
-            options={wedderWidths}
+            options={selectedStyle?.widths ?? []}
             selected={width}
             onSelect={setWidth}
           />
 
-          <OptionPicker
-            label="Finish"
-            options={wedderFinishes}
-            selected={finish}
-            onSelect={setFinish}
-          />
+          {!noFinish && (
+            <OptionPicker
+              label="Finish"
+              options={selectedStyle?.finishes ?? []}
+              selected={finish}
+              onSelect={setFinish}
+            />
+          )}
 
           {/* ── Result ── */}
           <div className="wedder-result">
             {!allSelected && (
-              <p className="wedder-result-prompt">Select all options above to find the P number</p>
+              <p className="wedder-result-prompt">
+                {selectedStyle
+                  ? 'Select all options above to find the P number'
+                  : 'Choose a style to begin'}
+              </p>
             )}
             {allSelected && pNumber && (
               <div className="wedder-result-found">
@@ -148,7 +181,7 @@ function WeddersPage() {
             )}
           </div>
 
-          {(style || metal || width || finish) && (
+          {anythingSelected && (
             <button className="wedder-reset-btn" onClick={handleReset}>Reset</button>
           )}
         </div>
