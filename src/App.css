@@ -2485,6 +2485,17 @@
   color: var(--color-text-light);
 }
 
+/* ── Style category sub-label ── */
+.wedder-style-category-label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
+}
+
 /* ── Style cards ── */
 .wedder-style-grid {
   display: flex;

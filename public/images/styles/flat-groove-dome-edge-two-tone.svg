@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Flat Groove Dome Edge Two Tone: dome shape with a groove near edge -->
+  <path d="M28,58 L92,58 Q92,58 92,38 Q92,16 60,16 Q28,16 28,38 Q28,58 28,58 Z" fill="none" stroke="#c49a3c" stroke-width="5" stroke-linejoin="round"/>
+  <!-- groove line near edge -->
+  <path d="M33,50 Q60,44 87,50" fill="none" stroke="#c49a3c" stroke-width="2"/>
+  <text x="60" y="74" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" font-weight="600" letter-spacing="0.03em" fill="#666">FLAT GROOVE DOME EDGE</text>
+</svg>

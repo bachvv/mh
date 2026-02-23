@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="120" height="80">
+  <rect width="120" height="80" fill="#f5f0e8"/>
+  <!-- Flat Bevel: flat top/bottom with angled chamfered edges -->
+  <polygon points="44,22 76,22 88,32 88,48 76,58 44,58 32,48 32,32" fill="none" stroke="#c49a3c" stroke-width="5" stroke-linejoin="miter"/>
+  <text x="60" y="74" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.07em" fill="#666">FLAT BEVEL</text>
+</svg>
