@@ -53,7 +53,7 @@ function WatchesPage() {
   return (
     <div className="watches-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
+        <button className="back-button" onClick={() => navigate('/findsku')}>SKU Finder</button>
         <h1>Watches</h1>
         {isAdmin && (
           <button className="watches-pair-btn" onClick={() => navigate('/watch-pair')}>Pair</button>

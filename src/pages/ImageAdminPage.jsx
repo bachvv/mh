@@ -32,7 +32,7 @@ function ImageAdminPage() {
   const { isAdmin } = useAuth()
 
   useEffect(() => {
-    if (!isAdmin) navigate('/concierge', { replace: true })
+    if (!isAdmin) navigate('/findsku', { replace: true })
   }, [isAdmin, navigate])
 
   if (!isAdmin) return null
@@ -144,7 +144,7 @@ function ImageAdminPage() {
   return (
     <div className="img-admin-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
+        <button className="back-button" onClick={() => navigate('/findsku')}>SKU Finder</button>
         <h1>Image Admin</h1>
       </div>
 

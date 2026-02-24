@@ -1,7 +1,9 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import earringsData from '../data/earrings.json'
+import catalog from '../data/catalog.json'
 
+const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
 const IMAGES_KEY = 'wedder-style-images'
 const SKU_KEY = 'wedder-skus'
 
@@ -15,12 +17,15 @@ function loadSkuMap() {
   catch { return {} }
 }
 
+function getImageUrl(product) {
+  return `${IMAGE_BASE}/${product.p}/${product.m}?sw=600&sm=fit&q=80`
+}
+
 // Extract color histogram from an image via canvas
 function getColorHistogram(canvas, ctx) {
   const w = canvas.width
   const h = canvas.height
   const data = ctx.getImageData(0, 0, w, h).data
-  // 8 bins per channel = 512 total bins
   const bins = 8
   const hist = new Float64Array(bins * bins * bins)
   const step = 256 / bins
@@ -28,7 +33,7 @@ function getColorHistogram(canvas, ctx) {
 
   for (let i = 0; i < data.length; i += 4) {
     const a = data[i + 3]
-    if (a < 128) continue // skip transparent
+    if (a < 128) continue
     const rBin = Math.min(Math.floor(data[i] / step), bins - 1)
     const gBin = Math.min(Math.floor(data[i + 1] / step), bins - 1)
     const bBin = Math.min(Math.floor(data[i + 2] / step), bins - 1)
@@ -36,29 +41,26 @@ function getColorHistogram(canvas, ctx) {
     total++
   }
 
-  // Normalize
   if (total > 0) {
     for (let i = 0; i < hist.length; i++) hist[i] /= total
   }
   return hist
 }
 
-// Compare two histograms using histogram intersection (higher = more similar)
 function compareHistograms(a, b) {
   let intersection = 0
   for (let i = 0; i < a.length; i++) {
     intersection += Math.min(a[i], b[i])
   }
-  return intersection // 0..1 range
+  return intersection
 }
 
-// Load an image src into a small canvas and return its histogram
 function imageToHistogram(src) {
   return new Promise((resolve) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
-      const size = 64 // downsample for speed
+      const size = 64
       const canvas = document.createElement('canvas')
       canvas.width = size
       canvas.height = size
@@ -71,9 +73,18 @@ function imageToHistogram(src) {
   })
 }
 
+// Build categories from catalog + special ones
+const CATALOG_CATEGORIES = Object.keys(catalog).sort((a, b) => {
+  return (catalog[b]?.length || 0) - (catalog[a]?.length || 0)
+})
+
 const CATEGORIES = [
-  { id: 'earrings', label: 'Earrings' },
-  { id: 'wedders', label: 'Wedders' },
+  { id: 'earrings-local', label: `Earrings (Local ${earringsData.length})` },
+  ...CATALOG_CATEGORIES.map(cat => ({
+    id: `catalog:${cat}`,
+    label: `${cat} (${catalog[cat].length})`,
+  })),
+  { id: 'wedders-local', label: 'Wedders (Saved Styles)' },
 ]
 
 function FindByPhotoPage() {
@@ -83,7 +94,8 @@ function FindByPhotoPage() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
-  const [category, setCategory] = useState('earrings')
+  const [category, setCategory] = useState(CATEGORIES[0].id)
+  const [progress, setProgress] = useState('')
 
   const processFile = useCallback(async (file) => {
     if (!file || !file.type.startsWith('image/')) return
@@ -94,8 +106,8 @@ function FindByPhotoPage() {
       setPreview(src)
       setLoading(true)
       setResults(null)
+      setProgress('Analyzing photo...')
 
-      // Get histogram of uploaded photo
       const uploadHist = await imageToHistogram(src)
       if (!uploadHist) {
         setResults([])
@@ -105,14 +117,15 @@ function FindByPhotoPage() {
 
       let matches = []
 
-      if (category === 'earrings') {
-        // Compare against earring product images
-        for (const item of earringsData) {
+      if (category === 'earrings-local') {
+        for (let idx = 0; idx < earringsData.length; idx++) {
+          const item = earringsData[idx]
+          setProgress(`Comparing ${idx + 1}/${earringsData.length}...`)
           const hist = await imageToHistogram(item.image)
           if (!hist) continue
           const score = compareHistograms(uploadHist, hist)
           matches.push({
-            styleId: item.pNumber,
+            id: item.pNumber,
             name: item.name,
             score,
             image: item.image,
@@ -120,31 +133,47 @@ function FindByPhotoPage() {
             sourceUrl: item.sourceUrl,
           })
         }
-      } else {
-        // Compare against wedder style images from localStorage
+      } else if (category === 'wedders-local') {
         const styleImages = loadStyleImages()
         const skuMap = loadSkuMap()
         const entries = Object.entries(styleImages)
-
         for (const [styleId, imgSrc] of entries) {
           const hist = await imageToHistogram(imgSrc)
           if (!hist) continue
           const score = compareHistograms(uploadHist, hist)
-
           const styleSkus = []
           for (const [pKey, sku] of Object.entries(skuMap)) {
             if (pKey.startsWith(styleId + '|') && sku) {
               styleSkus.push(sku)
             }
           }
-
-          matches.push({ styleId, name: styleId, score, image: imgSrc, skus: styleSkus })
+          matches.push({ id: styleId, name: styleId, score, image: imgSrc, skus: styleSkus })
+        }
+      } else if (category.startsWith('catalog:')) {
+        const catName = category.slice(8)
+        const products = catalog[catName] || []
+        for (let idx = 0; idx < products.length; idx++) {
+          const p = products[idx]
+          if (!p.m) continue
+          if (idx % 10 === 0) setProgress(`Comparing ${idx + 1}/${products.length}...`)
+          const url = getImageUrl(p)
+          const hist = await imageToHistogram(url)
+          if (!hist) continue
+          const score = compareHistograms(uploadHist, hist)
+          matches.push({
+            id: p.s,
+            name: p.n,
+            score,
+            image: url,
+            sku: p.s,
+          })
         }
       }
 
       matches.sort((a, b) => b.score - a.score)
-      setResults(matches.slice(0, 6))
+      setResults(matches.slice(0, 12))
       setLoading(false)
+      setProgress('')
     }
     reader.readAsDataURL(file)
   }, [category])
@@ -156,27 +185,26 @@ function FindByPhotoPage() {
     if (file) processFile(file)
   }
 
-  const hintText = category === 'earrings'
-    ? `Matches against ${earringsData.length} earring products`
-    : 'Matches against saved wedder style images'
+  const currentCat = CATEGORIES.find(c => c.id === category)
 
   return (
     <div className="fbp-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/concierge')}>SKU Finder</button>
+        <button className="back-button" onClick={() => navigate('/findsku')}>SKU Finder</button>
         <h1>Find by Photo</h1>
       </div>
 
-      <div className="fbp-category-toggle">
-        {CATEGORIES.map(c => (
-          <button
-            key={c.id}
-            className={`fbp-cat-btn${category === c.id ? ' fbp-cat-btn--active' : ''}`}
-            onClick={() => { setCategory(c.id); setResults(null) }}
-          >
-            {c.label}
-          </button>
-        ))}
+      <div className="fbp-category-select">
+        <label className="fbp-cat-label">Category</label>
+        <select
+          className="fbp-cat-dropdown"
+          value={category}
+          onChange={(e) => { setCategory(e.target.value); setResults(null) }}
+        >
+          {CATEGORIES.map(c => (
+            <option key={c.id} value={c.id}>{c.label}</option>
+          ))}
+        </select>
       </div>
 
       <div className="fbp-upload-card">
@@ -206,7 +234,7 @@ function FindByPhotoPage() {
                 </svg>
               </div>
               <span className="fbp-dropzone-text">Drop a photo here or tap to upload</span>
-              <span className="fbp-dropzone-hint">{hintText}</span>
+              <span className="fbp-dropzone-hint">Matches against {currentCat?.label}</span>
             </>
           )}
         </div>
@@ -221,15 +249,11 @@ function FindByPhotoPage() {
       </div>
 
       {loading && (
-        <div className="fbp-loading">Comparing images...</div>
+        <div className="fbp-loading">{progress || 'Comparing images...'}</div>
       )}
 
       {results && results.length === 0 && !loading && (
-        <div className="fbp-empty">
-          {category === 'earrings'
-            ? 'No earring images available.'
-            : 'No style images saved yet. Upload style images on the Wedders page first.'}
-        </div>
+        <div className="fbp-empty">No matches found in this category.</div>
       )}
 
       {results && results.length > 0 && !loading && (
@@ -237,7 +261,7 @@ function FindByPhotoPage() {
           <div className="wedder-step-label">Best Matches</div>
           <div className="fbp-results-grid">
             {results.map((m, i) => (
-              <div key={m.styleId + '-' + i} className="fbp-result-card">
+              <div key={m.id + '-' + i} className="fbp-result-card">
                 <div className="fbp-result-img-wrap">
                   <img src={m.image} alt={m.name} className="fbp-result-img" />
                 </div>
@@ -246,6 +270,9 @@ function FindByPhotoPage() {
                   <span className="fbp-result-score">{Math.round(m.score * 100)}% match</span>
                   {m.pNumber && (
                     <span className="fbp-result-skus">{m.pNumber}</span>
+                  )}
+                  {m.sku && (
+                    <span className="fbp-result-skus">SKU: {m.sku}</span>
                   )}
                   {m.skus && m.skus.length > 0 && (
                     <span className="fbp-result-skus">

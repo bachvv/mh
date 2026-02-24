@@ -15,6 +15,7 @@ import WatchesPage from './pages/WatchesPage'
 import WatchPairPage from './pages/WatchPairPage'
 import FindByPhotoPage from './pages/FindByPhotoPage'
 import ImageAdminPage from './pages/ImageAdminPage'
+import { ChainsPage, TennisPage, RingsPage } from './pages/CatalogPage'
 import './App.css'
 
 function App() {
@@ -29,13 +30,16 @@ function App() {
       <Route path="/dev" element={<DevPage />} />
       <Route path="/observation" element={<ObservationPage />} />
       <Route path="/clockwork" element={<ClockworkPage />} />
-      <Route path="/concierge" element={<ConciergePage />} />
+      <Route path="/findsku" element={<ConciergePage />} />
       <Route path="/wedders" element={<WeddersPage />} />
       <Route path="/wedder-crop" element={<WedderCropPage />} />
       <Route path="/watches" element={<WatchesPage />} />
       <Route path="/watch-pair" element={<WatchPairPage />} />
       <Route path="/find-by-photo" element={<FindByPhotoPage />} />
       <Route path="/image-admin" element={<ImageAdminPage />} />
+      <Route path="/chains" element={<ChainsPage />} />
+      <Route path="/tennis" element={<TennisPage />} />
+      <Route path="/rings" element={<RingsPage />} />
     </Routes>
   )
 }

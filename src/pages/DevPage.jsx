@@ -8,7 +8,7 @@ function DevPage() {
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
-    { label: 'SKU Finder', path: '/concierge' },
+    { label: 'SKU Finder', path: '/findsku' },
   ]
 
   return (

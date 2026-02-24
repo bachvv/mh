@@ -7,6 +7,9 @@ function ConciergePage() {
 
   const links = [
     { label: 'Wedders', path: '/wedders' },
+    { label: 'Chains', path: '/chains' },
+    { label: 'Rings', path: '/rings' },
+    { label: 'Tennis', path: '/tennis' },
     { label: 'Watches', path: '/watches' },
     { label: 'Find by Photo', path: '/find-by-photo' },
     ...(isAdmin ? [{ label: 'Image Admin', path: '/image-admin' }] : []),
