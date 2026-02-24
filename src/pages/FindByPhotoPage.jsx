@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import earringsData from '../data/earrings.json'
 import catalog from '../data/catalog.json'
 
 const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
@@ -79,7 +78,6 @@ const CATALOG_CATEGORIES = Object.keys(catalog).sort((a, b) => {
 })
 
 const CATEGORIES = [
-  { id: 'earrings-local', label: `Earrings (Local ${earringsData.length})` },
   ...CATALOG_CATEGORIES.map(cat => ({
     id: `catalog:${cat}`,
     label: `${cat} (${catalog[cat].length})`,
@@ -117,23 +115,7 @@ function FindByPhotoPage() {
 
       let matches = []
 
-      if (category === 'earrings-local') {
-        for (let idx = 0; idx < earringsData.length; idx++) {
-          const item = earringsData[idx]
-          setProgress(`Comparing ${idx + 1}/${earringsData.length}...`)
-          const hist = await imageToHistogram(item.image)
-          if (!hist) continue
-          const score = compareHistograms(uploadHist, hist)
-          matches.push({
-            id: item.pNumber,
-            name: item.name,
-            score,
-            image: item.image,
-            pNumber: item.pNumber,
-            sourceUrl: item.sourceUrl,
-          })
-        }
-      } else if (category === 'wedders-local') {
+      if (category === 'wedders-local') {
         const styleImages = loadStyleImages()
         const skuMap = loadSkuMap()
         const entries = Object.entries(styleImages)
