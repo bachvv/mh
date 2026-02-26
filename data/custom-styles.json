@@ -517,9 +517,14 @@
       "diamondWeights": [],
       "goldColors": [
         "White",
-        "Yellow"
+        "Yellow",
+        "Rose"
       ],
-      "carats": [],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
       "diamondCuts": []
     },
     {
@@ -530,9 +535,14 @@
       "diamondTypes": [],
       "diamondWeights": [],
       "goldColors": [
-        "Yellow"
+        "Yellow",
+        "Rose"
       ],
-      "carats": [],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
       "diamondCuts": []
     },
     {
