@@ -4,11 +4,11 @@ function DevPage() {
   const navigate = useNavigate()
 
   const links = [
+    { label: 'SKU Finder', path: '/findsku' },
     { label: 'Rotation', path: '/rotation' },
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
-    { label: 'SKU Finder', path: '/findsku' },
   ]
 
   return (

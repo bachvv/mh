@@ -1,0 +1,3640 @@
+{
+  "wedders": [
+    {
+      "id": "brushed with bevelled edge",
+      "name": "Brushed with Bevelled Edge",
+      "tier": "MensDiamond",
+      "image": "/images/styles/brushed-with-bevelled-edge.png",
+      "diamondTypes": [],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".35",
+        ".50",
+        ".75",
+        "1.00",
+        "1.50"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": [
+        "Princess Cut",
+        "Round Brilliant"
+      ]
+    },
+    {
+      "id": "brushed centre & polished inverted edge",
+      "name": "Brushed Centre & Polished Inverted Edge",
+      "tier": "MensDiamond",
+      "image": "/images/styles/brushed-centre-&-polished-inverted-edge.png",
+      "diamondTypes": [],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".35",
+        ".50",
+        ".75",
+        "1.00",
+        "1.50"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "inverted edge",
+      "name": "Inverted Edge",
+      "tier": "MensDiamond",
+      "image": "/images/styles/brushed-centre-&-polished-inverted-edge.png",
+      "diamondTypes": [],
+      "diamondWeights": [
+        "1.00",
+        "1.25",
+        "1.50",
+        "2.00"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "rounded band, centre single row (half)",
+      "name": "Rounded Band, Centre Single Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/rounded-band,-centre-single-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".34"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "flat, off centre single row (half)",
+      "name": "Flat, Off Centre Single Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/flat,-off-centre-single-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".15"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "bevelled edge, centre single row (half)",
+      "name": "Bevelled Edge, Centre Single Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/bevelled-edge,-centre-single-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".34"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "rounded band, double centre row (half)",
+      "name": "Rounded Band, Double Centre Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/rounded-band,-double-centre-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".50"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "rounded band, double off centre row (half)",
+      "name": "Rounded Band, Double Off Centre Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/rounded-band,-double-off-centre-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".34"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "bevelled edge band, double row north/south (half)",
+      "name": "Bevelled Edge Band, Double Row North/South (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/bevelled-edge-band,-double-row-north-south-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".50"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "flat band, double row north/south (half)",
+      "name": "Flat Band, Double Row North/South (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/flat-band,-double-row-north-south-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".50"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "patterned single row off centre (half)",
+      "name": "Patterned Single Row Off Centre (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/patterned-single-row-off-centre-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".15"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "split section single row band, off centre (half)",
+      "name": "Split Section Single Row Band, Off Centre (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/split-section-single-row-band,-off-centre-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".25"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "pave centre band (half)",
+      "name": "Pave Centre Band (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/pave-centre-band-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".75"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "straight band, off centre single row (half)",
+      "name": "Straight Band, Off Centre Single Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/straight-band,-off-centre-single-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".25"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "diamond set bevelled edge, double row (half)",
+      "name": "Diamond Set Bevelled Edge, Double Row (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/diamond-set-bevelled-edge,-double-row-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".34"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "rounded pattern band (half)",
+      "name": "Rounded Pattern Band (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/rounded-pattern-band-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".20"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "patterned bevelled edge band (half)",
+      "name": "Patterned Bevelled Edge Band (Half)",
+      "tier": "MensDiamond",
+      "image": "/images/styles/patterned-bevelled-edge-band-(half).png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".20"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "inverted edge, three stone band",
+      "name": "Inverted Edge, Three Stone Band",
+      "tier": "MensDiamond",
+      "image": "/images/styles/inverted-edge,-three-stone-band.png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".10"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "bevelled edge three stone band",
+      "name": "Bevelled Edge Three Stone Band",
+      "tier": "MensDiamond",
+      "image": "/images/styles/bevelled-edge-three-stone-band.png",
+      "diamondTypes": [
+        "Black Diamonds",
+        "White Diamonds"
+      ],
+      "diamondWeights": [
+        ".08"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diamondCuts": []
+    },
+    {
+      "id": "two tone mh signature men's eternity",
+      "name": "Two Tone MH Signature Men's Eternity",
+      "tier": "MensDiamond",
+      "image": "/images/styles/two-tone-mh-signature-men's-eternity.png",
+      "diamondTypes": [
+        "White Diamonds",
+        "Black Diamonds"
+      ],
+      "diamondWeights": [
+        "multiple"
+      ],
+      "goldColors": [
+        "White",
+        "Yellow",
+        "Rose",
+        "Platinum"
+      ],
+      "carats": [
+        "10K",
+        "14K",
+        "18K"
+      ]
+    },
+    {
+      "id": "plain gold single tone mh signature men's patterned wedding band",
+      "name": "Plain Gold Single Tone MH Signature Men's Patterned Wedding Band",
+      "tier": "MensDiamond",
+      "image": "/images/styles/plain-gold-single-tone-mh-signature-men's-patterned-wedding-band.png",
+      "diamondTypes": [],
+      "diamondWeights": [],
+      "goldColors": [
+        "White",
+        "Yellow"
+      ],
+      "carats": [],
+      "diamondCuts": []
+    },
+    {
+      "id": "plain gold two tone mh signature men's patterned wedding band",
+      "name": "Plain Gold Two Tone MH Signature Men's Patterned Wedding Band",
+      "tier": "MensDiamond",
+      "image": "/images/styles/plain-gold-two-tone-mh-signature-men's-patterned-wedding-band.png",
+      "diamondTypes": [],
+      "diamondWeights": [],
+      "goldColors": [
+        "Yellow"
+      ],
+      "carats": [],
+      "diamondCuts": []
+    },
+    {
+      "id": "RB Third Channel Set",
+      "name": "RB Third Channel Set",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/rb-third-channel-set.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "RB Half Channel Set",
+      "name": "RB Half Channel Set",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/rb-half-channel-set.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "PC Third Channel Set",
+      "name": "PC Third Channel Set",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/pc-third-channel-set.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "PC Half Channel Set",
+      "name": "PC Half Channel Set",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/pc-half-channel-set.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "RB Half Claw",
+      "name": "RB Half Claw",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/rb-half-claw.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00",
+        "1.50"
+      ]
+    },
+    {
+      "id": "PC&BG Half Channel",
+      "name": "PC&BG Half Channel",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/pcbg-half-channel.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".15",
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "RB&BG Half Channel",
+      "name": "RB&BG Half Channel",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/rbbg-half-channel.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "BG Channel Set",
+      "name": "BG Channel Set",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/bg-channel-set.png",
+      "metals": [
+        "14KT",
+        "18KT"
+      ],
+      "diamondWeights": [
+        ".25",
+        ".34",
+        ".50",
+        ".75"
+      ]
+    },
+    {
+      "id": "RB Twist",
+      "name": "RB Twist",
+      "tier": "DiaWedders",
+      "image": "/images/styles/wedders/rb-twist.png",
+      "metals": [
+        "14KT",
+        "18KT",
+        "Platinum"
+      ],
+      "diamondWeights": [
+        ".25",
+        ".34",
+        ".50",
+        ".75",
+        "1.00"
+      ]
+    },
+    {
+      "id": "ZMM6139",
+      "name": "ZMM6139",
+      "tier": "DiaWedders",
+      "image": "/images/styles/zmm6139.png"
+    },
+    {
+      "id": "ZMM6140",
+      "name": "ZMM6140",
+      "tier": "DiaWedders",
+      "image": "/images/styles/zmm6140.png"
+    },
+    {
+      "id": "JMM3164",
+      "name": "JMM3164",
+      "tier": "DiaWedders",
+      "image": "/images/styles/jmm3164.png"
+    },
+    {
+      "id": "ZMM6096",
+      "name": "ZMM6096",
+      "tier": "DiaWedders",
+      "image": "/images/styles/zmm6096.png"
+    },
+    {
+      "id": "JMM4192",
+      "name": "JMM4192",
+      "tier": "DiaWedders",
+      "image": "/images/styles/jmm4192.png"
+    },
+    {
+      "id": "JMM4193",
+      "name": "JMM4193",
+      "tier": "DiaWedders",
+      "image": "/images/styles/jmm4193.png"
+    },
+    {
+      "id": "DEI20836",
+      "name": "DEI20836",
+      "tier": "DiaWedders",
+      "image": "/images/styles/dei20836.png"
+    },
+    {
+      "id": "DEI20837",
+      "name": "DEI20837",
+      "tier": "DiaWedders",
+      "image": "/images/styles/dei20837.png"
+    },
+    {
+      "id": "DME0028W",
+      "name": "DME0028W",
+      "tier": "DiaWedders",
+      "image": "/images/styles/dme0028w.png"
+    },
+    {
+      "id": ".25TDW BG CH/SET RING",
+      "name": ".25TDW BG CH/SET RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.25tdw-bg-ch-set-ring.png"
+    },
+    {
+      "id": "1.00TDW RB&BG HALF CHAN R",
+      "name": "1.00TDW RB&BG HALF CHAN R",
+      "tier": "DiaWedders",
+      "image": "/images/styles/1.00tdw-rb&bg-half-chan-r.png"
+    },
+    {
+      "id": ".75TDW RB&BG HALF CHAN RG",
+      "name": ".75TDW RB&BG HALF CHAN RG",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.75tdw-rb&bg-half-chan-rg.png"
+    },
+    {
+      "id": ".50TDW BG CH/SET RING",
+      "name": ".50TDW BG CH/SET RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.50tdw-bg-ch-set-ring.png"
+    },
+    {
+      "id": ".34TDW BG CH/SET RING",
+      "name": ".34TDW BG CH/SET RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.34tdw-bg-ch-set-ring.png"
+    },
+    {
+      "id": "1.00TDW PC&BG HALF CHAN R",
+      "name": "1.00TDW PC&BG HALF CHAN R",
+      "tier": "DiaWedders",
+      "image": "/images/styles/1.00tdw-pc&bg-half-chan-r.png"
+    },
+    {
+      "id": ".75TDW PC&BG HALF CHAN RG",
+      "name": ".75TDW PC&BG HALF CHAN RG",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.75tdw-pc&bg-half-chan-rg.png"
+    },
+    {
+      "id": ".50TDW PC&BG HALF CHAN RG",
+      "name": ".50TDW PC&BG HALF CHAN RG",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.50tdw-pc&bg-half-chan-rg.png"
+    },
+    {
+      "id": ".34TDW PC&BG HALF CHAN RG",
+      "name": ".34TDW PC&BG HALF CHAN RG",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.34tdw-pc&bg-half-chan-rg.png"
+    },
+    {
+      "id": "1.00TDW RB TWIST RING",
+      "name": "1.00TDW RB TWIST RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/1.00tdw-rb-twist-ring.png"
+    },
+    {
+      "id": ".75TDW RB TWIST RING",
+      "name": ".75TDW RB TWIST RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.75tdw-rb-twist-ring.png"
+    },
+    {
+      "id": ".50TDW RB TWIST RING",
+      "name": ".50TDW RB TWIST RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.50tdw-rb-twist-ring.png"
+    },
+    {
+      "id": ".34TDW RB TWIST RING",
+      "name": ".34TDW RB TWIST RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.34tdw-rb-twist-ring.png"
+    },
+    {
+      "id": ".25TDW RB TWIST RING",
+      "name": ".25TDW RB TWIST RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.25tdw-rb-twist-ring.png"
+    },
+    {
+      "id": ".75TDW BG CH/SET RING",
+      "name": ".75TDW BG CH/SET RING",
+      "tier": "DiaWedders",
+      "image": "/images/styles/.75tdw-bg-ch-set-ring.png"
+    }
+  ],
+  "chains": [
+    {
+      "id": "Diamond Cut Curb 30G (1mm)",
+      "name": "Diamond Cut Curb 30G (1mm)",
+      "category": "Diamond Cut Curb",
+      "tier": "Gold",
+      "image": "/images/styles/diamond-cut-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Diamond Cut Curb 40G (1.4mm)",
+      "name": "Diamond Cut Curb 40G (1.4mm)",
+      "category": "Diamond Cut Curb",
+      "tier": "Gold",
+      "image": "/images/styles/diamond-cut-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Diamond Cut Curb 60G (2mm)",
+      "name": "Diamond Cut Curb 60G (2mm)",
+      "category": "Diamond Cut Curb",
+      "tier": "Gold",
+      "image": "/images/styles/diamond-cut-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 80G (3mm)",
+      "name": "Flat Bevelled Curb 80G (3mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 100G (3.8mm)",
+      "name": "Flat Bevelled Curb 100G (3.8mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 120G (4.5mm)",
+      "name": "Flat Bevelled Curb 120G (4.5mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 140G (5mm)",
+      "name": "Flat Bevelled Curb 140G (5mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 180G (6.5mm)",
+      "name": "Flat Bevelled Curb 180G (6.5mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    },
+    {
+      "id": "Flat Bevelled Curb 250G (9mm)",
+      "name": "Flat Bevelled Curb 250G (9mm)",
+      "category": "Flat Bevelled Curb",
+      "tier": "Gold",
+      "image": "/images/styles/flat-bevelled-curb.png",
+      "metals": [
+        "10KT",
+        "18KT"
+      ],
+      "lengths": [
+        "17cm",
+        "19cm",
+        "21cm",
+        "23cm",
+        "45cm",
+        "50cm",
+        "55cm",
+        "60cm",
+        "65cm"
+      ]
+    }
+  ],
+  "rings": [
+    {
+      "id": "AS-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "AS-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Asscher",
+      "image": "/images/styles/rings/as-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "CU-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "CU-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Cushion",
+      "image": "/images/styles/rings/cu-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "EC-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EC-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "ElongatedCushion",
+      "image": "/images/styles/rings/ec-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "EM-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EM-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EM-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "EM-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EM-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "EM-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "EM-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "EM-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Emerald",
+      "image": "/images/styles/rings/em-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "HE-Evermore Band (3 CLW)",
+      "name": "Evermore Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-evermore-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-KIF Band (3 CLW)",
+      "name": "KIF Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-kif-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-Lab Band (3 CLW)",
+      "name": "Lab Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-lab-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-MH Sol Band (3 CLW)",
+      "name": "MH Sol Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-mh-sol-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-Sig 101 Band (3 CLW)",
+      "name": "Sig 101 Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-sig-101-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "HE-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Heart",
+      "image": "/images/styles/rings/he-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Evermore Band (6 CLW)",
+      "name": "Evermore Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-evermore-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-KIF Band (6 CLW)",
+      "name": "KIF Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-kif-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Lab Band (2 CLW)",
+      "name": "Lab Band (2 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-lab-band-2-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "MQ-Lab Band (6 CLW)",
+      "name": "Lab Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-lab-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-MH Sol Band (6 CLW)",
+      "name": "MH Sol Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-mh-sol-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "MQ-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "MQ-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Sig 101 Band (6 CLW)",
+      "name": "Sig 101 Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-sig-101-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "MQ-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Marquise",
+      "image": "/images/styles/rings/mq-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "OV-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "OV-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Oval",
+      "image": "/images/styles/rings/ov-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PE-Evermore Band (3 CLW)",
+      "name": "Evermore Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-evermore-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PE-KIF Band (3 CLW)",
+      "name": "KIF Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-kif-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PE-Lab Band (3 CLW)",
+      "name": "Lab Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-lab-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PE-MH Sol Band (3 CLW)",
+      "name": "MH Sol Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-mh-sol-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PE-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PE-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PE-Sig 101 Band (3 CLW)",
+      "name": "Sig 101 Band (3 CLW)",
+      "category": "Solitaire",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-sig-101-band-3-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PE-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Pear",
+      "image": "/images/styles/rings/pe-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PR-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PR-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PR-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PR-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PR-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PR-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "PR-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "PR-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Princess",
+      "image": "/images/styles/rings/pr-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RA-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RA-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RA-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RA-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RA-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RA-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RA-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RA-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "Radiant",
+      "image": "/images/styles/rings/ra-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Evermore Band (4 CLW)",
+      "name": "Evermore Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-evermore-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Evermore Band (6 CLW)",
+      "name": "Evermore Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-evermore-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RB-KIF Band (4 CLW)",
+      "name": "KIF Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-kif-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RB-KIF Band (6 CLW)",
+      "name": "KIF Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-kif-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Lab Band (4 CLW)",
+      "name": "Lab Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-lab-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00",
+        "6.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Lab Band (6 CLW)",
+      "name": "Lab Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-lab-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RB-MH Sol Band (4 CLW)",
+      "name": "MH Sol Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-mh-sol-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RB-MH Sol Band (6 CLW)",
+      "name": "MH Sol Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-mh-sol-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Pave Accent Band",
+      "name": "Pave Accent Band",
+      "category": "Engagement",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-pave-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Side Accent Band",
+      "name": "Side Accent Band",
+      "category": "Engagement",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-side-accent-band.png",
+      "carats": [
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Sig 101 Band (4 CLW)",
+      "name": "Sig 101 Band (4 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-sig-101-band-4-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    },
+    {
+      "id": "RB-Sig 101 Band (6 CLW)",
+      "name": "Sig 101 Band (6 CLW)",
+      "category": "Solitaire",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-sig-101-band-6-clw.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT"
+      ]
+    },
+    {
+      "id": "RB-Tapered Band",
+      "name": "Tapered Band",
+      "category": "Engagement",
+      "tier": "RoundBrilliant",
+      "image": "/images/styles/rings/rb-tapered-band.png",
+      "carats": [
+        "0.70",
+        "1.00",
+        "1.20",
+        "1.50",
+        "2.00",
+        "3.00",
+        "4.00",
+        "5.00"
+      ],
+      "metals": [
+        "14KT",
+        "18KT",
+        "PLAT"
+      ]
+    }
+  ],
+  "tennis": [
+    {
+      "id": "LabNecklace",
+      "name": "Lab Round Brilliant Necklace",
+      "tier": "Necklace",
+      "image": "/images/styles/tennis/lab-necklace.png",
+      "tdws": [
+        "6",
+        "8",
+        "10",
+        "12"
+      ],
+      "lengths": [
+        "40cm",
+        "45cm",
+        "50cm",
+        "55cm"
+      ]
+    },
+    {
+      "id": "MinedNecklace",
+      "name": "Mined Round Brilliant Necklace",
+      "tier": "Necklace",
+      "image": "/images/styles/tennis/mined-necklace.png",
+      "tdws": [
+        "6",
+        "8",
+        "10",
+        "12"
+      ],
+      "lengths": [
+        "40cm",
+        "45cm",
+        "50cm",
+        "55cm"
+      ]
+    },
+    {
+      "id": "Lab3ProngRound",
+      "name": "Lab 3-Prong Round Brilliant",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/lab-3prong-round.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "Lab4ProngRound",
+      "name": "Lab 4-Prong Round Brilliant",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/lab-4prong-round.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "Mined3ProngRound",
+      "name": "Mined 3-Prong Round Brilliant",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/mined-3prong-round.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "Mined4ProngRound",
+      "name": "Mined 4-Prong Round Brilliant",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/mined-4prong-round.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "LabMarquise",
+      "name": "Lab Marquise",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/lab-marquise.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "LabPear",
+      "name": "Lab Pear",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/lab-pear.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    },
+    {
+      "id": "LabEmerald",
+      "name": "Lab Emerald",
+      "tier": "Bracelet",
+      "image": "/images/styles/tennis/lab-emerald.png",
+      "tdws": [
+        "6",
+        "8",
+        "10"
+      ],
+      "lengths": [
+        "16cm",
+        "17cm",
+        "18cm",
+        "19cm",
+        "20cm",
+        "21cm"
+      ]
+    }
+  ],
+  "bangles": [
+    {
+      "id": "Oval2mm",
+      "name": "Oval 2mm-2.5mm",
+      "tier": "Oval",
+      "image": "/images/styles/bangles/oval-2mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Oval3.5mm",
+      "name": "Oval 3.5mm-4mm",
+      "tier": "Oval",
+      "image": "/images/styles/bangles/oval-3.5mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Oval5.5mm",
+      "name": "Oval 5.5mm-6mm",
+      "tier": "Oval",
+      "image": "/images/styles/bangles/oval-5.5mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Oval7mm",
+      "name": "Oval 7mm-8mm",
+      "tier": "Oval",
+      "image": "/images/styles/bangles/oval-7mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Round2mm",
+      "name": "Round 2mm-2.5mm",
+      "tier": "Round",
+      "image": "/images/styles/bangles/round-2mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Round3.5mm",
+      "name": "Round 3.5mm-4mm",
+      "tier": "Round",
+      "image": "/images/styles/bangles/round-3.5mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Round4.5mm",
+      "name": "Round 4.5mm-5mm",
+      "tier": "Round",
+      "image": "/images/styles/bangles/round-4.5mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    },
+    {
+      "id": "Round7mm",
+      "name": "Round 7mm-8mm",
+      "tier": "Round",
+      "image": "/images/styles/bangles/round-7mm.png",
+      "metals": [
+        "10K",
+        "14K",
+        "18K"
+      ],
+      "diameters": [
+        "40mm",
+        "50mm",
+        "60mm",
+        "65mm",
+        "70mm",
+        "75mm"
+      ]
+    }
+  ],
+  "pendants": [
+    {
+      "id": "21403828",
+      "name": "10KT Aust Opal Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403828.png"
+    },
+    {
+      "id": "21403811",
+      "name": "10KT Garnet Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403811.png"
+    },
+    {
+      "id": "21456916",
+      "name": "10KT LB Topaz",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21456916.png"
+    },
+    {
+      "id": "21403767",
+      "name": "10KT Amethyst Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403767.png"
+    },
+    {
+      "id": "21403774",
+      "name": "10KT Aquamarine Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403774.png"
+    },
+    {
+      "id": "21403804",
+      "name": "10KT CR Emerald Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403804.png"
+    },
+    {
+      "id": "21488818",
+      "name": "10KT CFW Pearl",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21488818.png"
+    },
+    {
+      "id": "21403842",
+      "name": "10KT CR Ruby Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403842.png"
+    },
+    {
+      "id": "21403835",
+      "name": "10KT Peridot Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403835.png"
+    },
+    {
+      "id": "21403781",
+      "name": "10KT CR Sapphire Birthstone",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21403781.png"
+    },
+    {
+      "id": "21497322",
+      "name": "10KT CR Tanzanite",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21497322.png"
+    },
+    {
+      "id": "21456923",
+      "name": "10KT CR White Sapphire",
+      "tier": "Birthstone",
+      "image": "/images/styles/pendants/21456923.png"
+    },
+    {
+      "id": "21295331",
+      "name": "SIL Engravable Spin",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295331.png"
+    },
+    {
+      "id": "21295300",
+      "name": "SIL 12MM Engravable Heart",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295300.png"
+    },
+    {
+      "id": "21295317",
+      "name": "SIL Engravable Plate",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295317.png"
+    },
+    {
+      "id": "21295324",
+      "name": "SIL Engravable Shield",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295324.png"
+    },
+    {
+      "id": "21295232",
+      "name": "10K 12MM Engravable Heart",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295232.png"
+    },
+    {
+      "id": "21295263",
+      "name": "10K Engravable Plate",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295263.png"
+    },
+    {
+      "id": "21295270",
+      "name": "10K Engravable Shield",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295270.png"
+    },
+    {
+      "id": "21295294",
+      "name": "10K Engrave Circle Spin",
+      "tier": "Engravables",
+      "image": "/images/styles/pendants/21295294.png"
+    },
+    {
+      "id": "21298615",
+      "name": "SIL Dia Keyhole Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21298615.png"
+    },
+    {
+      "id": "21295423",
+      "name": "SIL 10MM Puff Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21295423.png"
+    },
+    {
+      "id": "21298622",
+      "name": "SIL 15MM MOP Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21298622.png"
+    },
+    {
+      "id": "21298639",
+      "name": "SIL Sunray Text Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21298639.png"
+    },
+    {
+      "id": "21298646",
+      "name": "SIL Open Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21298646.png"
+    },
+    {
+      "id": "21295362",
+      "name": "10K 10MM Puff Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21295362.png"
+    },
+    {
+      "id": "21295379",
+      "name": "10K Dia Keyhole Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21295379.png"
+    },
+    {
+      "id": "21295386",
+      "name": "10K 11MM MOP Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21295386.png"
+    },
+    {
+      "id": "21300066",
+      "name": "10K Open Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21300066.png"
+    },
+    {
+      "id": "21295393",
+      "name": "10K Sunray Text Heart",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21295393.png"
+    },
+    {
+      "id": "21317637",
+      "name": "10KT .13TDW Open Heart (White)",
+      "tier": "Heart",
+      "image": "/images/styles/pendants/21317637.png"
+    },
+    {
+      "id": "21298882",
+      "name": "SIL 12MM Square Locket",
+      "tier": "Lockets",
+      "image": "/images/styles/pendants/21298882.png"
+    },
+    {
+      "id": "21298899",
+      "name": "SIL Sunray Heart Locket",
+      "tier": "Lockets",
+      "image": "/images/styles/pendants/21298899.png"
+    },
+    {
+      "id": "21500527",
+      "name": "10K 12MM Square Locket",
+      "tier": "Lockets",
+      "image": "/images/styles/pendants/21500527.png"
+    },
+    {
+      "id": "21298844",
+      "name": "10K Sunray Heart Locket",
+      "tier": "Lockets",
+      "image": "/images/styles/pendants/21298844.png"
+    },
+    {
+      "id": "21298868",
+      "name": "SIL 10MM Dia Round Locket",
+      "tier": "Lockets",
+      "image": "/images/styles/pendants/21298868.png"
+    },
+    {
+      "id": "21299162",
+      "name": "SIL Dia Horseshoe",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299162.png"
+    },
+    {
+      "id": "21299049",
+      "name": "SIL 10MM Dia Evileye Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299049.png"
+    },
+    {
+      "id": "21299056",
+      "name": "SIL 6MM Dia Clover Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299056.png"
+    },
+    {
+      "id": "21299070",
+      "name": "SIL 10MM Heart Key Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299070.png"
+    },
+    {
+      "id": "21299124",
+      "name": "SIL 10MM Hummingbird Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299124.png"
+    },
+    {
+      "id": "21299148",
+      "name": "SIL 15MM Dia Wing",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21299148.png"
+    },
+    {
+      "id": "21298912",
+      "name": "10K 10MM Dia Evileye Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21298912.png"
+    },
+    {
+      "id": "21298929",
+      "name": "10K 6MM Dia Clover Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21298929.png"
+    },
+    {
+      "id": "21298943",
+      "name": "10K 10MM Heart Key Mini",
+      "tier": "Motif",
+      "image": "/images/styles/pendants/21298943.png"
+    }
+  ]
+}

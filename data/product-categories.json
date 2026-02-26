@@ -1,0 +1,134 @@
+{
+  "wedders": [
+    {
+      "id": "Gold",
+      "label": "Plain Wedders"
+    },
+    {
+      "id": "MensDiamond",
+      "label": "Men's Diamond Wedders"
+    },
+    {
+      "id": "DiaWedders",
+      "label": "Diamond Wedders"
+    }
+  ],
+  "chains": [
+    {
+      "id": "Gold",
+      "label": "Solid Chains"
+    },
+    {
+      "id": "SemiSolid",
+      "label": "Semi Solid Chains"
+    }
+  ],
+  "rings": [
+    {
+      "id": "RoundBrilliant",
+      "label": "Round Brilliant"
+    },
+    {
+      "id": "Marquise",
+      "label": "Marquise"
+    },
+    {
+      "id": "Asscher",
+      "label": "Asscher"
+    },
+    {
+      "id": "Oval",
+      "label": "Oval"
+    },
+    {
+      "id": "Pear",
+      "label": "Pear"
+    },
+    {
+      "id": "Princess",
+      "label": "Princess"
+    },
+    {
+      "id": "Emerald",
+      "label": "Emerald"
+    },
+    {
+      "id": "Radiant",
+      "label": "Radiant"
+    },
+    {
+      "id": "Cushion",
+      "label": "Cushion"
+    },
+    {
+      "id": "ElongatedCushion",
+      "label": "Elongated Cushion"
+    },
+    {
+      "id": "Heart",
+      "label": "Heart"
+    }
+  ],
+  "tennis": [
+    {
+      "id": "Necklace",
+      "label": "Necklace"
+    },
+    {
+      "id": "Bracelet",
+      "label": "Bracelet"
+    }
+  ],
+  "bangles": [
+    {
+      "id": "Oval",
+      "label": "Oval"
+    },
+    {
+      "id": "Round",
+      "label": "Round"
+    }
+  ],
+  "pendants": [
+    {
+      "id": "Birthstone",
+      "label": "Birthstone"
+    },
+    {
+      "id": "Engravables",
+      "label": "Engravables"
+    },
+    {
+      "id": "Heart",
+      "label": "Heart"
+    },
+    {
+      "id": "Initials",
+      "label": "Initials"
+    },
+    {
+      "id": "Lockets",
+      "label": "Lockets"
+    },
+    {
+      "id": "Motif",
+      "label": "Motif"
+    },
+    {
+      "id": "Padlock",
+      "label": "Padlock"
+    },
+    {
+      "id": "Pendant Connector",
+      "label": "Pendant Connector"
+    },
+    {
+      "id": "Religious",
+      "label": "Religious"
+    },
+    {
+      "id": "Zodiacs",
+      "label": "Zodiacs"
+    }
+  ]
+}

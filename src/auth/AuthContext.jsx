@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 
 const AuthContext = createContext(null)
 const STORAGE_KEY = 'mh-auth-user'
@@ -38,9 +38,14 @@ export function AuthProvider({ children }) {
     init()
   }, [handleCredentialResponse])
 
-  const login = useCallback(() => {
-    if (ready) {
-      window.google.accounts.id.prompt()
+  const renderButton = useCallback((el) => {
+    if (ready && el && window.google?.accounts?.id) {
+      window.google.accounts.id.renderButton(el, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'medium',
+        text: 'signin_with',
+      })
     }
   }, [ready])
 
@@ -55,7 +60,7 @@ export function AuthProvider({ children }) {
   const isAdmin = user?.email === ADMIN_EMAIL
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, login, logout, ready }}>
+    <AuthContext.Provider value={{ user, isAdmin, renderButton, logout, ready }}>
       {children}
     </AuthContext.Provider>
   )

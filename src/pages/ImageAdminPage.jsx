@@ -1,145 +1,168 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { wedderStyles } from '../data/wedders'
 
-const WEDDER_IMAGES_KEY = 'wedder-style-images'
-const WEDDER_SKUS_KEY = 'wedder-skus'
-const WATCH_SKUS_KEY = 'watch-skus'
-
-function loadJson(key) {
-  try { return JSON.parse(localStorage.getItem(key)) || {} }
-  catch { return {} }
-}
-
-function saveJson(key, data) {
-  localStorage.setItem(key, JSON.stringify(data))
-}
-
-function estimateSize(key) {
-  const val = localStorage.getItem(key)
-  if (!val) return 0
-  return new Blob([val]).size
-}
-
-function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 function ImageAdminPage() {
   const navigate = useNavigate()
   const { isAdmin } = useAuth()
+  const [serverImages, setServerImages] = useState([])
+  const [loadingImages, setLoadingImages] = useState(true)
+  const [customStyles, setCustomStyles] = useState({})
+  const [msg, setMsg] = useState(null)
+  const [pendingUploads, setPendingUploads] = useState({}) // { slug: { styleId, dataUrl } }
+  const styleUploadRefs = useRef({})
 
   useEffect(() => {
     if (!isAdmin) navigate('/findsku', { replace: true })
   }, [isAdmin, navigate])
 
+  useEffect(() => {
+    fetch('/api/style-images')
+      .then((r) => r.json())
+      .then((data) => { setServerImages(data.images || []); setLoadingImages(false) })
+      .catch(() => setLoadingImages(false))
+    fetch('/api/custom-styles')
+      .then((r) => r.json())
+      .then((data) => setCustomStyles(data))
+      .catch(() => {})
+  }, [])
+
   if (!isAdmin) return null
-  const [wedderImages, setWedderImages] = useState(() => loadJson(WEDDER_IMAGES_KEY))
-  const [wedderSkus, setWedderSkus] = useState(() => loadJson(WEDDER_SKUS_KEY))
-  const [watchSkus, setWatchSkus] = useState(() => loadJson(WATCH_SKUS_KEY))
-  const [msg, setMsg] = useState(null)
-  const uploadRef = useRef(null)
 
   function showMsg(text) {
     setMsg(text)
     setTimeout(() => setMsg(null), 3000)
   }
 
-  // Wedder images
-  const wedderImageEntries = Object.entries(wedderImages)
-  const wedderSkuEntries = Object.entries(wedderSkus).filter(([, v]) => v)
-  const watchSkuEntries = Object.entries(watchSkus)
-
-  function removeWedderImage(styleId) {
-    const next = { ...wedderImages }
-    delete next[styleId]
-    setWedderImages(next)
-    saveJson(WEDDER_IMAGES_KEY, next)
-    showMsg(`Removed image for ${styleId}`)
-  }
-
-  function clearAllWedderImages() {
-    setWedderImages({})
-    saveJson(WEDDER_IMAGES_KEY, {})
-    showMsg('All wedder images cleared')
-  }
-
-  function removeWedderSku(pKey) {
-    const next = { ...wedderSkus }
-    delete next[pKey]
-    setWedderSkus(next)
-    saveJson(WEDDER_SKUS_KEY, next)
-  }
-
-  function clearAllWedderSkus() {
-    setWedderSkus({})
-    saveJson(WEDDER_SKUS_KEY, {})
-    showMsg('All wedder SKUs cleared')
-  }
-
-  function removeWatchSku(code) {
-    const next = { ...watchSkus }
-    delete next[code]
-    setWatchSkus(next)
-    saveJson(WATCH_SKUS_KEY, next)
-  }
-
-  function clearAllWatchSkus() {
-    setWatchSkus({})
-    saveJson(WATCH_SKUS_KEY, {})
-    showMsg('All watch SKUs cleared')
-  }
-
-  // Export all data as JSON
-  function handleExport() {
-    const data = {
-      wedderImages: loadJson(WEDDER_IMAGES_KEY),
-      wedderSkus: loadJson(WEDDER_SKUS_KEY),
-      watchSkus: loadJson(WATCH_SKUS_KEY),
+  // Collect all known styles from wedders.js + custom-styles.json, grouped by source/category
+  const allStyles = (() => {
+    const styles = []
+    const seen = new Set()
+    for (const s of wedderStyles) {
+      const slug = s.id.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')
+      const cat = s.category || s.tier || 'Wedders'
+      if (!seen.has(slug)) { seen.add(slug); styles.push({ id: s.id, name: s.name, slug, source: 'wedders', category: cat }) }
     }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `sku-finder-backup-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-    showMsg('Exported')
-  }
-
-  // Import data from JSON
-  function handleImport(file) {
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result)
-        if (data.wedderImages) {
-          const merged = { ...wedderImages, ...data.wedderImages }
-          setWedderImages(merged)
-          saveJson(WEDDER_IMAGES_KEY, merged)
-        }
-        if (data.wedderSkus) {
-          const merged = { ...wedderSkus, ...data.wedderSkus }
-          setWedderSkus(merged)
-          saveJson(WEDDER_SKUS_KEY, merged)
-        }
-        if (data.watchSkus) {
-          const merged = { ...watchSkus, ...data.watchSkus }
-          setWatchSkus(merged)
-          saveJson(WATCH_SKUS_KEY, merged)
-        }
-        showMsg('Imported successfully')
-      } catch {
-        showMsg('Invalid file format')
+    for (const [type, arr] of Object.entries(customStyles)) {
+      if (!Array.isArray(arr)) continue
+      for (const s of arr) {
+        const slug = s.id.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')
+        const cat = s.tier || type
+        if (!seen.has(slug)) { seen.add(slug); styles.push({ id: s.id, name: s.name, slug, source: type, category: cat }) }
       }
     }
-    reader.readAsText(file)
+    return styles
+  })()
+
+  function handleFileSelect(styleId, file) {
+    if (!file) return
+    const slug = styleId.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setPendingUploads((prev) => ({ ...prev, [slug]: { styleId, dataUrl: e.target.result } }))
+    }
+    reader.readAsDataURL(file)
   }
 
-  const totalSize = estimateSize(WEDDER_IMAGES_KEY) + estimateSize(WEDDER_SKUS_KEY) + estimateSize(WATCH_SKUS_KEY)
+  function cancelPending(slug) {
+    setPendingUploads((prev) => { const next = { ...prev }; delete next[slug]; return next })
+  }
+
+  async function savePending(slug) {
+    const pending = pendingUploads[slug]
+    if (!pending) return
+    try {
+      const res = await fetch('/api/upload-style-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ styleId: pending.styleId, image: pending.dataUrl }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        const filename = `${slug}.png`
+        setServerImages((prev) => {
+          const filtered = prev.filter((img) => img.filename !== filename)
+          return [...filtered, { filename, name: pending.styleId, url: data.url }]
+        })
+        cancelPending(slug)
+        showMsg(`Saved image for ${pending.styleId}`)
+      } else {
+        showMsg(`Error: ${data.error}`)
+      }
+    } catch (err) {
+      showMsg(`Error: ${err.message}`)
+    }
+  }
+
+  async function assignToStyle(sourceFilename, targetStyleId) {
+    try {
+      const res = await fetch('/api/assign-style-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ styleId: targetStyleId, sourceFile: sourceFilename }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        const targetSlug = targetStyleId.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-')
+        const targetFilename = `${targetSlug}.png`
+        setServerImages((prev) => {
+          const filtered = prev.filter((img) => img.filename !== sourceFilename && img.filename !== targetFilename)
+          return [...filtered, { filename: targetFilename, name: targetStyleId, url: data.url }]
+        })
+        showMsg(`Assigned to ${targetStyleId}`)
+      } else {
+        showMsg(`Error: ${data.error}`)
+      }
+    } catch (err) {
+      showMsg(`Error: ${err.message}`)
+    }
+  }
+
+  async function removeServerImage(filename) {
+    const styleId = filename.replace('.png', '').replace(/-/g, ' ')
+    try {
+      await fetch('/api/delete-style-image', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ styleId }),
+      })
+      setServerImages((prev) => prev.filter((img) => img.filename !== filename))
+      showMsg(`Removed ${filename}`)
+    } catch (err) {
+      showMsg(`Error: ${err.message}`)
+    }
+  }
+
+
+  // Group images by category using allStyles lookup
+  const imagesByCategory = (() => {
+    const slugToCategory = {}
+    for (const s of allStyles) {
+      slugToCategory[s.slug] = s.category
+    }
+    const groups = {}
+    for (const img of serverImages) {
+      const slug = img.filename.replace('.png', '')
+      const cat = slugToCategory[slug] || 'Uncategorized'
+      if (!groups[cat]) groups[cat] = []
+      groups[cat].push(img)
+    }
+    return groups
+  })()
+  const categoryOrder = Object.keys(imagesByCategory).sort()
+
+  const serverFilenames = new Set(serverImages.map((img) => img.filename.replace('.png', '')))
+  const missingStyles = allStyles.filter((s) => !serverFilenames.has(s.slug))
+
+  // Group missing styles by category
+  const missingByCategory = {}
+  for (const s of missingStyles) {
+    const cat = s.category || 'Uncategorized'
+    if (!missingByCategory[cat]) missingByCategory[cat] = []
+    missingByCategory[cat].push(s)
+  }
 
   return (
     <div className="img-admin-page">
@@ -154,124 +177,140 @@ function ImageAdminPage() {
       <div className="img-admin-section">
         <div className="img-admin-stats">
           <div className="img-admin-stat">
-            <span className="img-admin-stat-value">{wedderImageEntries.length}</span>
-            <span className="img-admin-stat-label">Style Images</span>
+            <span className="img-admin-stat-value">{serverImages.length}</span>
+            <span className="img-admin-stat-label">Server Images</span>
           </div>
           <div className="img-admin-stat">
-            <span className="img-admin-stat-value">{wedderSkuEntries.length}</span>
-            <span className="img-admin-stat-label">Wedder SKUs</span>
+            <span className="img-admin-stat-value">{allStyles.length}</span>
+            <span className="img-admin-stat-label">Total Styles</span>
           </div>
           <div className="img-admin-stat">
-            <span className="img-admin-stat-value">{watchSkuEntries.length}</span>
-            <span className="img-admin-stat-label">Watch SKUs</span>
+            <span className="img-admin-stat-value">{missingStyles.length}</span>
+            <span className="img-admin-stat-label">Missing Images</span>
           </div>
-          <div className="img-admin-stat">
-            <span className="img-admin-stat-value">{formatBytes(totalSize)}</span>
-            <span className="img-admin-stat-label">Storage Used</span>
-          </div>
-        </div>
-        <div className="img-admin-actions">
-          <button className="img-admin-btn" onClick={handleExport}>Export All</button>
-          <button className="img-admin-btn" onClick={() => uploadRef.current?.click()}>Import</button>
-          <input
-            ref={uploadRef}
-            type="file"
-            accept=".json"
-            hidden
-            onChange={(e) => { handleImport(e.target.files[0]); e.target.value = '' }}
-          />
         </div>
       </div>
 
-      {/* Wedder Style Images */}
-      <div className="img-admin-section">
-        <div className="img-admin-section-title">
-          Wedder Style Images
-          <span className="img-admin-count">{wedderImageEntries.length} images</span>
-        </div>
-        {wedderImageEntries.length === 0 ? (
-          <p className="img-admin-empty">No style images uploaded yet</p>
-        ) : (
+      {/* Server Style Images by Category */}
+      {loadingImages ? (
+        <div className="img-admin-section"><p className="img-admin-empty">Loading...</p></div>
+      ) : serverImages.length === 0 ? (
+        <div className="img-admin-section"><p className="img-admin-empty">No style images on server. Use Catalog Processor to crop and save images.</p></div>
+      ) : (
+        categoryOrder.map((cat) => (
+          <div key={cat} className="img-admin-section">
+            <div className="img-admin-section-title">
+              {cat}
+              <span className="img-admin-count">{imagesByCategory[cat].length} images</span>
+            </div>
+            <div className="img-admin-grid">
+              {imagesByCategory[cat].map((img) => {
+                const styleId = img.filename.replace('.png', '').replace(/-/g, ' ')
+                const slug = img.filename.replace('.png', '')
+                const pending = pendingUploads[slug]
+                const isUncat = cat === 'Uncategorized'
+                return (
+                  <div key={img.filename} className="img-admin-item">
+                    <img src={pending ? pending.dataUrl : `${img.url}?v=${Date.now()}`} alt={img.name} className="img-admin-thumb" />
+                    <span className="img-admin-label">{img.name}</span>
+                    {pending ? (
+                      <div className="img-admin-pending-actions">
+                        <button className="img-admin-save-btn" onClick={() => savePending(slug)}>Save</button>
+                        <button className="img-admin-cancel-btn" onClick={() => cancelPending(slug)}>Cancel</button>
+                      </div>
+                    ) : (
+                      <>
+                        {isUncat && (
+                          <select
+                            className="img-admin-assign-select"
+                            defaultValue=""
+                            onChange={(e) => { if (e.target.value) assignToStyle(img.filename, e.target.value); e.target.value = '' }}
+                          >
+                            <option value="" disabled>Assign to...</option>
+                            {missingStyles.map((s) => (
+                              <option key={s.slug} value={s.id}>{s.name}</option>
+                            ))}
+                          </select>
+                        )}
+                        <div className="img-admin-item-actions">
+                          <button
+                            className="img-admin-replace"
+                            onClick={() => styleUploadRefs.current[img.filename]?.click()}
+                            title="Replace image"
+                          >
+                            &#8635;
+                          </button>
+                          <input
+                            ref={(el) => { styleUploadRefs.current[img.filename] = el }}
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={(e) => { handleFileSelect(styleId, e.target.files[0]); e.target.value = '' }}
+                          />
+                          <button
+                            className="img-admin-remove"
+                            onClick={() => removeServerImage(img.filename)}
+                            title="Remove"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ))
+      )}
+
+      {/* Styles Missing Images by Category */}
+      {Object.keys(missingByCategory).sort().map((cat) => (
+        <div key={`missing-${cat}`} className="img-admin-section">
+          <div className="img-admin-section-title">
+            {cat} — Missing Images
+            <span className="img-admin-count">{missingByCategory[cat].length} styles</span>
+          </div>
           <div className="img-admin-grid">
-            {wedderImageEntries.map(([id, src]) => (
-              <div key={id} className="img-admin-item">
-                <img src={src} alt={id} className="img-admin-thumb" />
-                <span className="img-admin-label">{id}</span>
-                <button
-                  className="img-admin-remove"
-                  onClick={() => removeWedderImage(id)}
-                  title="Remove"
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
+            {missingByCategory[cat].map((style) => {
+              const pending = pendingUploads[style.slug]
+              return (
+                <div key={style.slug} className={`img-admin-item ${pending ? '' : 'img-admin-item--missing'}`}>
+                  {pending ? (
+                    <img src={pending.dataUrl} alt={style.name} className="img-admin-thumb" />
+                  ) : (
+                    <div className="img-admin-thumb img-admin-thumb--placeholder">?</div>
+                  )}
+                  <span className="img-admin-label">{style.name}</span>
+                  {pending ? (
+                    <div className="img-admin-pending-actions">
+                      <button className="img-admin-save-btn" onClick={() => savePending(style.slug)}>Save</button>
+                      <button className="img-admin-cancel-btn" onClick={() => cancelPending(style.slug)}>Cancel</button>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className="img-admin-upload-btn"
+                        onClick={() => styleUploadRefs.current[style.slug]?.click()}
+                      >
+                        Upload
+                      </button>
+                      <input
+                        ref={(el) => { styleUploadRefs.current[style.slug] = el }}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => { handleFileSelect(style.id, e.target.files[0]); e.target.value = '' }}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
           </div>
-        )}
-        {wedderImageEntries.length > 0 && (
-          <div className="img-admin-actions">
-            <button className="img-admin-btn img-admin-btn--danger" onClick={clearAllWedderImages}>
-              Clear All Images
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Wedder SKUs */}
-      <div className="img-admin-section">
-        <div className="img-admin-section-title">
-          Wedder SKU Mappings
-          <span className="img-admin-count">{wedderSkuEntries.length} entries</span>
         </div>
-        {wedderSkuEntries.length === 0 ? (
-          <p className="img-admin-empty">No wedder SKUs saved yet</p>
-        ) : (
-          <div className="watches-list">
-            {wedderSkuEntries.map(([pKey, sku]) => (
-              <div key={pKey} className="watches-list-row">
-                <span className="watches-list-code" style={{ width: 'auto', flex: 1, fontSize: '0.78rem', letterSpacing: 0 }}>{pKey}</span>
-                <span className="watches-list-sku" style={{ flex: 'none' }}>{sku}</span>
-                <button className="watches-list-delete" onClick={() => removeWedderSku(pKey)} title="Remove">&times;</button>
-              </div>
-            ))}
-          </div>
-        )}
-        {wedderSkuEntries.length > 0 && (
-          <div className="img-admin-actions">
-            <button className="img-admin-btn img-admin-btn--danger" onClick={clearAllWedderSkus}>
-              Clear All Wedder SKUs
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Watch SKUs */}
-      <div className="img-admin-section">
-        <div className="img-admin-section-title">
-          Watch SKU Mappings
-          <span className="img-admin-count">{watchSkuEntries.length} entries</span>
-        </div>
-        {watchSkuEntries.length === 0 ? (
-          <p className="img-admin-empty">No watch SKUs saved yet</p>
-        ) : (
-          <div className="watches-list">
-            {watchSkuEntries.map(([code, sku]) => (
-              <div key={code} className="watches-list-row">
-                <span className="watches-list-code">{code}</span>
-                <span className="watches-list-sku">{sku}</span>
-                <button className="watches-list-delete" onClick={() => removeWatchSku(code)} title="Remove">&times;</button>
-              </div>
-            ))}
-          </div>
-        )}
-        {watchSkuEntries.length > 0 && (
-          <div className="img-admin-actions">
-            <button className="img-admin-btn img-admin-btn--danger" onClick={clearAllWatchSkus}>
-              Clear All Watch SKUs
-            </button>
-          </div>
-        )}
-      </div>
+      ))}
     </div>
   )
 }

@@ -12,7 +12,7 @@ export const wedderStyles = [
     name: 'Flat',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/flat.svg',
+    image: '/images/styles/flat.png',
     metals: ['10K', '14K', '18K', 'Platinum'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -22,7 +22,7 @@ export const wedderStyles = [
     name: 'High Dome',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/high-dome.svg',
+    image: '/images/styles/high-dome.png',
     metals: ['10K', '14K', '18K', 'Platinum'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -32,7 +32,7 @@ export const wedderStyles = [
     name: 'Round High Dome',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/round-high-dome.svg',
+    image: '/images/styles/round-high-dome.png',
     metals: ['10K', '14K', '18K'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm'],
     finishes: ['Polished', 'Brushed'],
@@ -42,7 +42,7 @@ export const wedderStyles = [
     name: 'Lite Half Round',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/lite-half-round.svg',
+    image: '/images/styles/lite-half-round.png',
     metals: ['10K', '14K', '18K', 'Platinum'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -52,7 +52,7 @@ export const wedderStyles = [
     name: 'Half Round',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/half-round.svg',
+    image: '/images/styles/half-round.png',
     metals: ['10K', '14K', '18K', 'Platinum'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -62,7 +62,7 @@ export const wedderStyles = [
     name: 'Flat Bevel',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/flat-bevel.svg',
+    image: '/images/styles/flat-bevel.png',
     metals: ['10K', '14K', '18K'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -72,7 +72,7 @@ export const wedderStyles = [
     name: 'Reverse Bevel',
     category: 'Plain',
     tier: 'Gold',
-    image: '/images/styles/reverse-bevel.svg',
+    image: '/images/styles/reverse-bevel.png',
     metals: ['10K', '14K', '18K'],
     widths: ['2mm', '3mm', '4mm', '5mm', '6mm', '7mm', '8mm', '9mm', '10mm'],
     finishes: ['Polished', 'Brushed'],
@@ -83,7 +83,7 @@ export const wedderStyles = [
     name: 'Bevel Two Tone',
     category: 'Patterned',
     tier: 'Gold',
-    image: '/images/styles/bevel-two-tone.svg',
+    image: '/images/styles/bevel-two-tone.png',
     metals: ['10K', '14K', '18K'],
     widths: ['6mm', '7mm', '8mm'],
     finishes: ['Two Tone', 'Single Tone'],
@@ -93,7 +93,7 @@ export const wedderStyles = [
     name: 'Flat Groove Dome Edge Two Tone',
     category: 'Patterned',
     tier: 'Gold',
-    image: '/images/styles/flat-groove-dome-edge-two-tone.svg',
+    image: '/images/styles/flat-groove-dome-edge-two-tone.png',
     metals: ['10K', '14K', '18K'],
     widths: ['6mm', '7mm', '8mm'],
     finishes: ['Two Tone', 'Single Tone'],
@@ -103,10 +103,84 @@ export const wedderStyles = [
     name: 'Vertical Side Bevel Cut',
     category: 'Patterned',
     tier: 'Gold',
-    image: '/images/styles/vertical-side-bevel-cut.svg',
+    image: '/images/styles/vertical-side-bevel-cut.png',
     metals: ['10K', '14K', '18K'],
     widths: ['6mm', '7mm', '8mm'],
     finishes: [],  // single P number per metal/width, no finish variant
+  },
+
+  // ── Diamond Wedding Bands ─────────────────────────────────────────────
+  {
+    id: 'RB Third Channel Set',
+    name: 'RB Third Channel Set',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/rb-third-channel-set.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.15', '.25', '.34', '.50', '.75', '1.00'],
+  },
+  {
+    id: 'RB Half Channel Set',
+    name: 'RB Half Channel Set',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/rb-half-channel-set.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.15', '.25', '.34', '.50', '.75', '1.00'],
+  },
+  {
+    id: 'PC Third Channel Set',
+    name: 'PC Third Channel Set',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/pc-third-channel-set.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.25', '.34', '.50', '.75', '1.00'],
+  },
+  {
+    id: 'PC Half Channel Set',
+    name: 'PC Half Channel Set',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/pc-half-channel-set.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.50', '.75', '1.00'],
+  },
+  {
+    id: 'RB Half Claw',
+    name: 'RB Half Claw',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/rb-half-claw.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.15', '.25', '.34', '.50', '.75', '1.00', '1.50'],
+  },
+  {
+    id: 'PC&BG Half Channel',
+    name: 'PC&BG Half Channel',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/pcbg-half-channel.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.15', '.25', '.34', '.50', '.75', '1.00'],
+  },
+  {
+    id: 'RB&BG Half Channel',
+    name: 'RB&BG Half Channel',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/rbbg-half-channel.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.25', '.34', '.50', '.75', '1.00'],
+  },
+  {
+    id: 'BG Channel Set',
+    name: 'BG Channel Set',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/bg-channel-set.png',
+    metals: ['14KT', '18KT'],
+    diamondWeights: ['.25', '.34', '.50', '.75'],
+  },
+  {
+    id: 'RB Twist',
+    name: 'RB Twist',
+    tier: 'DiaWedders',
+    image: '/images/styles/wedders/rb-twist.png',
+    metals: ['14KT', '18KT', 'Platinum'],
+    diamondWeights: ['.25', '.34', '.50', '.75', '1.00'],
   },
 ]
 
@@ -694,4 +768,74 @@ export const wedderPNumbers = {
   'Vertical Side Bevel Cut|18K|6mm': 'P19719115',
   'Vertical Side Bevel Cut|18K|7mm': 'P19809915',
   'Vertical Side Bevel Cut|18K|8mm': 'P19768571',
+
+  // ══════════════════════════════════════════════════════════════
+  // Diamond Wedding Bands (DiaWedders)
+  // Key format: "style|metal|diamondWeight"
+  // ══════════════════════════════════════════════════════════════
+
+  // ── RB Third Channel Set ──────────────────────────────────────
+  'RB Third Channel Set|14KT|.15': 'P11951797', 'RB Third Channel Set|18KT|.15': 'P19503004', 'RB Third Channel Set|Platinum|.15': 'P19502854',
+  'RB Third Channel Set|14KT|.25': 'P11951803', 'RB Third Channel Set|18KT|.25': 'P19502953', 'RB Third Channel Set|Platinum|.25': 'P19503028',
+  'RB Third Channel Set|14KT|.34': 'P19500171', 'RB Third Channel Set|18KT|.34': 'P19500713', 'RB Third Channel Set|Platinum|.34': 'P19501147',
+  'RB Third Channel Set|14KT|.50': 'P19502885', 'RB Third Channel Set|18KT|.50': 'P19502946', 'RB Third Channel Set|Platinum|.50': 'P19501154',
+  'RB Third Channel Set|14KT|.75': 'P19500362', 'RB Third Channel Set|18KT|.75': 'P19500720', 'RB Third Channel Set|Platinum|.75': 'P19501161',
+  'RB Third Channel Set|14KT|1.00': 'P19502908', 'RB Third Channel Set|18KT|1.00': 'P19502809', 'RB Third Channel Set|Platinum|1.00': 'P19502878',
+
+  // ── RB Half Channel Set ───────────────────────────────────────
+  'RB Half Channel Set|14KT|.15': 'P19500379', 'RB Half Channel Set|18KT|.15': 'P19500737', 'RB Half Channel Set|Platinum|.15': 'P19501178',
+  'RB Half Channel Set|14KT|.25': 'P19500386', 'RB Half Channel Set|18KT|.25': 'P19500744', 'RB Half Channel Set|Platinum|.25': 'P19503035',
+  'RB Half Channel Set|14KT|.34': 'P15592415', 'RB Half Channel Set|18KT|.34': 'P19502939', 'RB Half Channel Set|Platinum|.34': 'P19501208',
+  'RB Half Channel Set|14KT|.50': 'P15592422', 'RB Half Channel Set|18KT|.50': 'P19502922', 'RB Half Channel Set|Platinum|.50': 'P19501222',
+  'RB Half Channel Set|14KT|.75': 'P19500393', 'RB Half Channel Set|18KT|.75': 'P19500751', 'RB Half Channel Set|Platinum|.75': 'P19501307',
+  'RB Half Channel Set|14KT|1.00': 'P19500409', 'RB Half Channel Set|18KT|1.00': 'P19500843', 'RB Half Channel Set|Platinum|1.00': 'P19501239',
+
+  // ── PC Third Channel Set ──────────────────────────────────────
+  'PC Third Channel Set|14KT|.25': 'P14815010', 'PC Third Channel Set|18KT|.25': 'P19500768', 'PC Third Channel Set|Platinum|.25': 'P19501246',
+  'PC Third Channel Set|14KT|.34': 'P19500416', 'PC Third Channel Set|18KT|.34': 'P19500775', 'PC Third Channel Set|Platinum|.34': 'P19501253',
+  'PC Third Channel Set|14KT|.50': 'P14815058', 'PC Third Channel Set|18KT|.50': 'P19500782', 'PC Third Channel Set|Platinum|.50': 'P19501260',
+  'PC Third Channel Set|14KT|.75': 'P19500423', 'PC Third Channel Set|18KT|.75': 'P19500799', 'PC Third Channel Set|Platinum|.75': 'P19501277',
+  'PC Third Channel Set|14KT|1.00': 'P19502892', 'PC Third Channel Set|18KT|1.00': 'P19503011', 'PC Third Channel Set|Platinum|1.00': 'P19502861',
+
+  // ── PC Half Channel Set ───────────────────────────────────────
+  'PC Half Channel Set|14KT|.50': 'P19500430', 'PC Half Channel Set|18KT|.50': 'P19500805', 'PC Half Channel Set|Platinum|.50': 'P19501284',
+  'PC Half Channel Set|14KT|.75': 'P19500447', 'PC Half Channel Set|18KT|.75': 'P19500812', 'PC Half Channel Set|Platinum|.75': 'P19501291',
+  'PC Half Channel Set|14KT|1.00': 'P19500454', 'PC Half Channel Set|18KT|1.00': 'P19500829', 'PC Half Channel Set|Platinum|1.00': 'P19501130',
+
+  // ── RB Half Claw ──────────────────────────────────────────────
+  'RB Half Claw|14KT|.15': 'P19500461', 'RB Half Claw|18KT|.15': 'P19500836', 'RB Half Claw|Platinum|.15': 'P19501215',
+  'RB Half Claw|14KT|.25': 'P19500478', 'RB Half Claw|18KT|.25': 'P19500706', 'RB Half Claw|Platinum|.25': 'P19501123',
+  'RB Half Claw|14KT|.34': 'P15592521', 'RB Half Claw|18KT|.34': 'P19502915', 'RB Half Claw|Platinum|.34': 'P19502816',
+  'RB Half Claw|14KT|.50': 'P15592538', 'RB Half Claw|18KT|.50': 'P19502960', 'RB Half Claw|Platinum|.50': 'P19502847',
+  'RB Half Claw|14KT|.75': 'P15753656', 'RB Half Claw|18KT|.75': 'P19502984', 'RB Half Claw|Platinum|.75': 'P19502830',
+  'RB Half Claw|14KT|1.00': 'P15753625', 'RB Half Claw|18KT|1.00': 'P19502991', 'RB Half Claw|Platinum|1.00': 'P19502823',
+  'RB Half Claw|14KT|1.50': 'P19500355', 'RB Half Claw|18KT|1.50': 'P19500515', 'RB Half Claw|Platinum|1.50': 'P19500966',
+
+  // ── PC&BG Half Channel ────────────────────────────────────────
+  'PC&BG Half Channel|14KT|.15': 'P19500348', 'PC&BG Half Channel|18KT|.15': 'P19500522', 'PC&BG Half Channel|Platinum|.15': 'P19500973',
+  'PC&BG Half Channel|14KT|.25': 'P19500331', 'PC&BG Half Channel|18KT|.25': 'P19500539', 'PC&BG Half Channel|Platinum|.25': 'P19500980',
+  'PC&BG Half Channel|14KT|.34': 'P19500249', 'PC&BG Half Channel|18KT|.34': 'P19500546', 'PC&BG Half Channel|Platinum|.34': 'P19500997',
+  'PC&BG Half Channel|14KT|.50': 'P19500188', 'PC&BG Half Channel|18KT|.50': 'P19500553', 'PC&BG Half Channel|Platinum|.50': 'P19501000',
+  'PC&BG Half Channel|14KT|.75': 'P19500195', 'PC&BG Half Channel|18KT|.75': 'P19500560', 'PC&BG Half Channel|Platinum|.75': 'P19501017',
+  'PC&BG Half Channel|14KT|1.00': 'P19500201', 'PC&BG Half Channel|18KT|1.00': 'P19500577', 'PC&BG Half Channel|Platinum|1.00': 'P19501109',
+
+  // ── RB&BG Half Channel ────────────────────────────────────────
+  'RB&BG Half Channel|14KT|.25': 'P19500218', 'RB&BG Half Channel|18KT|.25': 'P19500584', 'RB&BG Half Channel|Platinum|.25': 'P19501024',
+  'RB&BG Half Channel|14KT|.34': 'P19500225', 'RB&BG Half Channel|18KT|.34': 'P19500591', 'RB&BG Half Channel|Platinum|.34': 'P19501031',
+  'RB&BG Half Channel|14KT|.50': 'P19500232', 'RB&BG Half Channel|18KT|.50': 'P19500683', 'RB&BG Half Channel|Platinum|.50': 'P19501048',
+  'RB&BG Half Channel|14KT|.75': 'P19500256', 'RB&BG Half Channel|18KT|.75': 'P19500607', 'RB&BG Half Channel|Platinum|.75': 'P19501055',
+  'RB&BG Half Channel|14KT|1.00': 'P19500324', 'RB&BG Half Channel|18KT|1.00': 'P19500614', 'RB&BG Half Channel|Platinum|1.00': 'P19501062',
+
+  // ── BG Channel Set ────────────────────────────────────────────
+  'BG Channel Set|14KT|.25': 'P19500263', 'BG Channel Set|18KT|.25': 'P19500621',
+  'BG Channel Set|14KT|.34': 'P19500270', 'BG Channel Set|18KT|.34': 'P19500638',
+  'BG Channel Set|14KT|.50': 'P19500287', 'BG Channel Set|18KT|.50': 'P19500645',
+  'BG Channel Set|14KT|.75': 'P19500294', 'BG Channel Set|18KT|.75': 'P19500652',
+
+  // ── RB Twist ──────────────────────────────────────────────────
+  'RB Twist|14KT|.25': 'P19023557', 'RB Twist|18KT|.25': 'P19502977', 'RB Twist|Platinum|.25': 'P19501079',
+  'RB Twist|14KT|.34': 'P19500300', 'RB Twist|18KT|.34': 'P19500669', 'RB Twist|Platinum|.34': 'P19501086',
+  'RB Twist|14KT|.50': 'P19500317', 'RB Twist|18KT|.50': 'P19500676', 'RB Twist|Platinum|.50': 'P19501093',
+  'RB Twist|14KT|.75': 'P19500485', 'RB Twist|18KT|.75': 'P19500690', 'RB Twist|Platinum|.75': 'P19501116',
+  'RB Twist|14KT|1.00': 'P19500492', 'RB Twist|18KT|1.00': 'P19500850', 'RB Twist|Platinum|1.00': 'P19501314',
 }

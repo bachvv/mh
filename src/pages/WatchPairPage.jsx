@@ -2,17 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
-const STORAGE_KEY = 'watch-skus'
-
-function loadWatchMap() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {} }
-  catch { return {} }
-}
-
-function saveWatchMap(map) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(map))
-}
-
 const INITIAL_ROWS = 10
 
 function emptyRow() {
@@ -24,6 +13,7 @@ function WatchPairPage() {
   const { isAdmin } = useAuth()
   const [rows, setRows] = useState(() => Array.from({ length: INITIAL_ROWS }, emptyRow))
   const [saved, setSaved] = useState(false)
+  const [savedCount, setSavedCount] = useState(0)
   const lastRowRef = useRef(null)
 
   // Redirect non-admins
@@ -50,36 +40,65 @@ function WatchPairPage() {
 
   function addRows(count = 5) {
     setRows(prev => [...prev, ...Array.from({ length: count }, emptyRow)])
-    // Scroll to new rows after render
     setTimeout(() => lastRowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
   }
 
-  function handleSave() {
-    const map = loadWatchMap()
+  const [errorMsg, setErrorMsg] = useState('')
+
+  async function handleSave() {
+    const pairs = {}
     let added = 0
-    for (const row of rows) {
-      const code = row.code.trim().toUpperCase()
-      const sku = row.sku.trim()
-      if (code && sku) {
-        map[code] = sku
-        added++
-      }
+    const seenCodes = {}
+    const seenSkus = {}
+    const existingSkuToCode = {}
+    for (const [k, v] of Object.entries(existingPairs)) existingSkuToCode[v] = k
+
+    for (let i = 0; i < rows.length; i++) {
+      const code = rows[i].code.trim().toUpperCase()
+      const sku = rows[i].sku.trim()
+      if (!code || !sku) continue
+      // Duplicate code within batch
+      if (seenCodes[code]) { setErrorMsg(`Duplicate code ${code} in rows`); setTimeout(() => setErrorMsg(''), 3000); return }
+      // Duplicate SKU within batch
+      if (seenSkus[sku]) { setErrorMsg(`Duplicate SKU ${sku} in rows`); setTimeout(() => setErrorMsg(''), 3000); return }
+      // Code already exists
+      if (existingPairs[code]) { setErrorMsg(`Code ${code} already exists`); setTimeout(() => setErrorMsg(''), 3000); return }
+      // SKU already paired to another code
+      if (existingSkuToCode[sku]) { setErrorMsg(`SKU ${sku} already paired to ${existingSkuToCode[sku]}`); setTimeout(() => setErrorMsg(''), 3000); return }
+      seenCodes[code] = true
+      seenSkus[sku] = true
+      pairs[code] = sku
+      added++
     }
     if (added === 0) return
-    saveWatchMap(map)
-    setSaved(true)
-    // Clear filled rows after save
-    setRows(prev => {
-      const remaining = prev.filter(r => !r.code.trim() || !r.sku.trim())
-      return remaining.length > 0 ? remaining : Array.from({ length: INITIAL_ROWS }, emptyRow)
-    })
-    setTimeout(() => setSaved(false), 3000)
+
+    try {
+      const res = await fetch('/api/watch-skus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pairs),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        setErrorMsg(data.duplicates?.[0] || 'Save failed')
+        setTimeout(() => setErrorMsg(''), 3000)
+        return
+      }
+      setSaved(true)
+      setSavedCount(added)
+      setRows(prev => {
+        const remaining = prev.filter(r => !r.code.trim() || !r.sku.trim())
+        return remaining.length > 0 ? remaining : Array.from({ length: INITIAL_ROWS }, emptyRow)
+      })
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      setSaved(false)
+    }
   }
 
   function handleKeyDown(e, i) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      // Move to next row's code input
       const nextInput = document.querySelector(`[data-row="${i + 1}"][data-field="code"]`)
       if (nextInput) {
         nextInput.focus()
@@ -91,6 +110,41 @@ function WatchPairPage() {
         }, 50)
       }
     }
+  }
+
+  const [existingPairs, setExistingPairs] = useState({})
+  const [showExisting, setShowExisting] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/watch-skus')
+      .then((r) => r.json())
+      .then((data) => setExistingPairs(data))
+      .catch(() => {})
+  }, [saved])
+
+  const [editingKey, setEditingKey] = useState(null)
+  const [editSku, setEditSku] = useState('')
+
+  const existingEntries = Object.entries(existingPairs).sort((a, b) => a[0].localeCompare(b[0]))
+
+  async function handleEditSave(key) {
+    if (!editSku.trim()) return
+    try {
+      await fetch('/api/watch-skus?update=1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [key]: editSku.trim() }),
+      })
+      setExistingPairs(prev => ({ ...prev, [key]: editSku.trim() }))
+    } catch {}
+    setEditingKey(null)
+  }
+
+  async function handleDeletePair(key) {
+    try {
+      await fetch(`/api/watch-skus/${encodeURIComponent(key)}`, { method: 'DELETE' })
+      setExistingPairs(prev => { const next = { ...prev }; delete next[key]; return next })
+    } catch {}
   }
 
   const filledCount = rows.filter(r => r.code.trim() && r.sku.trim()).length
@@ -153,7 +207,8 @@ function WatchPairPage() {
           + Add Rows
         </button>
         <div className="wp-actions-right">
-          {saved && <span className="wp-saved-msg">Saved {filledCount || ''} pairs</span>}
+          {errorMsg && <span className="wp-saved-msg" style={{ color: '#e74c3c' }}>{errorMsg}</span>}
+          {saved && <span className="wp-saved-msg">Saved {savedCount} pairs</span>}
           <button
             className="wp-save-btn"
             onClick={handleSave}
@@ -162,6 +217,64 @@ function WatchPairPage() {
             Save ({filledCount})
           </button>
         </div>
+      </div>
+
+      <div className="watches-list-card">
+        <button
+          className="wedder-upload-toggle"
+          onClick={() => setShowExisting((p) => !p)}
+          style={{ marginBottom: showExisting ? '0.75rem' : 0 }}
+        >
+          {showExisting ? 'Hide' : 'Show'} All Pairs ({existingEntries.length})
+        </button>
+        {showExisting && (
+          existingEntries.length > 0 ? (
+            <div className="watches-list">
+              {existingEntries.map(([k, v]) => (
+                <div key={k} className="watches-list-row">
+                  <span className="watches-list-code">{k}</span>
+                  {editingKey === k ? (
+                    <>
+                      <input
+                        className="wp-input wp-input-sku"
+                        style={{ flex: 1 }}
+                        value={editSku}
+                        onChange={(e) => setEditSku(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleEditSave(k); if (e.key === 'Escape') setEditingKey(null) }}
+                        autoFocus
+                      />
+                      <button className="watches-edit-btn" onClick={() => handleEditSave(k)}>Save</button>
+                      <button className="watches-edit-btn" onClick={() => setEditingKey(null)}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="watches-list-sku">{v}</span>
+                      {isAdmin && (
+                        <>
+                          <button
+                            className="watches-edit-btn"
+                            onClick={() => { setEditingKey(k); setEditSku(v) }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="watches-list-delete"
+                            onClick={() => handleDeletePair(k)}
+                            title="Remove"
+                          >
+                            &times;
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="wedder-result-prompt">No pairs saved yet</p>
+          )
+        )}
       </div>
     </div>
   )

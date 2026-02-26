@@ -1,19 +1,35 @@
 import { useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
 import { useAuth } from '../auth/AuthContext'
+
+const GROUPS = [
+  {
+    label: 'Concierge',
+    grid: true,
+    links: [
+      { label: 'Wedders', path: '/wedders' },
+      { label: 'Chains', path: '/chains' },
+      { label: 'Rings', path: '/rings' },
+      { label: 'Tennis', path: '/tennis' },
+      { label: 'Bangles', path: '/bangles' },
+      { label: 'Pendant Bar', path: '/pendant-bar' },
+    ],
+  },
+  {
+    label: null,
+    links: [
+      { label: 'Watches', path: '/watches' },
+      { label: 'Find by Photo', path: '/find-by-photo' },
+    ],
+  },
+]
 
 function ConciergePage() {
   const navigate = useNavigate()
-  const { user, isAdmin, login, logout } = useAuth()
-
-  const links = [
-    { label: 'Wedders', path: '/wedders' },
-    { label: 'Chains', path: '/chains' },
-    { label: 'Rings', path: '/rings' },
-    { label: 'Tennis', path: '/tennis' },
-    { label: 'Watches', path: '/watches' },
-    { label: 'Find by Photo', path: '/find-by-photo' },
-    ...(isAdmin ? [{ label: 'Image Admin', path: '/image-admin' }] : []),
-  ]
+  const { user, isAdmin, renderButton, logout } = useAuth()
+  const googleBtnRef = useCallback((el) => {
+    if (el) renderButton(el)
+  }, [renderButton])
 
   return (
     <div className="dev-page">
@@ -27,21 +43,37 @@ function ConciergePage() {
               <button className="auth-btn" onClick={logout}>Sign Out</button>
             </>
           ) : (
-            <button className="auth-btn" onClick={login}>Sign In</button>
+            <div ref={googleBtnRef} />
           )}
         </div>
       </div>
-      <div className="dev-links">
-        {links.map((link) => (
-          <button
-            key={link.path}
-            className="dev-link-btn"
-            onClick={() => navigate(link.path)}
-          >
-            {link.label}
-          </button>
-        ))}
-      </div>
+
+      {GROUPS.map((group, gi) => (
+        <div key={gi} className="concierge-group">
+          {group.label && <div className="concierge-group-label">{group.label}</div>}
+          <div className={`dev-links${group.grid ? ' dev-links--grid' : ''}`}>
+            {group.links.map((link) => (
+              <button
+                key={link.path}
+                className="dev-link-btn"
+                onClick={() => navigate(link.path)}
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {isAdmin && (
+        <div className="concierge-group">
+          <div className="dev-links">
+            <button className="dev-link-btn" onClick={() => navigate('/catalog-process')}>
+              Catalog Processor
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
