@@ -282,15 +282,17 @@ export default function ProductFinder({
         if (parts.length > segIdx) vals.add(parts[segIdx])
       }
       const valid = styleOpts.filter((v) => vals.has(v))
+      // If no P-number segments at this depth, use all style-defined options
+      const available = valid.length > 0 ? valid : styleOpts
 
       // Pick: keep previous selection if valid, else first valid, else null
       const prev = selections[def.key]
-      if (valid.includes(prev)) {
+      if (available.includes(prev)) {
         next[def.key] = prev
-      } else if (valid.length === 1) {
-        next[def.key] = valid[0]
+      } else if (available.length === 1) {
+        next[def.key] = available[0]
       } else {
-        next[def.key] = valid[0] || null
+        next[def.key] = available[0] || null
       }
 
       // Narrow keys
@@ -330,12 +332,17 @@ export default function ProductFinder({
         if (parts.length > segIdx) vals.add(parts[segIdx])
       }
       // Preserve style-defined order, only keep values that exist in P-numbers
-      result[def.key] = styleOpts.filter((v) => vals.has(v))
+      // If no P-number segments exist at this depth, show all style-defined options
+      const filtered = styleOpts.filter((v) => vals.has(v))
+      result[def.key] = filtered.length > 0 ? filtered : styleOpts
 
       // Narrow matching keys by current selection
       const sel = selections[def.key]
       if (sel && vals.has(sel)) {
         matchingKeys = matchingKeys.filter((k) => k.split('|')[segIdx] === sel)
+        segIdx++
+      } else if (filtered.length === 0) {
+        // No P-number segments at this depth — don't break the cascade
         segIdx++
       } else {
         // No valid selection — stop narrowing, later defs get empty
