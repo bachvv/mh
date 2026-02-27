@@ -493,20 +493,36 @@
         "White Diamonds",
         "Black Diamonds"
       ],
-      "diamondWeights": [
-        "multiple"
-      ],
-      "goldColors": [
-        "White",
-        "Yellow",
-        "Rose",
-        "Platinum"
-      ],
-      "carats": [
+      "metals": [
         "10K",
         "14K",
         "18K"
-      ]
+      ],
+      "diamondWeights": [
+        "0.41",
+        "0.42",
+        "0.43",
+        "0.44",
+        "0.45",
+        "0.46",
+        "0.47",
+        "0.48",
+        "0.5",
+        "0.51",
+        "0.52",
+        "0.53",
+        "0.54",
+        "0.55",
+        "0.57",
+        "0.58",
+        "0.6",
+        "0.62",
+        "0.64",
+        "0.65",
+        "0.66"
+      ],
+      "goldColors": [],
+      "carats": []
     },
     {
       "id": "plain gold single tone mh signature men's patterned wedding band",
