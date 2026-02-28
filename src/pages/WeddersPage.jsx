@@ -5,6 +5,7 @@ const TIERS = [
   { id: 'Gold',    label: 'Plain Wedders' },
   { id: 'MensDiamond', label: "Men's Diamond Wedders" },
   { id: 'DiaWedders', label: 'Diamond Wedders' },
+  { id: 'Eternity', label: 'Eternity Bands' },
 ]
 
 const OPTION_DEFS = [
@@ -16,6 +17,7 @@ const OPTION_DEFS = [
   { key: 'widths',         label: 'Width' },
   { key: 'finishes',       label: 'Finish' },
   { key: 'diamondWeights', label: 'Diamond Weight' },
+  { key: 'fingerSizes',    label: 'Finger Size' },
 ]
 
 function WeddersPage() {

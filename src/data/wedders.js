@@ -182,6 +182,71 @@ export const wedderStyles = [
     metals: ['14KT', '18KT', 'Platinum'],
     diamondWeights: ['.25', '.34', '.50', '.75', '1.00'],
   },
+
+  // ── Lab Eternity Bands ───────────────────────────────────────────────
+  {
+    id: 'RB Channel Set Eternity (sm)',
+    name: 'RB Channel Set Eternity (sm)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'RB Channel Set Eternity (md)',
+    name: 'RB Channel Set Eternity (md)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'RB Channel Set Eternity (lg)',
+    name: 'RB Channel Set Eternity (lg)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'RB Claw Set Eternity (sm)',
+    name: 'RB Claw Set Eternity (sm)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'RB Claw Set Eternity (md)',
+    name: 'RB Claw Set Eternity (md)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'RB Claw Set Eternity (lg)',
+    name: 'RB Claw Set Eternity (lg)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'PC Channel Set Eternity (sm)',
+    name: 'PC Channel Set Eternity (sm)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'PC Channel Set Eternity (md)',
+    name: 'PC Channel Set Eternity (md)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
+  {
+    id: 'PC Channel Set Eternity (lg)',
+    name: 'PC Channel Set Eternity (lg)',
+    tier: 'Eternity',
+    metals: ['14KT', '18KT', 'Platinum'],
+    fingerSizes: ['K', 'M', 'O', 'Q', 'S', 'U', 'W'],
+  },
 ]
 
 // ── P-number lookup ────────────────────────────────────────────────────
@@ -838,4 +903,85 @@ export const wedderPNumbers = {
   'RB Twist|14KT|.50': 'P19500317', 'RB Twist|18KT|.50': 'P19500676', 'RB Twist|Platinum|.50': 'P19501093',
   'RB Twist|14KT|.75': 'P19500485', 'RB Twist|18KT|.75': 'P19500690', 'RB Twist|Platinum|.75': 'P19501116',
   'RB Twist|14KT|1.00': 'P19500492', 'RB Twist|18KT|1.00': 'P19500850', 'RB Twist|Platinum|1.00': 'P19501314',
+
+  // ── RB Channel Set Eternity (sm) — JME0636 ──────────────────────
+  'RB Channel Set Eternity (sm)|14KT|K': 'P22684530', 'RB Channel Set Eternity (sm)|18KT|K': 'P22704481', 'RB Channel Set Eternity (sm)|Platinum|K': 'P22711588',
+  'RB Channel Set Eternity (sm)|14KT|M': 'P22684547', 'RB Channel Set Eternity (sm)|18KT|M': 'P22704498', 'RB Channel Set Eternity (sm)|Platinum|M': 'P22711595',
+  'RB Channel Set Eternity (sm)|14KT|O': 'P22684554', 'RB Channel Set Eternity (sm)|18KT|O': 'P22704511', 'RB Channel Set Eternity (sm)|Platinum|O': 'P22711601',
+  'RB Channel Set Eternity (sm)|14KT|Q': 'P22684561', 'RB Channel Set Eternity (sm)|18KT|Q': 'P22704528', 'RB Channel Set Eternity (sm)|Platinum|Q': 'P22711618',
+  'RB Channel Set Eternity (sm)|14KT|S': 'P22684585', 'RB Channel Set Eternity (sm)|18KT|S': 'P22704535', 'RB Channel Set Eternity (sm)|Platinum|S': 'P22711625',
+  'RB Channel Set Eternity (sm)|14KT|U': 'P22684592', 'RB Channel Set Eternity (sm)|18KT|U': 'P22704542', 'RB Channel Set Eternity (sm)|Platinum|U': 'P22711632',
+  'RB Channel Set Eternity (sm)|14KT|W': 'P22684608', 'RB Channel Set Eternity (sm)|18KT|W': 'P22704559', 'RB Channel Set Eternity (sm)|Platinum|W': 'P22711656',
+
+  // ── RB Channel Set Eternity (md) — JME0637 ──────────────────────
+  'RB Channel Set Eternity (md)|14KT|K': 'P22697165', 'RB Channel Set Eternity (md)|18KT|K': 'P22704566', 'RB Channel Set Eternity (md)|Platinum|K': 'P22711663',
+  'RB Channel Set Eternity (md)|14KT|M': 'P22697172', 'RB Channel Set Eternity (md)|18KT|M': 'P22704573', 'RB Channel Set Eternity (md)|Platinum|M': 'P22711670',
+  'RB Channel Set Eternity (md)|14KT|O': 'P22697189', 'RB Channel Set Eternity (md)|18KT|O': 'P22704580', 'RB Channel Set Eternity (md)|Platinum|O': 'P22711687',
+  'RB Channel Set Eternity (md)|14KT|Q': 'P22697196', 'RB Channel Set Eternity (md)|18KT|Q': 'P22704603', 'RB Channel Set Eternity (md)|Platinum|Q': 'P22711700',
+  'RB Channel Set Eternity (md)|14KT|S': 'P22697202', 'RB Channel Set Eternity (md)|18KT|S': 'P22704627', 'RB Channel Set Eternity (md)|Platinum|S': 'P23091832',
+  'RB Channel Set Eternity (md)|14KT|U': 'P22697226', 'RB Channel Set Eternity (md)|18KT|U': 'P22704641', 'RB Channel Set Eternity (md)|Platinum|U': 'P22711748',
+  'RB Channel Set Eternity (md)|14KT|W': 'P22697240', 'RB Channel Set Eternity (md)|18KT|W': 'P22704665', 'RB Channel Set Eternity (md)|Platinum|W': 'P22711755',
+
+  // ── RB Channel Set Eternity (lg) — JME0995 ──────────────────────
+  'RB Channel Set Eternity (lg)|14KT|K': 'P22697271', 'RB Channel Set Eternity (lg)|18KT|K': 'P22704689', 'RB Channel Set Eternity (lg)|Platinum|K': 'P22711762',
+  'RB Channel Set Eternity (lg)|14KT|M': 'P22697288', 'RB Channel Set Eternity (lg)|18KT|M': 'P22704696', 'RB Channel Set Eternity (lg)|Platinum|M': 'P22711779',
+  'RB Channel Set Eternity (lg)|14KT|O': 'P22697301', 'RB Channel Set Eternity (lg)|18KT|O': 'P22704702', 'RB Channel Set Eternity (lg)|Platinum|O': 'P22711793',
+  'RB Channel Set Eternity (lg)|14KT|Q': 'P22697325', 'RB Channel Set Eternity (lg)|18KT|Q': 'P22704719', 'RB Channel Set Eternity (lg)|Platinum|Q': 'P22711809',
+  'RB Channel Set Eternity (lg)|14KT|S': 'P22697356', 'RB Channel Set Eternity (lg)|18KT|S': 'P22704726', 'RB Channel Set Eternity (lg)|Platinum|S': 'P22711823',
+  'RB Channel Set Eternity (lg)|14KT|U': 'P22697370', 'RB Channel Set Eternity (lg)|18KT|U': 'P22704733', 'RB Channel Set Eternity (lg)|Platinum|U': 'P22711830',
+  'RB Channel Set Eternity (lg)|14KT|W': 'P22697387', 'RB Channel Set Eternity (lg)|18KT|W': 'P22704740', 'RB Channel Set Eternity (lg)|Platinum|W': 'P22711847',
+
+  // ── RB Claw Set Eternity (sm) — JME0996 ─────────────────────────
+  'RB Claw Set Eternity (sm)|14KT|K': 'P22704221', 'RB Claw Set Eternity (sm)|18KT|K': 'P22704757', 'RB Claw Set Eternity (sm)|Platinum|K': 'P22711861',
+  'RB Claw Set Eternity (sm)|14KT|M': 'P22704245', 'RB Claw Set Eternity (sm)|18KT|M': 'P22704764', 'RB Claw Set Eternity (sm)|Platinum|M': 'P22711878',
+  'RB Claw Set Eternity (sm)|14KT|O': 'P22704252', 'RB Claw Set Eternity (sm)|18KT|O': 'P22704771', 'RB Claw Set Eternity (sm)|Platinum|O': 'P22711892',
+  'RB Claw Set Eternity (sm)|14KT|Q': 'P22704269', 'RB Claw Set Eternity (sm)|18KT|Q': 'P22704788', 'RB Claw Set Eternity (sm)|Platinum|Q': 'P22711908',
+  'RB Claw Set Eternity (sm)|14KT|S': 'P22704283', 'RB Claw Set Eternity (sm)|18KT|S': 'P22704795', 'RB Claw Set Eternity (sm)|Platinum|S': 'P22711915',
+  'RB Claw Set Eternity (sm)|14KT|U': 'P22704290', 'RB Claw Set Eternity (sm)|18KT|U': 'P22704801', 'RB Claw Set Eternity (sm)|Platinum|U': 'P22711922',
+  'RB Claw Set Eternity (sm)|14KT|W': 'P22704306', 'RB Claw Set Eternity (sm)|18KT|W': 'P22704818', 'RB Claw Set Eternity (sm)|Platinum|W': 'P22711939',
+
+  // ── RB Claw Set Eternity (md) — JME0847 ─────────────────────────
+  'RB Claw Set Eternity (md)|14KT|K': 'P22704320', 'RB Claw Set Eternity (md)|18KT|K': 'P22704825', 'RB Claw Set Eternity (md)|Platinum|K': 'P22731654',
+  'RB Claw Set Eternity (md)|14KT|M': 'P22704337', 'RB Claw Set Eternity (md)|18KT|M': 'P22704832', 'RB Claw Set Eternity (md)|Platinum|M': 'P22731661',
+  'RB Claw Set Eternity (md)|14KT|O': 'P22704344', 'RB Claw Set Eternity (md)|18KT|O': 'P22704849', 'RB Claw Set Eternity (md)|Platinum|O': 'P22731685',
+  'RB Claw Set Eternity (md)|14KT|Q': 'P22704368', 'RB Claw Set Eternity (md)|18KT|Q': 'P22704856', 'RB Claw Set Eternity (md)|Platinum|Q': 'P22731692',
+  'RB Claw Set Eternity (md)|14KT|S': 'P22704382', 'RB Claw Set Eternity (md)|18KT|S': 'P22704863', 'RB Claw Set Eternity (md)|Platinum|S': 'P22731708',
+  'RB Claw Set Eternity (md)|14KT|U': 'P22704399', 'RB Claw Set Eternity (md)|18KT|U': 'P22704870', 'RB Claw Set Eternity (md)|Platinum|U': 'P22731722',
+  'RB Claw Set Eternity (md)|14KT|W': 'P22704405', 'RB Claw Set Eternity (md)|18KT|W': 'P22704887', 'RB Claw Set Eternity (md)|Platinum|W': 'P22731739',
+
+  // ── RB Claw Set Eternity (lg) — JME0994 ─────────────────────────
+  'RB Claw Set Eternity (lg)|14KT|K': 'P22704412', 'RB Claw Set Eternity (lg)|18KT|K': 'P22704894', 'RB Claw Set Eternity (lg)|Platinum|K': 'P22731753',
+  'RB Claw Set Eternity (lg)|14KT|M': 'P22704429', 'RB Claw Set Eternity (lg)|18KT|M': 'P22704900', 'RB Claw Set Eternity (lg)|Platinum|M': 'P22731760',
+  'RB Claw Set Eternity (lg)|14KT|O': 'P22704436', 'RB Claw Set Eternity (lg)|18KT|O': 'P22704917', 'RB Claw Set Eternity (lg)|Platinum|O': 'P22731777',
+  'RB Claw Set Eternity (lg)|14KT|Q': 'P22704443', 'RB Claw Set Eternity (lg)|18KT|Q': 'P22704924', 'RB Claw Set Eternity (lg)|Platinum|Q': 'P22731791',
+  'RB Claw Set Eternity (lg)|14KT|S': 'P22704450', 'RB Claw Set Eternity (lg)|18KT|S': 'P22704931', 'RB Claw Set Eternity (lg)|Platinum|S': 'P22731807',
+  'RB Claw Set Eternity (lg)|14KT|U': 'P22704467', 'RB Claw Set Eternity (lg)|18KT|U': 'P22704955', 'RB Claw Set Eternity (lg)|Platinum|U': 'P22731814',
+  'RB Claw Set Eternity (lg)|14KT|W': 'P22704474', 'RB Claw Set Eternity (lg)|18KT|W': 'P22704962', 'RB Claw Set Eternity (lg)|Platinum|W': 'P22731821',
+
+  // ── PC Channel Set Eternity (sm) — JME1000 ──────────────────────
+  'PC Channel Set Eternity (sm)|14KT|K': 'P22703859', 'PC Channel Set Eternity (sm)|18KT|K': 'P22711373', 'PC Channel Set Eternity (sm)|Platinum|K': 'P22731883',
+  'PC Channel Set Eternity (sm)|14KT|M': 'P22703866', 'PC Channel Set Eternity (sm)|18KT|M': 'P22711380', 'PC Channel Set Eternity (sm)|Platinum|M': 'P22731890',
+  'PC Channel Set Eternity (sm)|14KT|O': 'P22703934', 'PC Channel Set Eternity (sm)|18KT|O': 'P22711397', 'PC Channel Set Eternity (sm)|Platinum|O': 'P22731906',
+  'PC Channel Set Eternity (sm)|14KT|Q': 'P22703941', 'PC Channel Set Eternity (sm)|18KT|Q': 'P22711403', 'PC Channel Set Eternity (sm)|Platinum|Q': 'P22731920',
+  'PC Channel Set Eternity (sm)|14KT|S': 'P22703958', 'PC Channel Set Eternity (sm)|18KT|S': 'P22711410', 'PC Channel Set Eternity (sm)|Platinum|S': 'P22731937',
+  'PC Channel Set Eternity (sm)|14KT|U': 'P22703965', 'PC Channel Set Eternity (sm)|18KT|U': 'P22711427', 'PC Channel Set Eternity (sm)|Platinum|U': 'P22731944',
+  'PC Channel Set Eternity (sm)|14KT|W': 'P22703972', 'PC Channel Set Eternity (sm)|18KT|W': 'P22711434', 'PC Channel Set Eternity (sm)|Platinum|W': 'P22733337',
+
+  // ── PC Channel Set Eternity (md) — JME0632 ──────────────────────
+  'PC Channel Set Eternity (md)|14KT|K': 'P22703989', 'PC Channel Set Eternity (md)|18KT|K': 'P22711441', 'PC Channel Set Eternity (md)|Platinum|K': 'P22733344',
+  'PC Channel Set Eternity (md)|14KT|M': 'P22703996', 'PC Channel Set Eternity (md)|18KT|M': 'P22711458', 'PC Channel Set Eternity (md)|Platinum|M': 'P22733351',
+  'PC Channel Set Eternity (md)|14KT|O': 'P22704009', 'PC Channel Set Eternity (md)|18KT|O': 'P22711465', 'PC Channel Set Eternity (md)|Platinum|O': 'P22733375',
+  'PC Channel Set Eternity (md)|14KT|Q': 'P22704016', 'PC Channel Set Eternity (md)|18KT|Q': 'P22711472', 'PC Channel Set Eternity (md)|Platinum|Q': 'P22733382',
+  'PC Channel Set Eternity (md)|14KT|S': 'P22704023', 'PC Channel Set Eternity (md)|18KT|S': 'P22711489', 'PC Channel Set Eternity (md)|Platinum|S': 'P22733399',
+  'PC Channel Set Eternity (md)|14KT|U': 'P22704047', 'PC Channel Set Eternity (md)|18KT|U': 'P22711496', 'PC Channel Set Eternity (md)|Platinum|U': 'P22733405',
+  'PC Channel Set Eternity (md)|14KT|W': 'P22704054', 'PC Channel Set Eternity (md)|18KT|W': 'P22711502', 'PC Channel Set Eternity (md)|Platinum|W': 'P22733412',
+
+  // ── PC Channel Set Eternity (lg) — JME0633 ──────────────────────
+  'PC Channel Set Eternity (lg)|14KT|K': 'P22704078', 'PC Channel Set Eternity (lg)|18KT|K': 'P22711519', 'PC Channel Set Eternity (lg)|Platinum|K': 'P22733450',
+  'PC Channel Set Eternity (lg)|14KT|M': 'P22704085', 'PC Channel Set Eternity (lg)|18KT|M': 'P22711526', 'PC Channel Set Eternity (lg)|Platinum|M': 'P22733467',
+  'PC Channel Set Eternity (lg)|14KT|O': 'P22704092', 'PC Channel Set Eternity (lg)|18KT|O': 'P22711533', 'PC Channel Set Eternity (lg)|Platinum|O': 'P22733474',
+  'PC Channel Set Eternity (lg)|14KT|Q': 'P22704122', 'PC Channel Set Eternity (lg)|18KT|Q': 'P22711540', 'PC Channel Set Eternity (lg)|Platinum|Q': 'P22733481',
+  'PC Channel Set Eternity (lg)|14KT|S': 'P22704139', 'PC Channel Set Eternity (lg)|18KT|S': 'P22711557', 'PC Channel Set Eternity (lg)|Platinum|S': 'P22733498',
+  'PC Channel Set Eternity (lg)|14KT|U': 'P22704146', 'PC Channel Set Eternity (lg)|18KT|U': 'P22711564', 'PC Channel Set Eternity (lg)|Platinum|U': 'P22733504',
+  'PC Channel Set Eternity (lg)|14KT|W': 'P22704160', 'PC Channel Set Eternity (lg)|18KT|W': 'P22711571', 'PC Channel Set Eternity (lg)|Platinum|W': 'P22733511',
 }
