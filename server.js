@@ -470,6 +470,44 @@ app.put('/api/watch-skus', (req, res) => {
   res.json({ ok: true, count: Object.keys(incoming).length })
 })
 
+// ── Generic product SKU persistence ──────────────────────────────────
+const VALID_PRODUCT_TYPES = ['wedders', 'chains', 'rings', 'tennis', 'bangles', 'pendants']
+
+function loadProductSkus(type) {
+  try { return JSON.parse(readFileSync(join(DATA_DIR, `${type}-skus.json`), 'utf8')) }
+  catch { return {} }
+}
+
+function saveProductSkus(type, map) {
+  writeFileSync(join(DATA_DIR, `${type}-skus.json`), JSON.stringify(map, null, 2))
+}
+
+app.get('/api/product-skus/:productType', (req, res) => {
+  const type = req.params.productType.toLowerCase()
+  if (!VALID_PRODUCT_TYPES.includes(type)) return res.status(400).json({ error: 'Invalid product type' })
+  res.json(loadProductSkus(type))
+})
+
+app.post('/api/product-skus/:productType', (req, res) => {
+  const type = req.params.productType.toLowerCase()
+  if (!VALID_PRODUCT_TYPES.includes(type)) return res.status(400).json({ error: 'Invalid product type' })
+  const incoming = req.body
+  if (!incoming || typeof incoming !== 'object') return res.status(400).json({ error: 'Object required' })
+  const current = loadProductSkus(type)
+  Object.assign(current, incoming)
+  saveProductSkus(type, current)
+  res.json({ ok: true, count: Object.keys(current).length })
+})
+
+app.put('/api/product-skus/:productType', (req, res) => {
+  const type = req.params.productType.toLowerCase()
+  if (!VALID_PRODUCT_TYPES.includes(type)) return res.status(400).json({ error: 'Invalid product type' })
+  const incoming = req.body
+  if (!incoming || typeof incoming !== 'object') return res.status(400).json({ error: 'Object required' })
+  saveProductSkus(type, incoming)
+  res.json({ ok: true, count: Object.keys(incoming).length })
+})
+
 // Analyze catalog pages with Claude Vision
 app.post('/api/analyze-catalog', async (req, res) => {
   const { productType, pages } = req.body

@@ -2,16 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
-function loadSkuMap(storageKey) {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey)) || {}
-  } catch { return {} }
-}
-
-function saveSkuMap(storageKey, map) {
-  localStorage.setItem(storageKey, JSON.stringify(map))
-}
-
 function buildSkuIndex(skuMap) {
   const idx = {}
   for (const [pKey, sku] of Object.entries(skuMap)) {
@@ -192,25 +182,25 @@ export default function ProductFinder({
   const navigate = useNavigate()
   const { isAdmin } = useAuth()
 
-  const skuKey = storageKey || `${productName.toLowerCase()}-skus`
+  const productType = productName.toLowerCase()
   const [customStyles, setCustomStyles] = useState([])
   const [customPNumbers, setCustomPNumbers] = useState({})
   const [serverTiers, setServerTiers] = useState(null)
 
   useEffect(() => {
-    fetch(`/api/custom-styles/${productName.toLowerCase()}`)
+    fetch(`/api/custom-styles/${productType}`)
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data)) setCustomStyles(data) })
       .catch(() => {})
-    fetch(`/api/pnumbers/${productName.toLowerCase()}`)
+    fetch(`/api/pnumbers/${productType}`)
       .then((r) => r.json())
       .then((data) => { if (data && typeof data === 'object') setCustomPNumbers(data) })
       .catch(() => {})
-    fetch(`/api/categories/${productName.toLowerCase()}`)
+    fetch(`/api/categories/${productType}`)
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data) && data.length > 0) setServerTiers(data) })
       .catch(() => {})
-  }, [productName])
+  }, [productType])
 
   const effectiveTiers = serverTiers || tiers
 
@@ -223,10 +213,17 @@ export default function ProductFinder({
   const [openTiers, setOpenTiers] = useState({})
   const [showUpload, setShowUpload] = useState({})
 
-  const [skuMap, setSkuMap]       = useState(() => loadSkuMap(skuKey))
+  const [skuMap, setSkuMap]       = useState({})
   const [skuInput, setSkuInput]   = useState('')
   const [skuSearch, setSkuSearch] = useState('')
   const [skuMsg, setSkuMsg]       = useState(null)
+
+  useEffect(() => {
+    fetch(`/api/product-skus/${productType}`)
+      .then((r) => r.json())
+      .then((data) => { if (data && typeof data === 'object') setSkuMap(data) })
+      .catch(() => {})
+  }, [productType])
 
   const [imgVersion, setImgVersion] = useState(Date.now())
   const [pickerForStyle, setPickerForStyle] = useState(null) // style id to assign server image to
@@ -389,7 +386,11 @@ export default function ProductFinder({
     if (!pKey || !skuInput.trim()) return
     const next = { ...skuMap, [pKey]: skuInput.trim() }
     setSkuMap(next)
-    saveSkuMap(skuKey, next)
+    fetch(`/api/product-skus/${productType}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [pKey]: skuInput.trim() }),
+    }).catch(() => {})
     setSkuMsg('Saved')
     setTimeout(() => setSkuMsg(null), 2000)
   }

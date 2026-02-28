@@ -24,6 +24,7 @@ import ImageAdminPage from './pages/ImageAdminPage'
 import BanglesFinderPage from './pages/BanglesFinderPage'
 import PendantBarFinderPage from './pages/PendantBarFinderPage'
 import CatalogProcessPage from './pages/CatalogProcessPage'
+import MigrateSkusPage from './pages/MigrateSkusPage'
 import './App.css'
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
       <Route path="/find-by-photo" element={<FindByPhotoPage />} />
       <Route path="/image-admin" element={<ImageAdminPage />} />
       <Route path="/catalog-process" element={<CatalogProcessPage />} />
+      <Route path="/admin/migrate-skus" element={<MigrateSkusPage />} />
     </Routes>
   )
 }
