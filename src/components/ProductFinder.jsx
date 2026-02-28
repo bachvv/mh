@@ -579,10 +579,9 @@ export default function ProductFinder({
 
   // Preload style images
   useEffect(() => {
-    styles.forEach((s) => {
-      if (s.image) { const img = new Image(); img.src = s.image }
-    })
-  }, [styles])
+    const allImages = styles.map((s) => s.image).filter(Boolean)
+    allImages.forEach((src) => { const img = new Image(); img.src = src })
+  }, [customStyles, baseStyles])
 
   return (
     <div className="wedders-page">

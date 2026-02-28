@@ -3151,7 +3151,7 @@
   max-width: 420px;
   max-height: 320px;
   overflow-y: auto;
-  background: var(--color-surface);
+  background: #ffffff;
   border: 1px solid var(--color-border);
   border-top: none;
   z-index: 100;
