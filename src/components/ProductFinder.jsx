@@ -494,22 +494,32 @@ export default function ProductFinder({
     // Search Blue Tag SKUs (saved locally)
     for (const [pKey, blueSku] of Object.entries(skuMap)) {
       if (!blueSku) continue
-      if (blueSku.toLowerCase().includes(q)) {
+      if (blueSku.toLowerCase().includes(q) || pKey.toLowerCase().includes(q)) {
         const parts = pKey.split('|')
         const s = styles.find((st) => st.id === parts[0])
-        if (!s) continue
-        const pNum = pNumbers[pKey]
-        const tier = effectiveTiers.find((t) => t.id === s.tier)
-        const optLabels = parts.slice(1).join(' / ')
-        results.push({
-          type: 'pnumber',
-          pKey,
-          style: s,
-          tierLabel: tier?.label || s.tier,
-          label: `${blueSku} — ${s.name} (${optLabels})${pNum ? ` [${pNum.startsWith('P') ? pNum : 'P' + pNum}]` : ''}`,
-        })
+        if (s) {
+          const pNum = pNumbers[pKey]
+          const tier = effectiveTiers.find((t) => t.id === s.tier)
+          const optLabels = parts.slice(1).join(' / ')
+          results.push({
+            type: 'pnumber',
+            pKey,
+            style: s,
+            tierLabel: tier?.label || s.tier,
+            label: `${blueSku} — ${s.name} (${optLabels})${pNum ? ` [${pNum.startsWith('P') ? pNum : 'P' + pNum}]` : ''}`,
+          })
+        } else {
+          // Standalone SKU entry (eternity, men's diamond, etc.)
+          const optLabels = parts.slice(1).join(' / ')
+          results.push({
+            type: 'standalone',
+            pKey,
+            label: `${pKey}${optLabels ? ` (${optLabels})` : ''} → P${blueSku}`,
+            tierLabel: 'Blue Tag',
+          })
+        }
       }
-      if (results.length >= 15) break
+      if (results.length >= 20) break
     }
 
     // Search P-numbers / SKUs
@@ -542,6 +552,11 @@ export default function ProductFinder({
     if (result.type === 'style') {
       handleStyleSelect(result.style.id)
       setOpenTiers((prev) => ({ ...prev, [result.style.tier]: true }))
+    } else if (result.type === 'standalone') {
+      const goldSku = skuMap[result.pKey]
+      if (goldSku) navigator.clipboard.writeText(goldSku)
+      setSkuMsg(`Copied P${goldSku}`)
+      setTimeout(() => setSkuMsg(null), 3000)
     } else {
       const parts = result.pKey.split('|')
       const s = result.style
