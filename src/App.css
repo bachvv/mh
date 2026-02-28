@@ -3101,6 +3101,7 @@
 .pf-search-wrap {
   position: relative;
   margin-bottom: 1.25rem;
+  z-index: 100;
 }
 
 .pf-search-input {
@@ -3153,7 +3154,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-top: none;
-  z-index: 50;
+  z-index: 100;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
