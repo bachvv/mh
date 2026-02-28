@@ -510,11 +510,16 @@ export default function ProductFinder({
           })
         } else {
           // Standalone SKU entry (eternity, men's diamond, etc.)
+          if (parts[0].startsWith('_name_')) continue
+          const czSku = parts[0]
+          const displayName = skuMap[`_name_|${czSku}`]
           const optLabels = parts.slice(1).join(' / ')
+          const nameLabel = displayName || czSku
           results.push({
             type: 'standalone',
             pKey,
-            label: `${pKey}${optLabels ? ` (${optLabels})` : ''} → P${blueSku}`,
+            czSku,
+            label: `${nameLabel}${optLabels ? ` (${optLabels})` : ''} → P${blueSku}`,
             tierLabel: 'Blue Tag',
           })
         }
@@ -600,15 +605,36 @@ export default function ProductFinder({
               <div className="pf-search-empty">No results found</div>
             )}
             {searchResults.map((r, i) => (
-              <button
-                key={i}
-                className="pf-search-result-item"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleSearchSelect(r)}
-              >
-                <span className="pf-search-result-label">{r.label}</span>
-                <span className="pf-search-result-tier">{r.tierLabel}</span>
-              </button>
+              <div key={i} className="pf-search-result-item" style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                  style={{ flex: 1, textAlign: 'left', background: 'none', border: 'none', padding: '8px', cursor: 'pointer', font: 'inherit' }}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleSearchSelect(r)}
+                >
+                  <span className="pf-search-result-label">{r.label}</span>
+                  <span className="pf-search-result-tier">{r.tierLabel}</span>
+                </button>
+                {isAdmin && r.type === 'standalone' && (
+                  <button
+                    style={{ padding: '4px 8px', fontSize: 12, cursor: 'pointer', marginRight: 4, background: '#e5e7eb', border: 'none', borderRadius: 4 }}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const current = skuMap[`_name_|${r.czSku}`] || ''
+                      const name = prompt('Display name for ' + r.czSku + ':', current)
+                      if (name !== null) {
+                        const next = { ...skuMap, [`_name_|${r.czSku}`]: name }
+                        setSkuMap(next)
+                        fetch(`/api/product-skus/${productType}`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ [`_name_|${r.czSku}`]: name }),
+                        }).catch(() => {})
+                      }
+                    }}
+                  >Edit</button>
+                )}
+              </div>
             ))}
           </div>
         )}
