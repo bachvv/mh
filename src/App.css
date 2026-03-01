@@ -4084,11 +4084,30 @@
   text-align: left;
 }
 
+.new-items-filter {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.new-items-filter-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+
+.new-items-filter-input::placeholder {
+  color: var(--color-text-muted);
+}
+
 .new-items-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
-  margin-top: 0.75rem;
 }
 
 .new-item-card {

@@ -693,6 +693,9 @@ app.post('/api/find-by-photo', async (req, res) => {
     .map(p => `- SKU: ${p.s} | Name: ${p.n} | Category: ${p.category}`)
     .join('\n')
 
+  // Detect media type from data URL prefix
+  const mediaMatch = imageBase64.match(/^data:(image\/\w+);base64,/)
+  const mediaType = mediaMatch ? mediaMatch[1].replace('jpg', 'jpeg') : 'image/jpeg'
   const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
   const client = new Anthropic({ apiKey })
 
@@ -705,7 +708,7 @@ app.post('/api/find-by-photo', async (req, res) => {
         content: [
           {
             type: 'image',
-            source: { type: 'base64', media_type: 'image/png', data: base64Data },
+            source: { type: 'base64', media_type: mediaType, data: base64Data },
           },
           {
             type: 'text',

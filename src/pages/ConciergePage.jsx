@@ -26,20 +26,25 @@ const GROUPS = [
 
 const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
 
-function NewItemsSection({ navigate }) {
-  const [open, setOpen] = useState(false)
-
-  const newItems = useMemo(() => {
-    const items = []
-    for (const [cat, products] of Object.entries(catalog)) {
-      for (const p of products) {
-        if (p.s && p.s.startsWith('212')) {
-          items.push({ ...p, category: cat })
-        }
-      }
+// Build a flat list of all catalog items with category
+const ALL_ITEMS = (() => {
+  const items = []
+  for (const [cat, products] of Object.entries(catalog)) {
+    for (const p of products) {
+      items.push({ ...p, category: cat })
     }
-    return items
-  }, [])
+  }
+  return items
+})()
+
+function NewItemsSection() {
+  const [open, setOpen] = useState(false)
+  const [prefix, setPrefix] = useState('212')
+
+  const filtered = useMemo(() => {
+    if (!prefix) return ALL_ITEMS
+    return ALL_ITEMS.filter(p => p.s && p.s >= prefix)
+  }, [prefix])
 
   return (
     <div className="concierge-group">
@@ -47,32 +52,43 @@ function NewItemsSection({ navigate }) {
         className="concierge-collapse-btn"
         onClick={() => setOpen(!open)}
       >
-        <span>{open ? '▾' : '▸'} New Items ({newItems.length})</span>
+        <span>{open ? '▾' : '▸'} New Items ({filtered.length})</span>
       </button>
       {open && (
-        <div className="new-items-grid">
-          {newItems.map((item) => (
-            <div key={item.s} className="new-item-card">
-              <div className="new-item-img-wrap">
-                {item.m ? (
-                  <img
-                    src={`${IMAGE_BASE}/${item.p}/${item.m}?sw=200&sm=fit&q=70`}
-                    alt={item.n}
-                    className="new-item-img"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="new-item-no-img">No image</div>
-                )}
+        <>
+          <div className="new-items-filter">
+            <input
+              type="text"
+              className="new-items-filter-input"
+              value={prefix}
+              onChange={(e) => setPrefix(e.target.value)}
+              placeholder="SKU prefix (e.g. 212)"
+            />
+          </div>
+          <div className="new-items-grid">
+            {filtered.map((item) => (
+              <div key={item.s} className="new-item-card">
+                <div className="new-item-img-wrap">
+                  {item.m ? (
+                    <img
+                      src={`${IMAGE_BASE}/${item.p}/${item.m}?sw=200&sm=fit&q=70`}
+                      alt={item.n}
+                      className="new-item-img"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="new-item-no-img">No image</div>
+                  )}
+                </div>
+                <div className="new-item-info">
+                  <span className="new-item-name">{item.n}</span>
+                  <span className="new-item-sku">SKU: {item.s}</span>
+                  <span className="new-item-cat">{item.category}</span>
+                </div>
               </div>
-              <div className="new-item-info">
-                <span className="new-item-name">{item.n}</span>
-                <span className="new-item-sku">SKU: {item.s}</span>
-                <span className="new-item-cat">{item.category}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   )
@@ -119,7 +135,7 @@ function ConciergePage() {
         </div>
       ))}
 
-      <NewItemsSection navigate={navigate} />
+      <NewItemsSection />
 
       {isAdmin && (
         <div className="concierge-group">
