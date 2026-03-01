@@ -42,8 +42,9 @@ function NewItemsSection() {
   const [prefix, setPrefix] = useState('212')
 
   const filtered = useMemo(() => {
-    if (!prefix) return ALL_ITEMS
-    return ALL_ITEMS.filter(p => p.s && p.s >= prefix)
+    const items = prefix ? ALL_ITEMS.filter(p => p.s && p.s >= prefix) : [...ALL_ITEMS]
+    items.sort((a, b) => b.s.localeCompare(a.s))
+    return items.slice(0, 50)
   }, [prefix])
 
   return (
