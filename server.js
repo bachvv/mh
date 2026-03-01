@@ -662,6 +662,119 @@ Rules:
   }
 })
 
+// Find by Photo: match uploaded image against catalog items using Claude Vision
+app.post('/api/find-by-photo', async (req, res) => {
+  const { imageBase64, category } = req.body
+  if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' })
+
+  const apiKey = process.env.CATALOG_API_KEY
+  if (!apiKey) return res.status(500).json({ error: 'CATALOG_API_KEY not configured' })
+
+  // Load catalog.json
+  const catalogPath = join(__dirname, 'src', 'data', 'catalog.json')
+  let catalogData
+  try { catalogData = JSON.parse(readFileSync(catalogPath, 'utf8')) }
+  catch { return res.status(500).json({ error: 'Could not load catalog' }) }
+
+  // Build product list for the selected category (or all)
+  let products = []
+  if (category && category !== 'all') {
+    const catName = category.startsWith('catalog:') ? category.slice(8) : category
+    products = (catalogData[catName] || []).map(p => ({ ...p, category: catName }))
+  } else {
+    for (const [cat, items] of Object.entries(catalogData)) {
+      for (const p of items) products.push({ ...p, category: cat })
+    }
+  }
+
+  // Build a compact list of products for Claude to match against
+  const productList = products
+    .filter(p => p.m)
+    .map(p => `- SKU: ${p.s} | Name: ${p.n} | Category: ${p.category}`)
+    .join('\n')
+
+  const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
+  const client = new Anthropic({ apiKey })
+
+  try {
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4096,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: 'image/png', data: base64Data },
+          },
+          {
+            type: 'text',
+            text: `You are a jewelry product matcher. Look at this photo and identify the jewelry item(s) shown.
+
+Then find the best matches from this product catalog. Consider:
+- Type of jewelry (ring, bracelet, pendant, earring, chain, etc.)
+- Metal color (yellow gold, white gold, rose gold, silver, platinum)
+- Style (plain, diamond-set, gemstone, pattern, etc.)
+- Design elements (links, hearts, hoops, studs, etc.)
+
+Product catalog:
+${productList}
+
+Return the top 10 best matching products as JSON. For each match, provide a confidence score (0-100) indicating how likely it matches the photo.
+
+Return ONLY valid JSON:
+{
+  "description": "Brief description of what you see in the photo",
+  "matches": [
+    { "sku": "12345678", "confidence": 95, "reason": "Why this matches" },
+    ...
+  ]
+}
+
+Rules:
+- SKUs must exactly match ones from the catalog list
+- Order by confidence (highest first)
+- Be specific about why each item matches
+- If nothing matches well, return fewer results with lower confidence`,
+          },
+        ],
+      }],
+    })
+
+    let parsed = { description: '', matches: [] }
+    try {
+      parsed = JSON.parse(response.content[0].text)
+    } catch {
+      const text = response.content[0].text
+      const jsonMatch = text.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        try { parsed = JSON.parse(jsonMatch[0]) } catch { /* ignore */ }
+      }
+    }
+
+    // Enrich matches with full product data
+    const productMap = {}
+    for (const p of products) productMap[p.s] = p
+    const enriched = (parsed.matches || []).map(m => {
+      const p = productMap[m.sku]
+      if (!p) return null
+      return {
+        sku: m.sku,
+        name: p.n,
+        image: p.m ? `https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images/${p.p}/${p.m}?sw=600&sm=fit&q=80` : null,
+        confidence: m.confidence,
+        reason: m.reason,
+        category: p.category,
+      }
+    }).filter(Boolean)
+
+    res.json({ description: parsed.description, matches: enriched })
+  } catch (err) {
+    console.error('Find by photo error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // In production, serve the built Vite app
 const distDir = join(__dirname, 'dist')
 if (existsSync(distDir)) {

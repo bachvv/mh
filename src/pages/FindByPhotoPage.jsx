@@ -2,87 +2,16 @@ import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import catalog from '../data/catalog.json'
 
-const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
-const IMAGES_KEY = 'wedder-style-images'
-const SKU_KEY = 'wedder-skus'
-
-function loadStyleImages() {
-  try { return JSON.parse(localStorage.getItem(IMAGES_KEY)) || {} }
-  catch { return {} }
-}
-
-function loadSkuMap() {
-  try { return JSON.parse(localStorage.getItem(SKU_KEY)) || {} }
-  catch { return {} }
-}
-
-function getImageUrl(product) {
-  return `${IMAGE_BASE}/${product.p}/${product.m}?sw=600&sm=fit&q=80`
-}
-
-// Extract color histogram from an image via canvas
-function getColorHistogram(canvas, ctx) {
-  const w = canvas.width
-  const h = canvas.height
-  const data = ctx.getImageData(0, 0, w, h).data
-  const bins = 8
-  const hist = new Float64Array(bins * bins * bins)
-  const step = 256 / bins
-  let total = 0
-
-  for (let i = 0; i < data.length; i += 4) {
-    const a = data[i + 3]
-    if (a < 128) continue
-    const rBin = Math.min(Math.floor(data[i] / step), bins - 1)
-    const gBin = Math.min(Math.floor(data[i + 1] / step), bins - 1)
-    const bBin = Math.min(Math.floor(data[i + 2] / step), bins - 1)
-    hist[rBin * bins * bins + gBin * bins + bBin]++
-    total++
-  }
-
-  if (total > 0) {
-    for (let i = 0; i < hist.length; i++) hist[i] /= total
-  }
-  return hist
-}
-
-function compareHistograms(a, b) {
-  let intersection = 0
-  for (let i = 0; i < a.length; i++) {
-    intersection += Math.min(a[i], b[i])
-  }
-  return intersection
-}
-
-function imageToHistogram(src) {
-  return new Promise((resolve) => {
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => {
-      const size = 64
-      const canvas = document.createElement('canvas')
-      canvas.width = size
-      canvas.height = size
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, size, size)
-      resolve(getColorHistogram(canvas, ctx))
-    }
-    img.onerror = () => resolve(null)
-    img.src = src
-  })
-}
-
-// Build categories from catalog + special ones
 const CATALOG_CATEGORIES = Object.keys(catalog).sort((a, b) => {
   return (catalog[b]?.length || 0) - (catalog[a]?.length || 0)
 })
 
 const CATEGORIES = [
+  { id: 'all', label: 'All Categories' },
   ...CATALOG_CATEGORIES.map(cat => ({
     id: `catalog:${cat}`,
     label: `${cat} (${catalog[cat].length})`,
   })),
-  { id: 'wedders-local', label: 'Wedders (Saved Styles)' },
 ]
 
 function FindByPhotoPage() {
@@ -90,10 +19,11 @@ function FindByPhotoPage() {
   const inputRef = useRef(null)
   const [preview, setPreview] = useState(null)
   const [results, setResults] = useState(null)
+  const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const [category, setCategory] = useState(CATEGORIES[0].id)
-  const [progress, setProgress] = useState('')
+  const [error, setError] = useState('')
 
   const processFile = useCallback(async (file) => {
     if (!file || !file.type.startsWith('image/')) return
@@ -104,58 +34,33 @@ function FindByPhotoPage() {
       setPreview(src)
       setLoading(true)
       setResults(null)
-      setProgress('Analyzing photo...')
+      setDescription('')
+      setError('')
 
-      const uploadHist = await imageToHistogram(src)
-      if (!uploadHist) {
+      try {
+        const resp = await fetch('/api/find-by-photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageBase64: src,
+            category: category,
+          }),
+        })
+
+        if (!resp.ok) {
+          const err = await resp.json()
+          throw new Error(err.error || 'Server error')
+        }
+
+        const data = await resp.json()
+        setDescription(data.description || '')
+        setResults(data.matches || [])
+      } catch (err) {
+        setError(err.message)
         setResults([])
+      } finally {
         setLoading(false)
-        return
       }
-
-      let matches = []
-
-      if (category === 'wedders-local') {
-        const styleImages = loadStyleImages()
-        const skuMap = loadSkuMap()
-        const entries = Object.entries(styleImages)
-        for (const [styleId, imgSrc] of entries) {
-          const hist = await imageToHistogram(imgSrc)
-          if (!hist) continue
-          const score = compareHistograms(uploadHist, hist)
-          const styleSkus = []
-          for (const [pKey, sku] of Object.entries(skuMap)) {
-            if (pKey.startsWith(styleId + '|') && sku) {
-              styleSkus.push(sku)
-            }
-          }
-          matches.push({ id: styleId, name: styleId, score, image: imgSrc, skus: styleSkus })
-        }
-      } else if (category.startsWith('catalog:')) {
-        const catName = category.slice(8)
-        const products = catalog[catName] || []
-        for (let idx = 0; idx < products.length; idx++) {
-          const p = products[idx]
-          if (!p.m) continue
-          if (idx % 10 === 0) setProgress(`Comparing ${idx + 1}/${products.length}...`)
-          const url = getImageUrl(p)
-          const hist = await imageToHistogram(url)
-          if (!hist) continue
-          const score = compareHistograms(uploadHist, hist)
-          matches.push({
-            id: p.s,
-            name: p.n,
-            score,
-            image: url,
-            sku: p.s,
-          })
-        }
-      }
-
-      matches.sort((a, b) => b.score - a.score)
-      setResults(matches.slice(0, 12))
-      setLoading(false)
-      setProgress('')
     }
     reader.readAsDataURL(file)
   }, [category])
@@ -216,14 +121,14 @@ function FindByPhotoPage() {
                 </svg>
               </div>
               <span className="fbp-dropzone-text">Drop a photo here or tap to upload</span>
-              <span className="fbp-dropzone-hint">Matches against {currentCat?.label}</span>
+              <span className="fbp-dropzone-hint">AI-powered matching against {currentCat?.label}</span>
             </>
           )}
         </div>
         {preview && (
           <button
             className="fbp-clear-btn"
-            onClick={() => { setPreview(null); setResults(null) }}
+            onClick={() => { setPreview(null); setResults(null); setDescription(''); setError('') }}
           >
             Clear
           </button>
@@ -231,10 +136,18 @@ function FindByPhotoPage() {
       </div>
 
       {loading && (
-        <div className="fbp-loading">{progress || 'Comparing images...'}</div>
+        <div className="fbp-loading">Analyzing with AI... this may take a moment</div>
       )}
 
-      {results && results.length === 0 && !loading && (
+      {error && !loading && (
+        <div className="fbp-empty">{error}</div>
+      )}
+
+      {description && !loading && (
+        <div className="fbp-description">{description}</div>
+      )}
+
+      {results && results.length === 0 && !loading && !error && (
         <div className="fbp-empty">No matches found in this category.</div>
       )}
 
@@ -243,25 +156,15 @@ function FindByPhotoPage() {
           <div className="wedder-step-label">Best Matches</div>
           <div className="fbp-results-grid">
             {results.map((m, i) => (
-              <div key={m.id + '-' + i} className="fbp-result-card">
+              <div key={m.sku + '-' + i} className="fbp-result-card">
                 <div className="fbp-result-img-wrap">
-                  <img src={m.image} alt={m.name} className="fbp-result-img" />
+                  {m.image && <img src={m.image} alt={m.name} className="fbp-result-img" />}
                 </div>
                 <div className="fbp-result-info">
                   <span className="fbp-result-name">{m.name}</span>
-                  <span className="fbp-result-score">{Math.round(m.score * 100)}% match</span>
-                  {m.pNumber && (
-                    <span className="fbp-result-skus">{m.pNumber}</span>
-                  )}
-                  {m.sku && (
-                    <span className="fbp-result-skus">SKU: {m.sku}</span>
-                  )}
-                  {m.skus && m.skus.length > 0 && (
-                    <span className="fbp-result-skus">
-                      {m.skus.slice(0, 3).join(', ')}
-                      {m.skus.length > 3 && ` +${m.skus.length - 3}`}
-                    </span>
-                  )}
+                  <span className="fbp-result-score">{m.confidence}% match</span>
+                  <span className="fbp-result-skus">SKU: {m.sku}</span>
+                  {m.reason && <span className="fbp-result-reason">{m.reason}</span>}
                 </div>
               </div>
             ))}
