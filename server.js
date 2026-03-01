@@ -662,7 +662,7 @@ Rules:
   }
 })
 
-// Find by Photo: match uploaded image against catalog items using Claude Vision
+// Find by Photo: 2-step — Claude describes item + text filter, then Claude visually compares top candidates
 app.post('/api/find-by-photo', async (req, res) => {
   const { imageBase64, category } = req.body
   if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' })
@@ -670,108 +670,165 @@ app.post('/api/find-by-photo', async (req, res) => {
   const apiKey = process.env.CATALOG_API_KEY
   if (!apiKey) return res.status(500).json({ error: 'CATALOG_API_KEY not configured' })
 
-  // Load catalog.json
-  const catalogPath = join(__dirname, 'src', 'data', 'catalog.json')
-  let catalogData
-  try { catalogData = JSON.parse(readFileSync(catalogPath, 'utf8')) }
-  catch { return res.status(500).json({ error: 'Could not load catalog' }) }
-
-  // Build product list for the selected category (or all)
-  let products = []
-  if (category && category !== 'all') {
-    const catName = category.startsWith('catalog:') ? category.slice(8) : category
-    products = (catalogData[catName] || []).map(p => ({ ...p, category: catName }))
-  } else {
-    for (const [cat, items] of Object.entries(catalogData)) {
-      for (const p of items) products.push({ ...p, category: cat })
-    }
-  }
-
-  // Build a compact list of products for Claude to match against
-  const productList = products
-    .filter(p => p.m)
-    .map(p => `- SKU: ${p.s} | Name: ${p.n} | Category: ${p.category}`)
-    .join('\n')
-
-  // Detect media type from data URL prefix
   const mediaMatch = imageBase64.match(/^data:(image\/\w+);base64,/)
   const mediaType = mediaMatch ? mediaMatch[1].replace('jpg', 'jpeg') : 'image/jpeg'
   const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
   const client = new Anthropic({ apiKey })
 
   try {
-    const response = await client.messages.create({
+    // Step 1: Describe the jewelry item
+    const descResp = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
+      max_tokens: 512,
       messages: [{
         role: 'user',
         content: [
-          {
-            type: 'image',
-            source: { type: 'base64', media_type: mediaType, data: base64Data },
-          },
-          {
-            type: 'text',
-            text: `You are a jewelry product matcher. Look at this photo and identify the jewelry item(s) shown.
-
-Then find the best matches from this product catalog. Consider:
-- Type of jewelry (ring, bracelet, pendant, earring, chain, etc.)
-- Metal color (yellow gold, white gold, rose gold, silver, platinum)
-- Style (plain, diamond-set, gemstone, pattern, etc.)
-- Design elements (links, hearts, hoops, studs, etc.)
-
-Product catalog:
-${productList}
-
-Return the top 10 best matching products as JSON. For each match, provide a confidence score (0-100) indicating how likely it matches the photo.
-
-Return ONLY valid JSON:
+          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
+          { type: 'text', text: `Describe this jewelry item concisely. Return ONLY valid JSON:
 {
-  "description": "Brief description of what you see in the photo",
-  "matches": [
-    { "sku": "12345678", "confidence": 95, "reason": "Why this matches" },
-    ...
-  ]
-}
-
-Rules:
-- SKUs must exactly match ones from the catalog list
-- Order by confidence (highest first)
-- Be specific about why each item matches
-- If nothing matches well, return fewer results with lower confidence`,
-          },
+  "description": "One sentence describing the item",
+  "type": "ring|earring|pendant|necklace|bracelet|bangle|chain|watch|other",
+  "metal": "yellow gold|white gold|rose gold|sterling silver|platinum|two-tone|unknown",
+  "keywords": ["5-10 words: style, shape, stone type, setting, design details"]
+}` },
         ],
       }],
     })
 
-    let parsed = { description: '', matches: [] }
-    try {
-      parsed = JSON.parse(response.content[0].text)
-    } catch {
-      const text = response.content[0].text
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        try { parsed = JSON.parse(jsonMatch[0]) } catch { /* ignore */ }
-      }
+    let analysis = { description: '', type: 'other', metal: 'unknown', keywords: [] }
+    try { analysis = JSON.parse(descResp.content[0].text) } catch {
+      const m = descResp.content[0].text.match(/\{[\s\S]*\}/)
+      if (m) try { analysis = JSON.parse(m[0]) } catch {}
     }
 
-    // Enrich matches with full product data
-    const productMap = {}
-    for (const p of products) productMap[p.s] = p
-    const enriched = (parsed.matches || []).map(m => {
-      const p = productMap[m.sku]
-      if (!p) return null
+    // Step 2: Load catalog and text-filter candidates
+    const catalogPath = join(__dirname, 'src', 'data', 'catalog.json')
+    let catalogData
+    try { catalogData = JSON.parse(readFileSync(catalogPath, 'utf8')) } catch {
+      return res.status(500).json({ error: 'Could not load catalog' })
+    }
+
+    let products = []
+    if (category && category !== 'all') {
+      const catName = category.startsWith('catalog:') ? category.slice(8) : category
+      products = (catalogData[catName] || []).map(p => ({ ...p, category: catName }))
+    } else {
+      for (const [cat, items] of Object.entries(catalogData))
+        for (const p of items) products.push({ ...p, category: cat })
+    }
+
+    const catTypeMap = {
+      'Rings': 'ring', 'Engagement': 'ring', 'Solitaires': 'ring', 'Wedders': 'ring',
+      'Earrings': 'earring', 'Pendants': 'pendant', 'Pendants-Necklaces': 'pendant',
+      'Bracelets-Bangles': 'bracelet', 'Chains': 'chain',
+    }
+    // Also match bangle -> bracelet-bangles, necklace -> chains/pendants
+    const typeAliases = {
+      'bangle': ['bracelet'], 'necklace': ['pendant', 'chain'],
+      'pendant': ['necklace'], 'bracelet': ['bangle'],
+    }
+
+    const searchTerms = [...(analysis.keywords || []), analysis.metal]
+      .filter(t => t && t !== 'unknown' && t !== 'other').map(t => t.toLowerCase())
+
+    const aType = (analysis.type || '').toLowerCase()
+    const acceptTypes = new Set([aType, ...(typeAliases[aType] || [])])
+
+    // Score products by text match
+    const scored = products.filter(p => p.m).map(p => {
+      const name = p.n.toLowerCase()
+      let score = 0
+      const pType = catTypeMap[p.category] || 'other'
+      if (aType !== 'other' && aType !== 'unknown') {
+        if (acceptTypes.has(pType) || name.includes(aType)) score += 40
+        else return null
+      }
+      for (const term of searchTerms) {
+        if (term.length < 3) continue
+        if (name.includes(term)) score += 5
+      }
+      return { p, score }
+    }).filter(Boolean)
+
+    scored.sort((a, b) => b.score - a.score)
+    // Take top 30 candidates for visual comparison
+    const candidates = scored.slice(0, 30)
+
+    if (candidates.length === 0) {
+      return res.json({ description: analysis.description, matches: [] })
+    }
+
+    // Step 3: Download candidate images and ask Claude to visually rank them
+    const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
+    const https = await import('https')
+    const http = await import('http')
+
+    function fetchImageBase64(url) {
+      return new Promise((resolve) => {
+        const mod = url.startsWith('https') ? https : http
+        mod.get(url, { timeout: 5000 }, (resp) => {
+          if (resp.statusCode !== 200) { resolve(null); return }
+          const chunks = []
+          resp.on('data', c => chunks.push(c))
+          resp.on('end', () => resolve(Buffer.concat(chunks).toString('base64')))
+          resp.on('error', () => resolve(null))
+        }).on('error', () => resolve(null))
+      })
+    }
+
+    // Download candidate images in parallel (small 150px thumbnails)
+    const imgPromises = candidates.map(async ({ p }) => {
+      const url = `${IMAGE_BASE}/${p.m.split('-')[0]}/${p.m}?sw=150&sm=fit&q=60`
+      const b64 = await fetchImageBase64(url)
+      return { p, b64 }
+    })
+    const withImages = (await Promise.all(imgPromises)).filter(x => x.b64)
+
+    // Build Claude message with user photo + candidate images
+    const content = [
+      { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
+      { type: 'text', text: 'This is the customer\'s photo. Compare it visually against these catalog products and rank the best matches:\n' },
+    ]
+
+    for (let i = 0; i < withImages.length; i++) {
+      const { p, b64 } = withImages[i]
+      content.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } })
+      content.push({ type: 'text', text: `[${i}] SKU: ${p.s} — ${p.n}` })
+    }
+
+    content.push({ type: 'text', text: `\nCompare the customer's photo visually against all ${withImages.length} product images above. Consider stone shape, size, count, setting style, metal color, band design, and overall appearance.
+
+Return ONLY valid JSON — the top 10 best visual matches:
+{ "matches": [{ "index": 0, "confidence": 95, "reason": "brief reason" }, ...] }
+Order by visual similarity (best first). confidence 0-100.` })
+
+    const rankResp = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content }],
+    })
+
+    let ranked = { matches: [] }
+    try { ranked = JSON.parse(rankResp.content[0].text) } catch {
+      const m2 = rankResp.content[0].text.match(/\{[\s\S]*\}/)
+      if (m2) try { ranked = JSON.parse(m2[0]) } catch {}
+    }
+
+    const matches = (ranked.matches || []).map(m => {
+      const item = withImages[m.index]
+      if (!item) return null
+      const p = item.p
       return {
-        sku: m.sku,
+        sku: p.s,
         name: p.n,
-        image: p.m ? `https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images/${p.m.split('-')[0]}/${p.m}?sw=600&sm=fit&q=80` : null,
+        image: `${IMAGE_BASE}/${p.m.split('-')[0]}/${p.m}?sw=600&sm=fit&q=80`,
         confidence: m.confidence,
         reason: m.reason,
         category: p.category,
       }
     }).filter(Boolean)
 
-    res.json({ description: parsed.description, matches: enriched })
+    res.json({ description: analysis.description, matches })
   } catch (err) {
     console.error('Find by photo error:', err.message)
     res.status(500).json({ error: err.message })
