@@ -676,9 +676,9 @@ app.post('/api/find-by-photo', async (req, res) => {
   const client = new Anthropic({ apiKey })
 
   try {
-    // Step 1: Describe the jewelry item
+    // Step 1: Describe the jewelry item (fast model)
     const descResp = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{
         role: 'user',
@@ -751,8 +751,8 @@ app.post('/api/find-by-photo', async (req, res) => {
     }).filter(Boolean)
 
     scored.sort((a, b) => b.score - a.score)
-    // Take top 30 candidates for visual comparison
-    const candidates = scored.slice(0, 30)
+    // Take top 15 candidates for visual comparison
+    const candidates = scored.slice(0, 15)
 
     if (candidates.length === 0) {
       return res.json({ description: analysis.description, matches: [] })
@@ -778,7 +778,7 @@ app.post('/api/find-by-photo', async (req, res) => {
 
     // Download candidate images in parallel (small 150px thumbnails)
     const imgPromises = candidates.map(async ({ p }) => {
-      const url = `${IMAGE_BASE}/${p.m.split('-')[0]}/${p.m}?sw=150&sm=fit&q=60`
+      const url = `${IMAGE_BASE}/${p.m.split('-')[0]}/${p.m}?sw=100&sm=fit&q=50`
       const b64 = await fetchImageBase64(url)
       return { p, b64 }
     })

@@ -1,18 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import catalog from '../data/catalog.json'
-
-const CATALOG_CATEGORIES = Object.keys(catalog).sort((a, b) => {
-  return (catalog[b]?.length || 0) - (catalog[a]?.length || 0)
-})
-
-const CATEGORIES = [
-  { id: 'all', label: 'All Categories' },
-  ...CATALOG_CATEGORIES.map(cat => ({
-    id: `catalog:${cat}`,
-    label: `${cat} (${catalog[cat].length})`,
-  })),
-]
 
 function FindByPhotoPage() {
   const navigate = useNavigate()
@@ -22,7 +9,6 @@ function FindByPhotoPage() {
   const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
-  const [category, setCategory] = useState(CATEGORIES[0].id)
   const [error, setError] = useState('')
 
   const processFile = useCallback(async (file) => {
@@ -43,7 +29,7 @@ function FindByPhotoPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             imageBase64: src,
-            category: category,
+            category: 'all',
           }),
         })
 
@@ -63,7 +49,7 @@ function FindByPhotoPage() {
       }
     }
     reader.readAsDataURL(file)
-  }, [category])
+  }, [])
 
   function handleDrop(e) {
     e.preventDefault()
@@ -72,26 +58,11 @@ function FindByPhotoPage() {
     if (file) processFile(file)
   }
 
-  const currentCat = CATEGORIES.find(c => c.id === category)
-
   return (
     <div className="fbp-page">
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/findsku')}>SKU Finder</button>
         <h1>Find by Photo</h1>
-      </div>
-
-      <div className="fbp-category-select">
-        <label className="fbp-cat-label">Category</label>
-        <select
-          className="fbp-cat-dropdown"
-          value={category}
-          onChange={(e) => { setCategory(e.target.value); setResults(null) }}
-        >
-          {CATEGORIES.map(c => (
-            <option key={c.id} value={c.id}>{c.label}</option>
-          ))}
-        </select>
       </div>
 
       <div className="fbp-upload-card">
@@ -121,7 +92,7 @@ function FindByPhotoPage() {
                 </svg>
               </div>
               <span className="fbp-dropzone-text">Drop a photo here or tap to upload</span>
-              <span className="fbp-dropzone-hint">AI-powered matching against {currentCat?.label}</span>
+              <span className="fbp-dropzone-hint">AI-powered visual matching</span>
             </>
           )}
         </div>
