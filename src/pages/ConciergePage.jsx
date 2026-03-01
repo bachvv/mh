@@ -39,13 +39,12 @@ const ALL_ITEMS = (() => {
 
 function NewItemsSection() {
   const [open, setOpen] = useState(false)
-  const [prefix, setPrefix] = useState('212')
 
   const filtered = useMemo(() => {
-    const items = prefix ? ALL_ITEMS.filter(p => p.s && p.s >= prefix) : [...ALL_ITEMS]
+    const items = ALL_ITEMS.filter(p => p.s && !p.s.startsWith('609') && !p.s.startsWith('400'))
     items.sort((a, b) => b.s.localeCompare(a.s))
     return items.slice(0, 50)
-  }, [prefix])
+  }, [])
 
   return (
     <div className="concierge-group">
@@ -56,23 +55,13 @@ function NewItemsSection() {
         <span>{open ? '▾' : '▸'} New Items ({filtered.length})</span>
       </button>
       {open && (
-        <>
-          <div className="new-items-filter">
-            <input
-              type="text"
-              className="new-items-filter-input"
-              value={prefix}
-              onChange={(e) => setPrefix(e.target.value)}
-              placeholder="SKU prefix (e.g. 212)"
-            />
-          </div>
-          <div className="new-items-grid">
+        <div className="new-items-grid">
             {filtered.map((item) => (
               <div key={item.s} className="new-item-card">
                 <div className="new-item-img-wrap">
                   {item.m ? (
                     <img
-                      src={`${IMAGE_BASE}/${item.p}/${item.m}?sw=200&sm=fit&q=70`}
+                      src={`${IMAGE_BASE}/${item.m.split('-')[0]}/${item.m}?sw=200&sm=fit&q=70`}
                       alt={item.n}
                       className="new-item-img"
                       loading="lazy"
@@ -89,7 +78,6 @@ function NewItemsSection() {
               </div>
             ))}
           </div>
-        </>
       )}
     </div>
   )

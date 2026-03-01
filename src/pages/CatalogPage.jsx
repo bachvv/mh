@@ -5,7 +5,8 @@ import catalog from '../data/catalog.json'
 const IMAGE_BASE = 'https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images'
 
 function getImageUrl(pSku, filename, width = 600) {
-  return `${IMAGE_BASE}/${pSku}/${filename}?sw=${width}&sm=fit&q=80`
+  const path = filename ? filename.split('-')[0] : pSku
+  return `${IMAGE_BASE}/${path}/${filename}?sw=${width}&sm=fit&q=80`
 }
 
 function CatalogPage({ title, categories, backLabel = 'SKU Finder', backPath = '/findsku' }) {

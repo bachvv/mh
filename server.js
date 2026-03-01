@@ -764,7 +764,7 @@ Rules:
       return {
         sku: m.sku,
         name: p.n,
-        image: p.m ? `https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images/${p.p}/${p.m}?sw=600&sm=fit&q=80` : null,
+        image: p.m ? `https://prod-sfcc-api.michaelhill.com/dw/image/v2/AANC_PRD/on/demandware.static/-/Sites-MHJ_Master/default/images/${p.m.split('-')[0]}/${p.m}?sw=600&sm=fit&q=80` : null,
         confidence: m.confidence,
         reason: m.reason,
         category: p.category,
