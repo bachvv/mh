@@ -26,6 +26,8 @@ import PendantBarFinderPage from './pages/PendantBarFinderPage'
 import CatalogProcessPage from './pages/CatalogProcessPage'
 import MigrateSkusPage from './pages/MigrateSkusPage'
 import ManagersReportPage from './pages/ManagersReportPage'
+import BookingPage from './pages/BookingPage'
+import BookingAdminPage from './pages/BookingAdminPage'
 import './App.css'
 
 function App() {
@@ -58,6 +60,9 @@ function App() {
       <Route path="/catalog-process" element={<CatalogProcessPage />} />
       <Route path="/admin/migrate-skus" element={<MigrateSkusPage />} />
       <Route path="/managers-report" element={<ManagersReportPage />} />
+      <Route path="/booking" element={<BookingPage />} />
+      <Route path="/booking/admin" element={<BookingAdminPage />} />
+      <Route path="/booking/:slug" element={<BookingPage />} />
     </Routes>
   )
 }

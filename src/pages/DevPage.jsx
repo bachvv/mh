@@ -12,6 +12,8 @@ function DevPage() {
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
     ...(isAdmin ? [{ label: "Manager's Report", path: '/managers-report' }] : []),
+    { label: 'Booking', path: '/booking' },
+    ...(isAdmin ? [{ label: 'Booking Admin', path: '/booking/admin' }] : []),
   ]
 
   return (
