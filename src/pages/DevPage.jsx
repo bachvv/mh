@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 function DevPage() {
   const navigate = useNavigate()
+  const { isAdmin } = useAuth()
 
   const links = [
     { label: 'SKU Finder', path: '/findsku' },
@@ -9,6 +11,7 @@ function DevPage() {
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
+    ...(isAdmin ? [{ label: "Manager's Report", path: '/managers-report' }] : []),
   ]
 
   return (

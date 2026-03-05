@@ -2,234 +2,388 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
-/* ── CSV helpers ────────────────────────────────────── */
+/* -- KPI row definitions matching the template -- */
 
-function parseCSV(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim())
-  if (lines.length === 0) return { headers: [], rows: [] }
-  const delim = lines[0].includes('\t') ? '\t' : ','
-  const headers = splitRow(lines[0], delim)
-  const rows = lines.slice(1).map(l => {
-    const vals = splitRow(l, delim)
-    const row = {}
-    headers.forEach((h, i) => { row[h] = vals[i] || '' })
-    return row
-  })
-  return { headers, rows }
-}
+const KPI_ROWS = [
+  { key: 'sales', label: '1. Sales result for the store vs budget vs LY (Gold, Black, Red), $', format: 'sales' },
+  { key: 'goldstar_pct', label: '2. Goldstar Percentage in store', format: 'num1' },
+  { key: 'gp_pct', label: '3. GP% % vs %LY', format: 'num2' },
+  { key: 'avg_sale', label: '4. Avg Sale vs LY vs LW', format: 'int' },
+  { key: 'ips', label: '5. IPS vs LY vs LW', format: 'num2' },
+  { key: 'tph', label: '6. TPH vs LY vs LW', format: 'num2' },
+  { key: 'sph', label: '7. SPH vs LY vs LW', format: 'int' },
+  { key: 'pcp_pct', label: '8. PCP vs LY, %', format: 'int' },
+  { key: 'credit_sales', label: '9. Credit Sales vs LY', format: 'int' },
+  { key: 'credit_avg_sale', label: '10. Credit Average Sale vs LY', format: 'int' },
+  { key: 'brilliance', label: '11. Brilliance - WTD Loyalty Sign Ups, WTD Loyalty Sales', format: 'brilliance' },
+  { key: 'above_mins_pct', label: '12. Above Mins % - LW', format: 'int' },
+  { key: 'below_mins_pct', label: '13. Below Mins % - LW', format: 'int' },
+]
 
-function splitRow(line, delim) {
-  const vals = []
-  let cur = '', inQ = false
-  for (const ch of line) {
-    if (ch === '"') { inQ = !inQ; continue }
-    if (ch === delim && !inQ) { vals.push(cur.trim()); cur = ''; continue }
-    cur += ch
+function formatVal(kpis, key, format) {
+  if (!kpis) return ''
+  if (format === 'sales') {
+    const actual = kpis.sales_actual
+    const budget = kpis.sales_budget
+    const star = kpis.sales_star || ''
+    if (actual == null && budget == null) return ''
+    const parts = []
+    if (actual != null) parts.push(Math.round(actual).toLocaleString())
+    if (budget != null) parts.push(Math.round(budget).toLocaleString())
+    let val = parts.join('/')
+    if (star) val += '\n' + star
+    return val
   }
-  vals.push(cur.trim())
-  return vals
+  if (format === 'brilliance') {
+    const s = kpis.brilliance_signups
+    const l = kpis.brilliance_sales
+    if (s == null && l == null) return ''
+    return `${s ?? '-'}/${l ?? '-'}`
+  }
+  const val = kpis[key]
+  if (val == null) return ''
+  if (format === 'int') return Math.round(val).toLocaleString()
+  if (format === 'num1') return val.toFixed(1)
+  if (format === 'num2') return val.toFixed(2)
+  return val
 }
 
-function num(str) {
-  if (!str) return 0
-  const c = str.replace(/[$,%\s]/g, '').replace(/\(([^)]+)\)/, '-$1').replace(/,/g, '')
-  const n = parseFloat(c)
-  return isNaN(n) ? 0 : n
-}
+/* -- Build merged KPIs from source reports -- */
 
-function fmtD(n) { return '$' + Math.round(n).toLocaleString() }
-function fmtP(n) { return n.toFixed(1) + '%' }
-function pctVar(tw, lw) { return lw === 0 ? 0 : ((tw - lw) / Math.abs(lw)) * 100 }
+function buildReportKpis(images) {
+  const done = images.filter(img => img.status === 'done')
+  // Separate TY (2026) and LY (2025) by year
+  const thisYear = new Date().getFullYear()
+  const ty = done.filter(img => img.year >= thisYear)
+  const ly = done.filter(img => img.year < thisYear)
 
-/* ── Column auto-detection ─────────────────────────── */
-
-const COL_PATTERNS = {
-  category: ['category', 'department', 'dept', 'class', 'group', 'merchandise'],
-  revenue: ['revenue', 'rev', 'sales', 'net sales', 'net rev', 'total sales'],
-  units: ['units', 'qty', 'quantity', 'pcs', 'pieces'],
-  gp: ['gp$', 'gp $', 'gross profit', 'gp dollars', 'gp dol', 'margin$', 'margin $'],
-  gpPct: ['gp%', 'gp %', 'margin%', 'margin %', 'gross margin', 'gp pct'],
-  trans: ['trans', 'transactions', 'ticket', 'tickets'],
-}
-
-function detectColumn(headers, type) {
-  const patterns = COL_PATTERNS[type]
-  const lower = headers.map(h => h.toLowerCase().trim())
-  // exact substring match
-  for (let i = 0; i < lower.length; i++) {
-    for (const p of patterns) {
-      if (lower[i] === p || lower[i].includes(p)) return headers[i]
+  function extract(group) {
+    const kpis = {}
+    for (const img of group) {
+      const d = img.kpis || {}
+      if (img.reportType === 'wps') {
+        if (d.nett_sales != null) kpis.sales_actual = d.nett_sales
+        if (d.avg_sale != null) kpis.avg_sale = d.avg_sale
+        if (d.ips != null) kpis.ips = d.ips
+        if (d.tph != null) kpis.tph = d.tph
+        if (d.sph != null) kpis.sph = d.sph
+        if (d.pcp_attach_rate != null) kpis.pcp_pct = d.pcp_attach_rate
+        if (d.credit_sales_count != null) kpis.credit_sales = d.credit_sales_count
+        if (d.credit_sales_avg != null) kpis.credit_avg_sale = d.credit_sales_avg
+        if (d.above_min_sell_pct != null) kpis.above_mins_pct = d.above_min_sell_pct
+        if (d.below_min_sell_pct != null) kpis.below_mins_pct = d.below_min_sell_pct
+      }
+      if (img.reportType === 'min') {
+        if (d.nett_sales != null) kpis.sales_actual = d.nett_sales
+        if (d.gold_star_target != null) kpis.sales_budget = d.gold_star_target
+        if (d.pct_of_target != null) kpis.goldstar_pct = d.pct_of_target
+        // Determine star level
+        if (d.nett_sales != null && d.gold_star_target != null) {
+          if (d.nett_sales >= (d.stretch_platinum_target || Infinity)) kpis.sales_star = 'Platinum Star'
+          else if (d.nett_sales >= d.gold_star_target) kpis.sales_star = 'Gold Star'
+          else if (d.nett_sales >= (d.black_dot_target || 0)) kpis.sales_star = 'Black Dot'
+          else kpis.sales_star = 'Red Dot'
+        }
+      }
+      if (img.reportType === 'onyx') {
+        if (d.net_sales != null) kpis.sales_actual = d.net_sales
+        if (d.gs_gp_pct != null) kpis.gp_pct = d.gs_gp_pct
+        if (d.ips != null) kpis.ips = d.ips
+        if (d.pcp_pct != null) kpis.pcp_pct = d.pcp_pct
+      }
     }
+    return Object.keys(kpis).length ? kpis : null
   }
-  // For category, fallback to first non-numeric column
-  if (type === 'category') return headers[0]
-  return null
+
+  return { ty: extract(ty), ly: extract(ly) }
 }
 
-function extractData(parsed) {
-  if (!parsed) return []
-  const { headers, rows } = parsed
-  const catCol = detectColumn(headers, 'category')
-  const revCol = detectColumn(headers, 'revenue')
-  const unitsCol = detectColumn(headers, 'units')
-  const gpCol = detectColumn(headers, 'gp')
-  const gpPctCol = detectColumn(headers, 'gpPct')
-  const transCol = detectColumn(headers, 'trans')
+/* -- Sales Impact Analysis & Coaching -- */
 
-  return rows
-    .filter(r => r[catCol] && r[catCol].trim())
-    .map(r => ({
-      category: r[catCol].trim().toUpperCase(),
-      revenue: revCol ? num(r[revCol]) : 0,
-      units: unitsCol ? num(r[unitsCol]) : 0,
-      gp: gpCol ? num(r[gpCol]) : 0,
-      gpPct: gpPctCol ? num(r[gpPctCol]) : 0,
-      trans: transCol ? num(r[transCol]) : 0,
-    }))
+// Net Sales = TPH × Hours × ASV
+// ASV = IPS × Avg Price Per Item
+// So: Net Sales = TPH × Hours × IPS × AvgItemPrice
+
+function buildSalesAnalysis(ty) {
+  if (!ty) return null
+  const { tph, ips, avg_sale, sales_actual, sph } = ty
+  if (tph == null || ips == null || avg_sale == null || sales_actual == null) return null
+
+  // Derive paid hours from SPH or TPH
+  const hours = sph != null && sph > 0 ? sales_actual / sph : (tph > 0 ? sales_actual / (tph * avg_sale) : null)
+  if (!hours || hours <= 0) return null
+
+  const transactions = tph * hours
+  const avgItemPrice = ips > 0 ? avg_sale / ips : 0
+
+  // Calculate impact of +10% improvement in each lever
+  const improvements = [
+    {
+      key: 'tph',
+      label: 'TPH (Transactions Per Hour)',
+      current: tph,
+      improved: +(tph * 1.1).toFixed(2),
+      format: (v) => v.toFixed(2),
+      newSales: Math.round((tph * 1.1) * hours * avg_sale),
+      extraSales: Math.round((tph * 1.1) * hours * avg_sale - sales_actual),
+      focus: 'How to CONVERT MORE',
+      suggestions: [
+        'Opening — genuine greeting within 30 seconds, non-business opening line to build rapport',
+        'Probing — ask at least 4 of the 6 Essential Probing Questions (Who, What, When, Where, Why, How much)',
+        'Use clear, confident closing lines — don\'t wait for the customer to volunteer to buy',
+        'Control the sale — SP should be leading the interaction, not following the customer',
+        'Rotation system — approach new clients regularly, don\'t cluster at the counter',
+        'Reduce operations focus — less tidying/admin during peak, more actively engaging on the floor',
+      ],
+    },
+    {
+      key: 'ips',
+      label: 'IPS (Items Per Sale)',
+      current: ips,
+      improved: +(ips * 1.1).toFixed(2),
+      format: (v) => v.toFixed(2),
+      // More items per sale → higher ASV (same avg item price)
+      newSales: Math.round(transactions * (ips * 1.1) * avgItemPrice),
+      extraSales: Math.round(transactions * (ips * 1.1) * avgItemPrice - sales_actual),
+      focus: 'How to ADD ON',
+      suggestions: [
+        'Advanced/emotional probing — let the customer share their full story, not just the immediate need',
+        'WORM method for add-ons — Wardrobe, Occasions, Reward & Matching',
+        'Suggest complementary items naturally: "This pairs beautifully with..."',
+        'Use the 3-piece outfit rule — always show a matching piece (earrings with pendant, band with ring)',
+        'Before wrapping up: "Is there anything else on your wish list today?"',
+      ],
+    },
+    {
+      key: 'asv',
+      label: 'ASV (Average Sale Value)',
+      current: avg_sale,
+      improved: Math.round(avg_sale * 1.1),
+      format: (v) => '$' + Math.round(v).toLocaleString(),
+      newSales: Math.round(transactions * avg_sale * 1.1),
+      extraSales: Math.round(transactions * avg_sale * 1.1 - sales_actual),
+      focus: 'How to UPSELL',
+      suggestions: [
+        'Demonstrate higher priced items first — lead with value, not price; show F&Bs before revealing cost',
+        'Introduce payment plans early (Flexiti, MHC), then recap when price objections arise',
+        'Build emotional value — "This is a piece you\'ll have forever"',
+        'Use the "step up" technique — show the item they asked for, then one level up: "Have you also considered..."',
+        'F&Bs matched back to probing answers, not generic product facts',
+      ],
+    },
+  ]
+
+  // Sort by biggest dollar impact
+  improvements.sort((a, b) => b.extraSales - a.extraSales)
+
+  return { sales_actual, hours: Math.round(hours), transactions: Math.round(transactions), avgItemPrice: Math.round(avgItemPrice), improvements }
 }
 
-/* ── Trade report categories (Michael Hill standard) ── */
-
-const MH_CATEGORIES = [
-  'DIAMONDS', 'COLOURED GEMSTONE', 'WATCHES', 'GOLD',
-  'SILVER', 'PEARL', 'BRANDED', 'OTHER',
-]
-
-/* ── Component ─────────────────────────────────────── */
-
-const REPORT_LABELS = ['This Week Report', 'Last Week Report', 'Budget Report']
-const REPORT_DESCS = [
-  'Current week sales by department',
-  'Previous week sales by department',
-  'Budget targets by department',
-]
+/* -- Component -- */
 
 function ManagersReportPage() {
   const navigate = useNavigate()
   const { isAdmin } = useAuth()
-  const [files, setFiles] = useState([null, null, null])
-  const [parsed, setParsed] = useState([null, null, null])
+  const [images, setImages] = useState([])
   const [report, setReport] = useState(null)
   const [storeName, setStoreName] = useState('METROTOWN')
-  const [weekEnding, setWeekEnding] = useState(() => {
-    const d = new Date()
-    return d.toISOString().slice(0, 10)
-  })
+  const [weekEnding, setWeekEnding] = useState(() => new Date().toISOString().slice(0, 10))
   const [copied, setCopied] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const [savedImages, setSavedImages] = useState([])
+  const [showSaved, setShowSaved] = useState(false)
+  const [saveNotice, setSaveNotice] = useState(null)
   const reportRef = useRef(null)
+  const fileInputRef = useRef(null)
+  const templateInputRef = useRef(null)
+  const [templateUploaded, setTemplateUploaded] = useState(false)
 
   useEffect(() => {
     if (!isAdmin) navigate('/', { replace: true })
   }, [isAdmin, navigate])
 
+  useEffect(() => {
+    loadSavedImages()
+  }, [])
+
+  async function loadSavedImages() {
+    try {
+      const resp = await fetch('/api/saved-report-images')
+      const data = await resp.json()
+      setSavedImages(data) // [{fileName, cached, type?, year?, kpis?}, ...]
+    } catch {}
+  }
+
+  async function deleteSavedImage(fileName) {
+    await fetch(`/api/saved-report-images/${encodeURIComponent(fileName)}`, { method: 'DELETE' })
+    loadSavedImages()
+  }
+
   if (!isAdmin) return null
 
-  function handleFile(index, file) {
-    if (!file) return
+  async function uploadTemplate(file) {
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const text = e.target.result
-      const p = parseCSV(text)
-      const newParsed = [...parsed]
-      newParsed[index] = p
-      setParsed(newParsed)
-      const newFiles = [...files]
-      newFiles[index] = file.name
-      setFiles(newFiles)
-      setReport(null)
+    reader.onload = async () => {
+      await fetch('/api/upload-template', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: reader.result, fileName: file.name }),
+      })
+      setTemplateUploaded(true)
+      setTimeout(() => setTemplateUploaded(false), 3000)
     }
-    reader.readAsText(file)
+    reader.readAsDataURL(file)
+  }
+
+  async function resizeImage(file, maxDim = 2000) {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(file)
+      const img = new Image()
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        let { width, height } = img
+        if (width <= maxDim && height <= maxDim) {
+          const c = document.createElement('canvas')
+          c.width = width; c.height = height
+          c.getContext('2d').drawImage(img, 0, 0)
+          resolve(c.toDataURL('image/png'))
+          return
+        }
+        const ratio = Math.min(maxDim / width, maxDim / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+        const c = document.createElement('canvas')
+        c.width = width; c.height = height
+        c.getContext('2d').drawImage(img, 0, 0, width, height)
+        resolve(c.toDataURL('image/png'))
+      }
+      img.src = url
+    })
+  }
+
+  async function saveImageToServer(base64, fileName) {
+    try {
+      const resp = await fetch('/api/save-report-image', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, fileName }),
+      })
+      const data = await resp.json()
+      if (data.ok) {
+        setSaveNotice(`Saved: ${fileName}`)
+        setTimeout(() => setSaveNotice(null), 3000)
+        loadSavedImages()
+        return data.fileName // return server filename for caching
+      }
+    } catch (err) {
+      console.error('Save image failed:', err)
+    }
+    return null
+  }
+
+  async function processImage(file, id) {
+    setImages(prev => prev.map(img => img.id === id ? { ...img, status: 'processing' } : img))
+    try {
+      const base64 = await resizeImage(file)
+      const saveResult = await saveImageToServer(base64, file.name)
+
+      const resp = await fetch('/api/ocr-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 }),
+      })
+      const data = await resp.json()
+      if (data.error) throw new Error(data.error)
+      setImages(prev => prev.map(img => img.id === id ? {
+        ...img, status: 'done', year: data.year,
+        dateRange: data.dateRange, reportType: data.type,
+        kpis: data.kpis,
+      } : img))
+    } catch (err) {
+      console.error('OCR failed:', err)
+      setImages(prev => prev.map(img => img.id === id ? { ...img, status: 'error', error: err.message } : img))
+    }
+  }
+
+  async function processSavedImage(savedItem) {
+    const fileName = typeof savedItem === 'string' ? savedItem : savedItem.fileName
+    const id = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const displayName = fileName.replace(/^\d+_/, '')
+    setImages(prev => [...prev, { id, fileName: displayName, status: 'processing' }])
+    try {
+      const ocrResp = await fetch('/api/ocr-saved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName }),
+      })
+      const data = await ocrResp.json()
+      if (data.error) throw new Error(data.error)
+      setImages(prev => prev.map(img => img.id === id ? {
+        ...img, status: 'done', year: data.year,
+        dateRange: data.dateRange, reportType: data.type,
+        kpis: data.kpis,
+      } : img))
+    } catch (err) {
+      console.error('processSavedImage failed:', fileName, err)
+      setImages(prev => prev.map(img => img.id === id ? { ...img, status: 'error', error: err.message } : img))
+    }
+  }
+
+  async function processAllSaved() {
+    setReport(null)
+    for (const item of savedImages) {
+      await processSavedImage(item)
+    }
+  }
+
+  function handleFiles(fileList) {
+    const newFiles = Array.from(fileList).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name))
+    if (!newFiles.length) return
+    setReport(null)
+    const newImages = newFiles.map(f => ({
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      fileName: f.name, status: 'pending',
+    }))
+    setImages(prev => [...prev, ...newImages])
+    newFiles.forEach((f, i) => processImage(f, newImages[i].id))
+  }
+
+  function removeImage(id) {
+    setImages(prev => prev.filter(img => img.id !== id))
+    setReport(null)
+  }
+
+  function clearAll() {
+    setImages([])
+    setReport(null)
   }
 
   function generateReport() {
-    const twData = extractData(parsed[0])
-    const lwData = extractData(parsed[1])
-    const budData = extractData(parsed[2])
-
-    // Build a merged set of all categories found
-    const catSet = new Set()
-    ;[twData, lwData, budData].forEach(arr => arr.forEach(r => catSet.add(r.category)))
-
-    // Order: known MH categories first, then any extras
-    const orderedCats = []
-    for (const c of MH_CATEGORIES) {
-      if (catSet.has(c)) { orderedCats.push(c); catSet.delete(c) }
-    }
-    for (const c of catSet) orderedCats.push(c)
-
-    const lookup = (data, cat) => data.find(r => r.category === cat) || { revenue: 0, units: 0, gp: 0, gpPct: 0, trans: 0 }
-
-    const rows = orderedCats.map(cat => {
-      const tw = lookup(twData, cat)
-      const lw = lookup(lwData, cat)
-      const bud = lookup(budData, cat)
-      const atvTW = tw.trans > 0 ? tw.revenue / tw.trans : (tw.units > 0 ? tw.revenue / tw.units : 0)
-      const atvLW = lw.trans > 0 ? lw.revenue / lw.trans : (lw.units > 0 ? lw.revenue / lw.units : 0)
-      return {
-        category: cat,
-        revTW: tw.revenue,
-        revLW: lw.revenue,
-        revVar: pctVar(tw.revenue, lw.revenue),
-        revBud: bud.revenue,
-        revBudVar: bud.revenue === 0 ? 0 : ((tw.revenue - bud.revenue) / Math.abs(bud.revenue)) * 100,
-        unitsTW: tw.units,
-        unitsLW: lw.units,
-        unitsVar: pctVar(tw.units, lw.units),
-        atvTW,
-        atvLW,
-        gpTW: tw.gp,
-        gpLW: lw.gp,
-        gpPctTW: tw.revenue > 0 ? (tw.gp / tw.revenue) * 100 : tw.gpPct,
-        gpPctLW: lw.revenue > 0 ? (lw.gp / lw.revenue) * 100 : lw.gpPct,
-      }
-    })
-
-    // Totals
-    const totals = {
-      category: 'TOTAL',
-      revTW: rows.reduce((s, r) => s + r.revTW, 0),
-      revLW: rows.reduce((s, r) => s + r.revLW, 0),
-      revBud: rows.reduce((s, r) => s + r.revBud, 0),
-      unitsTW: rows.reduce((s, r) => s + r.unitsTW, 0),
-      unitsLW: rows.reduce((s, r) => s + r.unitsLW, 0),
-      gpTW: rows.reduce((s, r) => s + r.gpTW, 0),
-      gpLW: rows.reduce((s, r) => s + r.gpLW, 0),
-    }
-    totals.revVar = pctVar(totals.revTW, totals.revLW)
-    totals.revBudVar = totals.revBud === 0 ? 0 : ((totals.revTW - totals.revBud) / Math.abs(totals.revBud)) * 100
-    totals.unitsVar = pctVar(totals.unitsTW, totals.unitsLW)
-    totals.atvTW = totals.unitsTW > 0 ? totals.revTW / totals.unitsTW : 0
-    totals.atvLW = totals.unitsLW > 0 ? totals.revLW / totals.unitsLW : 0
-    totals.gpPctTW = totals.revTW > 0 ? (totals.gpTW / totals.revTW) * 100 : 0
-    totals.gpPctLW = totals.revLW > 0 ? (totals.gpLW / totals.revLW) * 100 : 0
-
-    setReport({ rows, totals, storeName, weekEnding })
+    const { ty, ly } = buildReportKpis(images)
+    setReport({ storeName, weekEnding, ty, ly })
   }
 
   function copyToClipboard() {
     if (!report) return
-    const { rows, totals } = report
-    const allRows = [...rows, totals]
     const pad = (s, w) => s.toString().padStart(w)
     const padL = (s, w) => s.toString().padEnd(w)
 
     let txt = `${report.storeName} TRADE REPORT\n`
     txt += `Week Ending: ${new Date(report.weekEnding + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}\n\n`
+    txt += padL('', 55) + pad('This Year/Week', 18) + pad('Last Year/Week', 18) + '\n'
+    txt += '-'.repeat(91) + '\n'
 
-    const hdr = padL('CATEGORY', 20) + pad('REV TW', 12) + pad('REV LW', 12) + pad('VAR%', 8)
-      + pad('BUDGET', 12) + pad('%BUD', 8) + pad('UN TW', 8) + pad('UN LW', 8)
-      + pad('ATV TW', 10) + pad('GP$ TW', 12) + pad('GP% TW', 8)
-    txt += hdr + '\n'
-    txt += '─'.repeat(hdr.length) + '\n'
-
-    for (const r of allRows) {
-      if (r.category === 'TOTAL') txt += '─'.repeat(hdr.length) + '\n'
-      txt += padL(r.category, 20)
-        + pad(fmtD(r.revTW), 12) + pad(fmtD(r.revLW), 12) + pad(fmtP(r.revVar), 8)
-        + pad(fmtD(r.revBud), 12) + pad(fmtP(r.revBudVar), 8)
-        + pad(Math.round(r.unitsTW), 8) + pad(Math.round(r.unitsLW), 8)
-        + pad(fmtD(r.atvTW), 10) + pad(fmtD(r.gpTW), 12) + pad(fmtP(r.gpPctTW), 8)
-        + '\n'
+    for (const row of KPI_ROWS) {
+      const tyVal = formatVal(report.ty, row.key, row.format)
+      const lyVal = formatVal(report.ly, row.key, row.format)
+      const tyLine = tyVal.split('\n')[0] || ''
+      const lyLine = lyVal.split('\n')[0] || ''
+      txt += padL(row.label, 55) + pad(tyLine, 18) + pad(lyLine, 18) + '\n'
+      if (row.format === 'sales') {
+        const tyStar = tyVal.split('\n')[1] || ''
+        const lyStar = lyVal.split('\n')[1] || ''
+        if (tyStar || lyStar) {
+          txt += padL('', 55) + pad(tyStar, 18) + pad(lyStar, 18) + '\n'
+        }
+      }
     }
 
     navigator.clipboard.writeText(txt).then(() => {
@@ -244,14 +398,14 @@ function ManagersReportPage() {
     w.document.write(`<!DOCTYPE html><html><head><title>${storeName} Trade Report</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 1.5rem; }
-        h2 { margin: 0 0 0.25rem; }
+        h2 { margin: 0 0 0.25rem; text-align: center; background: #006666; color: #fff; padding: 12px; }
         p { margin: 0 0 1rem; color: #666; }
-        table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
-        th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: right; }
-        th { background: #222; color: #fff; }
-        td:first-child, th:first-child { text-align: left; }
-        tr:last-child td { font-weight: bold; border-top: 2px solid #222; }
-        .pos { color: #2e7d32; } .neg { color: #c62828; }
+        table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+        th, td { border: 1px solid #ccc; padding: 6px 10px; }
+        th { background: #006666; color: #fff; text-align: center; }
+        td:first-child { text-align: left; }
+        td:not(:first-child) { text-align: center; }
+        .star { font-size: 0.75rem; color: #666; }
         @media print { body { padding: 0; } }
       </style>
     </head><body>${reportRef.current.innerHTML}</body></html>`)
@@ -259,16 +413,102 @@ function ManagersReportPage() {
     w.print()
   }
 
-  const allUploaded = parsed.every(Boolean)
-
-  function varClass(val) { return val > 0 ? 'mr-pos' : val < 0 ? 'mr-neg' : '' }
+  const TYPE_LABELS = { wps: 'WPS', min: 'MIN', onyx: 'Onyx' }
+  const TYPE_COLORS = { wps: '#3b82f6', min: '#f59e0b', onyx: '#ec4899' }
 
   return (
     <div className="managers-report-page">
       <div className="page-header">
         <button className="back-button" onClick={() => navigate('/')}>← Home</button>
         <h1>Managers Report</h1>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+          {savedImages.length > 0 && (
+            <button
+              onClick={() => setShowSaved(!showSaved)}
+              style={{ background: 'none', border: '1px solid #444', color: '#aaa', padding: '6px 14px', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}
+            >
+              Saved Images ({savedImages.length})
+            </button>
+          )}
+          <button
+            onClick={() => templateInputRef.current?.click()}
+            style={{ background: 'none', border: '1px solid #444', color: '#aaa', padding: '6px 14px', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}
+          >
+            {templateUploaded ? '✓ Template Uploaded' : 'Upload Template'}
+          </button>
+          <input
+            ref={templateInputRef}
+            type="file"
+            accept="image/*"
+            onChange={e => { if (e.target.files[0]) uploadTemplate(e.target.files[0]); e.target.value = '' }}
+            style={{ display: 'none' }}
+          />
+        </div>
       </div>
+
+      {/* Save notification */}
+      {saveNotice && (
+        <div style={{
+          position: 'fixed', top: 20, right: 20, zIndex: 1000,
+          background: '#166534', color: '#fff', padding: '10px 20px',
+          borderRadius: 8, fontSize: 14, fontWeight: 600,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}>
+          {saveNotice}
+        </div>
+      )}
+
+      {/* Saved images panel */}
+      {showSaved && savedImages.length > 0 && (
+        <div className="card" style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ margin: 0 }}>Saved Report Images</h3>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={processAllSaved} style={{ background: '#006666', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11, fontWeight: 600 }}>
+                Process All ({savedImages.length})
+              </button>
+              <button onClick={async () => {
+                await fetch('/api/saved-report-images', { method: 'DELETE' })
+                setSavedImages([])
+              }} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11 }}>
+                Clear All Saved
+              </button>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {savedImages.map(item => (
+              <div key={item.fileName} style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px',
+                background: '#1a1a2e', borderRadius: 6, border: '1px solid #333',
+              }}>
+                <div style={{ flex: 1, cursor: 'pointer', minWidth: 0 }} onClick={() => processSavedImage(item)}>
+                  <div style={{ fontSize: 12, color: '#ccc', wordBreak: 'break-all' }}>
+                    {item.fileName.replace(/^\d+_/, '')}
+                  </div>
+                  {item.cached && (
+                    <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>
+                      <span style={{
+                        padding: '1px 5px', borderRadius: 3, marginRight: 4,
+                        background: '#4ade8022', color: '#4ade80', fontWeight: 600,
+                      }}>cached</span>
+                      {item.type && <span style={{
+                        padding: '1px 5px', borderRadius: 3, marginRight: 4,
+                        background: `${TYPE_COLORS[item.type] || '#666'}22`,
+                        color: TYPE_COLORS[item.type] || '#888', fontWeight: 600,
+                      }}>{TYPE_LABELS[item.type] || item.type}</span>}
+                      {item.dateRange && <span>{item.dateRange} </span>}
+                      {item.year && <span>({item.year})</span>}
+                    </div>
+                  )}
+                </div>
+                <button onClick={(e) => { e.stopPropagation(); deleteSavedImage(item.fileName) }} style={{
+                  background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 16, padding: '0 4px', flexShrink: 0,
+                }}>&times;</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Store info */}
       <div className="mr-config card">
@@ -295,54 +535,108 @@ function ManagersReportPage() {
         </div>
       </div>
 
-      {/* File uploads */}
-      <div className="mr-uploads">
-        {REPORT_LABELS.map((label, i) => (
-          <div key={i} className={`mr-upload-card card${parsed[i] ? ' mr-upload-card--done' : ''}`}>
-            <div className="mr-upload-header">
-              <h3>{label}</h3>
-              <p>{REPORT_DESCS[i]}</p>
-            </div>
-            <label className="mr-file-label">
-              <span className="mr-file-btn">{files[i] ? 'Change File' : 'Choose CSV File'}</span>
-              <input
-                type="file"
-                accept=".csv,.tsv,.txt"
-                onChange={e => handleFile(i, e.target.files[0])}
-                className="mr-file-input"
-              />
-            </label>
-            {parsed[i] && (
-              <div className="mr-upload-info">
-                <span className="mr-check">✓</span>
-                <span>{files[i]} — {parsed[i].rows.length} rows, {parsed[i].headers.length} columns</span>
-              </div>
-            )}
-            {parsed[i] && (
-              <details className="mr-preview-details">
-                <summary>Preview columns</summary>
-                <div className="mr-col-list">
-                  {parsed[i].headers.map(h => <span key={h} className="mr-col-tag">{h}</span>)}
-                </div>
-              </details>
-            )}
-          </div>
-        ))}
+      {/* Drop zone */}
+      <div
+        className={`card${dragging ? ' mr-drop-active' : ''}`}
+        style={{
+          marginBottom: 20, padding: 30, textAlign: 'center',
+          border: `2px dashed ${dragging ? '#f59e0b' : '#333'}`,
+          background: dragging ? 'rgba(245,158,11,0.05)' : 'transparent',
+          cursor: 'pointer', transition: 'all 0.2s',
+        }}
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={e => { e.preventDefault(); setDragging(true) }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={e => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files) }}
+      >
+        <div style={{ fontSize: 32, marginBottom: 8 }}>📸</div>
+        <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>
+          Drop report screenshots here or tap to select
+        </div>
+        <div style={{ fontSize: 11, color: '#555' }}>
+          WPS, MIN Planner, or Onyx — this year &amp; last year. Images are auto-saved.
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/png,image/jpeg,image/jpg,image/heic,image/heif,.png,.jpg,.jpeg,.heic,.heif"
+          onChange={e => { handleFiles(e.target.files); e.target.value = '' }}
+          style={{ display: 'none' }}
+        />
       </div>
 
+      {/* Uploaded images list */}
+      {images.length > 0 && (
+        <div className="card" style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ margin: 0 }}>{images.length} Image{images.length !== 1 ? 's' : ''}</h3>
+            <button onClick={clearAll} style={{ background: 'none', border: '1px solid #333', color: '#888', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 11 }}>Clear All</button>
+          </div>
+          {images.map(img => (
+            <div key={img.id} style={{
+              display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
+              background: img.status === 'error' ? 'rgba(239,68,68,0.08)' : 'rgba(255,255,255,0.03)',
+              borderRadius: 8, marginBottom: 6, borderLeft: `3px solid ${
+                img.status === 'processing' ? '#f59e0b' : img.status === 'error' ? '#ef4444' : img.status === 'done' ? '#4ade80' : '#555'
+              }`,
+            }}>
+              <span style={{ fontSize: 14 }}>
+                {img.status === 'processing' ? '⏳' : img.status === 'error' ? '❌' : img.status === 'done' ? '✅' : '⏸️'}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, color: '#ccc', wordBreak: 'break-all' }}>
+                  {img.fileName}
+                </div>
+                {img.status === 'done' && (
+                  <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>
+                    {img.reportType && (
+                      <span style={{
+                        display: 'inline-block', padding: '1px 6px', borderRadius: 4, marginRight: 6,
+                        background: `${TYPE_COLORS[img.reportType] || '#666'}22`,
+                        color: TYPE_COLORS[img.reportType] || '#888',
+                        fontWeight: 600, fontSize: 10,
+                      }}>{TYPE_LABELS[img.reportType] || img.reportType}</span>
+                    )}
+                    {img.dateRange && <span>{img.dateRange} </span>}
+                    {img.year && <span>({img.year})</span>}
+                    {img.kpis && <span> — {Object.keys(img.kpis).length} fields</span>}
+                  </div>
+                )}
+                {img.status === 'error' && (
+                  <div style={{ fontSize: 11, color: '#ef4444', marginTop: 2 }}>{img.error || 'Failed to process'}</div>
+                )}
+              </div>
+              <button onClick={() => removeImage(img.id)} style={{
+                background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 16, padding: '0 4px',
+              }}>&times;</button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Generate */}
-      <div className="mr-actions">
-        <button
-          className="mr-generate-btn"
-          onClick={generateReport}
-          disabled={!allUploaded}
-        >
-          Generate Trade Report
-        </button>
-        {!allUploaded && (
-          <span className="mr-hint">Upload all 3 reports to generate</span>
-        )}
-      </div>
+      {(() => {
+        const doneCount = images.filter(i => i.status === 'done').length
+        const processingCount = images.filter(i => i.status === 'processing').length
+        return (
+          <div className="mr-actions">
+            <button
+              className="mr-generate-btn"
+              onClick={generateReport}
+              disabled={doneCount === 0 || processingCount > 0}
+            >
+              {processingCount > 0 ? `Processing ${processingCount} image${processingCount !== 1 ? 's' : ''}...` : 'Generate Managers Report'}
+            </button>
+            {doneCount > 0 && processingCount === 0 && (
+              <span className="mr-hint">{doneCount} report{doneCount !== 1 ? 's' : ''} ready</span>
+            )}
+            {images.length === 0 && (
+              <span className="mr-hint">Upload WPS, MIN, or Onyx screenshots</span>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Report output */}
       {report && (
@@ -355,64 +649,119 @@ function ManagersReportPage() {
           </div>
 
           <div className="mr-report card" ref={reportRef}>
-            <h2>{report.storeName} TRADE REPORT</h2>
-            <p>Week Ending: {new Date(report.weekEnding + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <h2 style={{ textAlign: 'center', background: '#006666', color: '#fff', margin: '-20px -20px 16px', padding: '14px 20px', borderRadius: '8px 8px 0 0' }}>
+              {report.storeName} TRADE REPORT
+            </h2>
+            <p style={{ fontWeight: 700, marginBottom: 16 }}>Results for the week</p>
+            <p style={{ color: '#888', marginBottom: 20 }}>
+              Week Ending: {new Date(report.weekEnding + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
 
             <div className="mr-table-wrap">
               <table className="mr-table">
                 <thead>
                   <tr>
-                    <th>Category</th>
-                    <th>Rev TW</th>
-                    <th>Rev LW</th>
-                    <th>% Var</th>
-                    <th>Budget</th>
-                    <th>% Bud</th>
-                    <th>Units TW</th>
-                    <th>Units LW</th>
-                    <th>% Var</th>
-                    <th>ATV TW</th>
-                    <th>GP$ TW</th>
-                    <th>GP% TW</th>
+                    <th style={{ textAlign: 'left', width: '55%' }}></th>
+                    <th>This Year / Week</th>
+                    <th>Last Year / Week</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {report.rows.map(r => (
-                    <tr key={r.category}>
-                      <td className="mr-cat">{r.category}</td>
-                      <td>{fmtD(r.revTW)}</td>
-                      <td>{fmtD(r.revLW)}</td>
-                      <td className={varClass(r.revVar)}>{fmtP(r.revVar)}</td>
-                      <td>{fmtD(r.revBud)}</td>
-                      <td className={varClass(r.revBudVar)}>{fmtP(r.revBudVar)}</td>
-                      <td>{Math.round(r.unitsTW)}</td>
-                      <td>{Math.round(r.unitsLW)}</td>
-                      <td className={varClass(r.unitsVar)}>{fmtP(r.unitsVar)}</td>
-                      <td>{fmtD(r.atvTW)}</td>
-                      <td>{fmtD(r.gpTW)}</td>
-                      <td>{fmtP(r.gpPctTW)}</td>
-                    </tr>
-                  ))}
+                  {KPI_ROWS.map(row => {
+                    const tyVal = formatVal(report.ty, row.key, row.format)
+                    const lyVal = formatVal(report.ly, row.key, row.format)
+                    const tyLines = tyVal.split('\n')
+                    const lyLines = lyVal.split('\n')
+                    return (
+                      <tr key={row.key}>
+                        <td style={{ textAlign: 'left', fontSize: 13 }}>{row.label}</td>
+                        <td style={{ textAlign: 'center' }}>
+                          <div>{tyLines[0]}</div>
+                          {tyLines[1] && <div style={{ fontSize: 11, color: '#888' }}>{tyLines[1]}</div>}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          <div>{lyLines[0]}</div>
+                          {lyLines[1] && <div style={{ fontSize: 11, color: '#888' }}>{lyLines[1]}</div>}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <td className="mr-cat"><strong>TOTAL</strong></td>
-                    <td><strong>{fmtD(report.totals.revTW)}</strong></td>
-                    <td><strong>{fmtD(report.totals.revLW)}</strong></td>
-                    <td className={varClass(report.totals.revVar)}><strong>{fmtP(report.totals.revVar)}</strong></td>
-                    <td><strong>{fmtD(report.totals.revBud)}</strong></td>
-                    <td className={varClass(report.totals.revBudVar)}><strong>{fmtP(report.totals.revBudVar)}</strong></td>
-                    <td><strong>{Math.round(report.totals.unitsTW)}</strong></td>
-                    <td><strong>{Math.round(report.totals.unitsLW)}</strong></td>
-                    <td className={varClass(report.totals.unitsVar)}><strong>{fmtP(report.totals.unitsVar)}</strong></td>
-                    <td><strong>{fmtD(report.totals.atvTW)}</strong></td>
-                    <td><strong>{fmtD(report.totals.gpTW)}</strong></td>
-                    <td><strong>{fmtP(report.totals.gpPctTW)}</strong></td>
-                  </tr>
-                </tfoot>
               </table>
             </div>
           </div>
+
+          {/* Sales Impact Analysis & Coaching */}
+          {(() => {
+            const analysis = buildSalesAnalysis(report.ty)
+            if (!analysis) return null
+            const best = analysis.improvements[0]
+            return (
+              <div className="card" style={{ marginTop: 20 }}>
+                <h3 style={{ marginBottom: 6 }}>Sales Lever Analysis</h3>
+                <p style={{ fontSize: 13, color: '#888', marginBottom: 12 }}>
+                  Current weekly sales: <strong style={{ color: '#ccc' }}>${analysis.sales_actual.toLocaleString()}</strong> from {analysis.transactions} transactions over {analysis.hours} paid hours
+                </p>
+                <p style={{ fontSize: 13, color: '#888', marginBottom: 16 }}>
+                  If each SP improves by 10%, which lever drives the most sales?
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+                  {analysis.improvements.map((imp, i) => {
+                    const isBest = i === 0
+                    return (
+                      <div key={imp.key} style={{
+                        padding: '12px 16px', borderRadius: 8,
+                        background: isBest ? 'rgba(74,222,128,0.08)' : '#1a1a2e',
+                        border: isBest ? '1px solid rgba(74,222,128,0.3)' : '1px solid #333',
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                          <div style={{ fontWeight: 700, fontSize: 14, color: isBest ? '#4ade80' : '#ccc' }}>
+                            {isBest && '★ '}{imp.label}
+                          </div>
+                          <div style={{ fontWeight: 700, fontSize: 16, color: isBest ? '#4ade80' : '#f59e0b' }}>
+                            +${imp.extraSales.toLocaleString()}/wk
+                          </div>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#888' }}>
+                          {imp.format(imp.current)} → {imp.format(imp.improved)} = ${imp.newSales.toLocaleString()}/wk
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div style={{ padding: 14, background: '#1a1a2e', borderRadius: 8, borderLeft: '3px solid #4ade80' }}>
+                  <div style={{ fontWeight: 700, marginBottom: 2, color: '#4ade80', fontSize: 14 }}>
+                    Top Priority: {best.label} — {best.focus}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+                    +10% {best.label.split(' (')[0]} = +${best.extraSales.toLocaleString()} weekly sales — biggest lever for SPs right now
+                  </div>
+                  <p style={{ fontSize: 12, color: '#999', margin: '0 0 8px', fontStyle: 'italic' }}>
+                    MH Observation behaviours to focus on:
+                  </p>
+                  <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#ccc', lineHeight: 1.7 }}>
+                    {best.suggestions.map((tip, j) => <li key={j}>{tip}</li>)}
+                  </ul>
+                </div>
+
+                {analysis.improvements.length > 1 && analysis.improvements.slice(1).map((imp, i) => (
+                  <div key={imp.key} style={{ padding: 14, background: '#1a1a2e', borderRadius: 8, borderLeft: '3px solid #f59e0b', marginTop: 12 }}>
+                    <div style={{ fontWeight: 700, marginBottom: 2, color: '#f59e0b', fontSize: 14 }}>
+                      Also Focus: {imp.label} — {imp.focus}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+                      +10% = +${imp.extraSales.toLocaleString()} weekly sales
+                    </div>
+                    <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#ccc', lineHeight: 1.7 }}>
+                      {imp.suggestions.map((tip, j) => <li key={j}>{tip}</li>)}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>

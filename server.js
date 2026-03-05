@@ -835,6 +835,284 @@ Order by visual similarity (best first). confidence 0-100.` })
   }
 })
 
+// Manager report URLs settings
+const REPORT_URLS_FILE = join(__dirname, 'data', 'report_urls.json')
+
+app.get('/api/report-urls', (req, res) => {
+  try {
+    if (existsSync(REPORT_URLS_FILE)) {
+      res.json(JSON.parse(readFileSync(REPORT_URLS_FILE, 'utf8')))
+    } else {
+      res.json({ min: '', wps: '', hillnet: '' })
+    }
+  } catch { res.json({ min: '', wps: '', hillnet: '' }) }
+})
+
+app.post('/api/report-urls', (req, res) => {
+  const { min, wps, hillnet } = req.body
+  const data = { min: min || '', wps: wps || '', hillnet: hillnet || '' }
+  writeFileSync(REPORT_URLS_FILE, JSON.stringify(data, null, 2))
+  res.json({ ok: true })
+})
+
+// Upload report template image for reference
+app.post('/api/upload-template', (req, res) => {
+  const { imageBase64, fileName } = req.body
+  if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' })
+  const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
+  const ext = (fileName || 'template.png').split('.').pop() || 'png'
+  const outPath = join(__dirname, 'data', `report_template.${ext}`)
+  writeFileSync(outPath, Buffer.from(base64Data, 'base64'))
+  res.json({ ok: true, path: outPath })
+})
+
+// Save uploaded report images to disk
+const REPORT_IMAGES_DIR = join(__dirname, 'data', 'report_images')
+if (!existsSync(REPORT_IMAGES_DIR)) mkdirSync(REPORT_IMAGES_DIR, { recursive: true })
+
+app.post('/api/save-report-image', (req, res) => {
+  const { imageBase64, fileName } = req.body
+  if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' })
+  const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
+  const ts = Date.now()
+  const safeName = (fileName || 'report.png').replace(/[^a-zA-Z0-9._-]/g, '_')
+  const outName = `${ts}_${safeName}`
+  const outPath = join(REPORT_IMAGES_DIR, outName)
+  writeFileSync(outPath, Buffer.from(base64Data, 'base64'))
+  res.json({ ok: true, fileName: outName })
+})
+
+// OCR results cache
+const OCR_CACHE_FILE = join(REPORT_IMAGES_DIR, '_ocr_cache.json')
+
+function loadOcrCache() {
+  try { return JSON.parse(readFileSync(OCR_CACHE_FILE, 'utf8')) } catch { return {} }
+}
+
+function saveOcrCache(cache) {
+  writeFileSync(OCR_CACHE_FILE, JSON.stringify(cache, null, 2))
+}
+
+app.get('/api/saved-report-images', (req, res) => {
+  try {
+    if (!existsSync(REPORT_IMAGES_DIR)) return res.json([])
+    const files = readdirSync(REPORT_IMAGES_DIR)
+      .filter(f => /\.(png|jpg|jpeg|heic|heif)$/i.test(f))
+      .sort((a, b) => b.localeCompare(a))
+    const cache = loadOcrCache()
+    const result = files.map(f => ({ fileName: f, cached: !!cache[f], ...(cache[f] || {}) }))
+    res.json(result)
+  } catch { res.json([]) }
+})
+
+app.delete('/api/saved-report-images', (req, res) => {
+  try {
+    if (existsSync(REPORT_IMAGES_DIR)) {
+      const files = readdirSync(REPORT_IMAGES_DIR)
+      for (const f of files) unlinkSync(join(REPORT_IMAGES_DIR, f))
+    }
+    if (existsSync(OCR_CACHE_FILE)) unlinkSync(OCR_CACHE_FILE)
+    res.json({ ok: true })
+  } catch (err) { res.status(500).json({ error: err.message }) }
+})
+
+app.delete('/api/saved-report-images/:fileName', (req, res) => {
+  try {
+    const safeName = req.params.fileName.replace(/[^a-zA-Z0-9._-]/g, '')
+    const filePath = join(REPORT_IMAGES_DIR, safeName)
+    if (existsSync(filePath)) unlinkSync(filePath)
+    const cache = loadOcrCache()
+    delete cache[safeName]
+    saveOcrCache(cache)
+    res.json({ ok: true })
+  } catch (err) { res.status(500).json({ error: err.message }) }
+})
+
+// Serve saved report images
+app.use('/api/report-images', express.static(REPORT_IMAGES_DIR))
+
+// OCR from a saved image filename — returns cached result if available
+app.post('/api/ocr-saved', async (req, res) => {
+  const { fileName } = req.body
+  if (!fileName) return res.status(400).json({ error: 'fileName required' })
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, '')
+  const filePath = join(REPORT_IMAGES_DIR, safeName)
+  if (!existsSync(filePath)) return res.status(404).json({ error: 'Image not found' })
+
+  // Check cache first
+  const cache = loadOcrCache()
+  if (cache[safeName]) return res.json(cache[safeName])
+
+  // Not cached — run OCR
+  const buf = readFileSync(filePath)
+  const ext = safeName.split('.').pop().toLowerCase()
+  const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png'
+  const imageBase64 = `data:${mime};base64,${buf.toString('base64')}`
+  req.body = { imageBase64 }
+
+  // Wrap ocrReport to intercept successful result and cache it
+  const origJson = res.json.bind(res)
+  res.json = (data) => {
+    if (!data.error) {
+      cache[safeName] = data
+      saveOcrCache(cache)
+    }
+    return origJson(data)
+  }
+  return ocrReport(req, res)
+})
+
+// OCR parse report image → extract KPIs matching managers report template
+app.post('/api/ocr-report', (req, res) => ocrReport(req, res))
+
+async function ocrReport(req, res) {
+  const { imageBase64 } = req.body
+  if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' })
+
+  const apiKey = process.env.CATALOG_API_KEY
+  if (!apiKey) return res.status(500).json({ error: 'CATALOG_API_KEY not configured' })
+
+  const client = new Anthropic({ apiKey })
+
+  try {
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '')
+    const mediaMatch = imageBase64.match(/^data:(image\/\w+);base64,/)
+    const mediaType = mediaMatch ? mediaMatch[1] : 'image/png'
+
+    // Include template if available for reference
+    const content = []
+    const templatePath = join(__dirname, 'data', 'report_template.png')
+    if (existsSync(templatePath)) {
+      const templateBase64 = readFileSync(templatePath).toString('base64')
+      content.push({
+        type: 'image',
+        source: { type: 'base64', media_type: 'image/png', data: templateBase64 },
+      })
+      content.push({
+        type: 'text',
+        text: 'Above is the TEMPLATE showing the desired report format. Below is the actual report screenshot to extract data from.',
+      })
+    }
+
+    content.push({
+      type: 'image',
+      source: { type: 'base64', media_type: mediaType, data: base64Data },
+    })
+
+    content.push({
+      type: 'text',
+      text: `You are reading a Michael Hill retail report screenshot.
+
+FIRST: Identify the report type. Valid types are:
+- "wps" = Weekly Performance Summary (has rows like PAID HOURS, TOTAL SALES, # OF TRANSACTIONS, # OF ITEMS, NETT SALES, AVERAGE SALE, ITEMS PER SALE, TRANSACTIONS PER HOUR, SALES PER HOUR, % OFF RETAIL, ABOVE/BELOW MIN SELL, CREDIT SALES, PCP ATTACH RATE per staff member with a Total column)
+- "min" = Weekly Minimums Planner (has columns: Paid Hours, % Store Hours, Black Dot Target, Gold Star Target, Nett Sales, % Of Target, Stretch-Platinum Target)
+- "onyx" = Onyx report (pink/magenta headers, has columns: Net Sales $, Customer Orders $, Qty, Trans, IPS, PCP%, GS GP%)
+
+If this is NONE of those three types, return ONLY:
+{"error": "invalid_report", "detected": "description of what you see"}
+
+If it IS one of those types, extract the STORE TOTAL row data (the Total/summary row, not individual staff).
+
+For WPS reports, extract from the "Total" column:
+{
+  "type": "wps",
+  "year": 2026,
+  "dateRange": "23 Feb - 01 Mar",
+  "kpis": {
+    "paid_hours": 212.8,
+    "total_sales": 65917,
+    "nett_sales": 45068,
+    "num_transactions": 85,
+    "num_items": 107,
+    "avg_sale": 530,
+    "ips": 1.07,
+    "tph": 0.40,
+    "sph": 310,
+    "pct_off_retail": 34,
+    "above_min_sell_pct": 75,
+    "above_min_sell_count": 80,
+    "below_min_sell_pct": 25,
+    "below_min_sell_count": 27,
+    "credit_sales_count": 17,
+    "credit_sales_avg": 2192,
+    "pcp_attach_rate": 19
+  }
+}
+
+For MIN reports, extract the Total row:
+{
+  "type": "min",
+  "year": 2026,
+  "dateRange": "01 Mar 2026",
+  "kpis": {
+    "paid_hours": 213,
+    "black_dot_target": 48959,
+    "gold_star_target": 53216,
+    "nett_sales": 45068,
+    "pct_of_target": 85,
+    "stretch_platinum_target": 63860,
+    "pct_stretch_platinum": 71
+  }
+}
+
+For ONYX reports, extract the store total row (e.g. "Metrotown Centre"):
+{
+  "type": "onyx",
+  "year": 2026,
+  "dateRange": "23 Feb - 01 Mar",
+  "kpis": {
+    "net_sales": 45068,
+    "customer_orders": 9386,
+    "qty": 107,
+    "trans": 85,
+    "ips": 1.07,
+    "pcp_pct": 19.44,
+    "gs_gp_pct": 56.03
+  }
+}
+
+Rules:
+- Extract exact numbers as shown. Remove $ and % signs, commas.
+- Use the dates shown in the report for dateRange and year.
+- Only extract the TOTAL/store summary row, not individual staff rows.
+- Return ONLY the JSON object, no other text.`,
+    })
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      messages: [{ role: 'user', content }],
+    })
+
+    let text = response.content[0].text.trim()
+    // Strip markdown fences and any surrounding text — extract the JSON object
+    text = text.replace(/^```json?\s*/im, '').replace(/\s*```\s*$/im, '')
+    const start = text.indexOf('{')
+    const end = text.lastIndexOf('}')
+    if (start === -1 || end === -1) {
+      return res.status(400).json({ error: 'Could not read this image. Make sure it is a Managers Trade Report screenshot.' })
+    }
+    text = text.slice(start, end + 1)
+
+    let result
+    try { result = JSON.parse(text) } catch (parseErr) {
+      console.error('JSON parse failed. Raw text:', text.slice(0, 300))
+      return res.status(400).json({ error: 'Failed to parse report data. Try a clearer screenshot.' })
+    }
+
+    // Check if Claude detected a wrong report type
+    if (result.error === 'invalid_report') {
+      const detected = result.detected || 'unknown report type'
+      return res.status(400).json({ error: `Not a valid report — detected "${detected}". Please upload WPS, MIN planner, or Onyx screenshots.` })
+    }
+
+    res.json(result)
+  } catch (err) {
+    console.error('OCR report error:', err)
+    res.status(500).json({ error: err.message })
+  }
+}
+
 // In production, serve the built Vite app
 const distDir = join(__dirname, 'dist')
 if (existsSync(distDir)) {
