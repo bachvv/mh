@@ -4,6 +4,7 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Anthropic from '@anthropic-ai/sdk'
 import { config } from 'dotenv'
+import { createTransport } from 'nodemailer'
 
 // Load env
 config({ path: join(dirname(fileURLToPath(import.meta.url)), '.env') })
@@ -831,6 +832,401 @@ Order by visual similarity (best first). confidence 0-100.` })
     res.json({ description: analysis.description, matches })
   } catch (err) {
     console.error('Find by photo error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ── Booking System ──────────────────────────────────────────────
+const BOOKING_DIR = join(__dirname, 'data', 'booking')
+if (!existsSync(BOOKING_DIR)) mkdirSync(BOOKING_DIR, { recursive: true })
+
+const STORES_FILE = join(BOOKING_DIR, 'stores.json')
+const PROFESSIONALS_FILE = join(BOOKING_DIR, 'professionals.json')
+const AVAILABILITY_FILE = join(BOOKING_DIR, 'availability.json')
+const BOOKINGS_FILE = join(BOOKING_DIR, 'bookings.json')
+
+function loadJson(filepath, fallback = []) {
+  try { return JSON.parse(readFileSync(filepath, 'utf8')) }
+  catch { return fallback }
+}
+function saveJson(filepath, data) {
+  writeFileSync(filepath, JSON.stringify(data, null, 2))
+}
+
+// Email transporter (configure via env vars)
+let emailTransporter = null
+if (process.env.SMTP_HOST) {
+  emailTransporter = createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  })
+}
+
+async function sendBookingEmail(to, subject, html) {
+  if (!emailTransporter) {
+    console.log(`[Email stub] To: ${to} | Subject: ${subject}`)
+    return
+  }
+  try {
+    await emailTransporter.sendMail({
+      from: process.env.SMTP_FROM || 'bookings@michaelhill.com',
+      to,
+      subject,
+      html,
+    })
+  } catch (err) {
+    console.error('Email send error:', err.message)
+  }
+}
+
+// ── Stores CRUD ──
+app.get('/api/booking/stores', (req, res) => {
+  res.json(loadJson(STORES_FILE, []))
+})
+
+app.post('/api/booking/stores', (req, res) => {
+  const { name, address } = req.body
+  if (!name) return res.status(400).json({ error: 'name required' })
+  const stores = loadJson(STORES_FILE, [])
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  if (stores.find(s => s.id === id)) return res.status(409).json({ error: 'Store already exists' })
+  stores.push({ id, name, address: address || '' })
+  saveJson(STORES_FILE, stores)
+  res.json({ ok: true, store: stores[stores.length - 1] })
+})
+
+app.delete('/api/booking/stores/:id', (req, res) => {
+  let stores = loadJson(STORES_FILE, [])
+  stores = stores.filter(s => s.id !== req.params.id)
+  saveJson(STORES_FILE, stores)
+  res.json({ ok: true })
+})
+
+// ── Sales Professionals CRUD ──
+app.get('/api/booking/professionals', (req, res) => {
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const { store } = req.query
+  if (store) return res.json(pros.filter(p => p.storeId === store))
+  res.json(pros)
+})
+
+app.get('/api/booking/professionals/:slug', (req, res) => {
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.slug === req.params.slug)
+  if (!pro) return res.status(404).json({ error: 'Not found' })
+  res.json(pro)
+})
+
+app.post('/api/booking/professionals', (req, res) => {
+  const { name, email, storeId, phone } = req.body
+  if (!name || !email || !storeId) return res.status(400).json({ error: 'name, email, storeId required' })
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  if (pros.find(p => p.slug === slug)) return res.status(409).json({ error: 'Professional with this name already exists' })
+  const pro = { id: Date.now().toString(), slug, name, email, storeId, phone: phone || '', googleCalendarConnected: false }
+  pros.push(pro)
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true, professional: pro })
+})
+
+app.put('/api/booking/professionals/:id', (req, res) => {
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const idx = pros.findIndex(p => p.id === req.params.id)
+  if (idx < 0) return res.status(404).json({ error: 'Not found' })
+  const { name, email, storeId, phone } = req.body
+  if (name) {
+    pros[idx].name = name
+    pros[idx].slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  }
+  if (email) pros[idx].email = email
+  if (storeId) pros[idx].storeId = storeId
+  if (phone !== undefined) pros[idx].phone = phone
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true, professional: pros[idx] })
+})
+
+app.delete('/api/booking/professionals/:id', (req, res) => {
+  let pros = loadJson(PROFESSIONALS_FILE, [])
+  pros = pros.filter(p => p.id !== req.params.id)
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true })
+})
+
+// ── Availability ──
+// Availability format: { professionalId, dayOfWeek (0-6), slots: [{start: "09:00", end: "09:30"}], date (optional for specific date overrides) }
+app.get('/api/booking/availability/:professionalId', (req, res) => {
+  const all = loadJson(AVAILABILITY_FILE, [])
+  res.json(all.filter(a => a.professionalId === req.params.professionalId))
+})
+
+app.post('/api/booking/availability', (req, res) => {
+  const { professionalId, dayOfWeek, slots, date } = req.body
+  if (!professionalId || (dayOfWeek === undefined && !date)) return res.status(400).json({ error: 'professionalId and dayOfWeek or date required' })
+  const all = loadJson(AVAILABILITY_FILE, [])
+  // Remove existing for same professional + day/date
+  const filtered = all.filter(a => {
+    if (a.professionalId !== professionalId) return true
+    if (date) return a.date !== date
+    return a.dayOfWeek !== dayOfWeek
+  })
+  filtered.push({ professionalId, dayOfWeek: dayOfWeek ?? null, date: date || null, slots: slots || [] })
+  saveJson(AVAILABILITY_FILE, filtered)
+  res.json({ ok: true })
+})
+
+app.delete('/api/booking/availability', (req, res) => {
+  const { professionalId, dayOfWeek, date } = req.body
+  if (!professionalId) return res.status(400).json({ error: 'professionalId required' })
+  let all = loadJson(AVAILABILITY_FILE, [])
+  all = all.filter(a => {
+    if (a.professionalId !== professionalId) return true
+    if (date) return a.date !== date
+    if (dayOfWeek !== undefined) return a.dayOfWeek !== dayOfWeek
+    return false
+  })
+  saveJson(AVAILABILITY_FILE, all)
+  res.json({ ok: true })
+})
+
+// Get available slots for a professional on a specific date
+app.get('/api/booking/slots/:professionalId/:date', (req, res) => {
+  const { professionalId, date } = req.params
+  const all = loadJson(AVAILABILITY_FILE, [])
+  const bookings = loadJson(BOOKINGS_FILE, [])
+
+  // Check for date-specific override first, then fall back to day of week
+  const d = new Date(date + 'T00:00:00')
+  const dow = d.getDay()
+
+  let avail = all.find(a => a.professionalId === professionalId && a.date === date)
+  if (!avail) avail = all.find(a => a.professionalId === professionalId && a.dayOfWeek === dow && !a.date)
+
+  if (!avail || !avail.slots?.length) return res.json({ slots: [] })
+
+  // Filter out already booked slots
+  const bookedSlots = bookings
+    .filter(b => b.professionalId === professionalId && b.date === date && b.status !== 'declined')
+    .map(b => b.time)
+
+  const available = avail.slots.filter(s => !bookedSlots.includes(s.start))
+  res.json({ slots: available })
+})
+
+// ── Bookings CRUD ──
+app.get('/api/booking/bookings', (req, res) => {
+  const bookings = loadJson(BOOKINGS_FILE, [])
+  const { professionalId, status } = req.query
+  let filtered = bookings
+  if (professionalId) filtered = filtered.filter(b => b.professionalId === professionalId)
+  if (status) filtered = filtered.filter(b => b.status === status)
+  res.json(filtered)
+})
+
+app.post('/api/booking/bookings', async (req, res) => {
+  const { storeId, professionalId, date, time, firstName, lastName, email, phone } = req.body
+  if (!firstName) return res.status(400).json({ error: 'First name is required' })
+  if (!email && !phone) return res.status(400).json({ error: 'Email or phone number is required' })
+  if (!storeId || !professionalId || !date || !time) return res.status(400).json({ error: 'Store, professional, date, and time are required' })
+
+  const bookings = loadJson(BOOKINGS_FILE, [])
+
+  // Check slot is still available
+  const conflict = bookings.find(b =>
+    b.professionalId === professionalId && b.date === date && b.time === time && b.status !== 'declined'
+  )
+  if (conflict) return res.status(409).json({ error: 'This time slot is no longer available' })
+
+  const booking = {
+    id: Date.now().toString(),
+    storeId,
+    professionalId,
+    date,
+    time,
+    firstName,
+    lastName: lastName || '',
+    email: email || '',
+    phone: phone || '',
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  }
+  bookings.push(booking)
+  saveJson(BOOKINGS_FILE, bookings)
+
+  // Notify professional via email
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === professionalId)
+  const stores = loadJson(STORES_FILE, [])
+  const store = stores.find(s => s.id === storeId)
+  if (pro?.email) {
+    await sendBookingEmail(
+      pro.email,
+      `New Booking Request - ${firstName} ${lastName || ''}`,
+      `<h2>New Booking Request</h2>
+      <p><strong>Customer:</strong> ${firstName} ${lastName || ''}</p>
+      <p><strong>Email:</strong> ${email || 'N/A'}</p>
+      <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
+      <p><strong>Store:</strong> ${store?.name || storeId}</p>
+      <p><strong>Date:</strong> ${date}</p>
+      <p><strong>Time:</strong> ${time}</p>
+      <p>Please log in to accept or decline this booking.</p>`
+    )
+  }
+
+  res.json({ ok: true, booking })
+})
+
+// Update booking status (accept/decline/reschedule)
+app.put('/api/booking/bookings/:id', async (req, res) => {
+  const bookings = loadJson(BOOKINGS_FILE, [])
+  const idx = bookings.findIndex(b => b.id === req.params.id)
+  if (idx < 0) return res.status(404).json({ error: 'Booking not found' })
+
+  const { status, newDate, newTime, note } = req.body
+  const booking = bookings[idx]
+  const oldDate = booking.date
+  const oldTime = booking.time
+
+  if (status) booking.status = status
+  if (newDate) booking.date = newDate
+  if (newTime) booking.time = newTime
+  if (note) booking.note = note
+  booking.updatedAt = new Date().toISOString()
+
+  bookings[idx] = booking
+  saveJson(BOOKINGS_FILE, bookings)
+
+  // Notify customer
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === booking.professionalId)
+  const stores = loadJson(STORES_FILE, [])
+  const store = stores.find(s => s.id === booking.storeId)
+
+  if (booking.email) {
+    let subject, body
+    if (status === 'accepted') {
+      subject = `Booking Confirmed - ${store?.name || 'Michael Hill'}`
+      body = `<h2>Your Booking is Confirmed!</h2>
+        <p>Your appointment with <strong>${pro?.name || 'our team'}</strong> has been confirmed.</p>
+        <p><strong>Store:</strong> ${store?.name || ''}</p>
+        <p><strong>Date:</strong> ${booking.date}</p>
+        <p><strong>Time:</strong> ${booking.time}</p>
+        <p>We look forward to seeing you!</p>`
+    } else if (status === 'declined') {
+      subject = `Booking Update - ${store?.name || 'Michael Hill'}`
+      body = `<h2>Booking Update</h2>
+        <p>Unfortunately, your booking with <strong>${pro?.name || 'our team'}</strong> on ${oldDate} at ${oldTime} could not be confirmed.</p>
+        ${note ? `<p><strong>Note:</strong> ${note}</p>` : ''}
+        <p>Please visit our booking page to schedule a new appointment.</p>`
+    } else if (newDate || newTime) {
+      subject = `Booking Rescheduled - ${store?.name || 'Michael Hill'}`
+      body = `<h2>Your Booking Has Been Rescheduled</h2>
+        <p>Your appointment with <strong>${pro?.name || 'our team'}</strong> has been updated.</p>
+        <p><strong>New Date:</strong> ${booking.date}</p>
+        <p><strong>New Time:</strong> ${booking.time}</p>
+        <p><strong>Store:</strong> ${store?.name || ''}</p>
+        ${note ? `<p><strong>Note:</strong> ${note}</p>` : ''}
+        <p>We look forward to seeing you!</p>`
+    }
+    if (subject) await sendBookingEmail(booking.email, subject, body)
+  }
+
+  res.json({ ok: true, booking })
+})
+
+app.delete('/api/booking/bookings/:id', (req, res) => {
+  let bookings = loadJson(BOOKINGS_FILE, [])
+  bookings = bookings.filter(b => b.id !== req.params.id)
+  saveJson(BOOKINGS_FILE, bookings)
+  res.json({ ok: true })
+})
+
+// ── Google Calendar Sync ──
+// Store Google Calendar tokens for professionals
+app.post('/api/booking/google-calendar/connect', (req, res) => {
+  const { professionalId, accessToken, refreshToken } = req.body
+  if (!professionalId) return res.status(400).json({ error: 'professionalId required' })
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const idx = pros.findIndex(p => p.id === professionalId)
+  if (idx < 0) return res.status(404).json({ error: 'Professional not found' })
+  pros[idx].googleCalendarConnected = true
+  pros[idx].googleCalendarTokens = { accessToken, refreshToken }
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true })
+})
+
+app.post('/api/booking/google-calendar/disconnect', (req, res) => {
+  const { professionalId } = req.body
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const idx = pros.findIndex(p => p.id === professionalId)
+  if (idx < 0) return res.status(404).json({ error: 'Professional not found' })
+  pros[idx].googleCalendarConnected = false
+  delete pros[idx].googleCalendarTokens
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true })
+})
+
+// Sync a booking to Google Calendar (creates event)
+app.post('/api/booking/google-calendar/sync', async (req, res) => {
+  const { professionalId, bookingId } = req.body
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === professionalId)
+  if (!pro?.googleCalendarTokens?.accessToken) return res.status(400).json({ error: 'Google Calendar not connected' })
+
+  const bookings = loadJson(BOOKINGS_FILE, [])
+  const booking = bookings.find(b => b.id === bookingId)
+  if (!booking) return res.status(404).json({ error: 'Booking not found' })
+
+  const stores = loadJson(STORES_FILE, [])
+  const store = stores.find(s => s.id === booking.storeId)
+
+  // Create Google Calendar event
+  const startDateTime = `${booking.date}T${booking.time}:00`
+  const [h, m] = booking.time.split(':').map(Number)
+  const endMin = m + 30
+  const endH = h + Math.floor(endMin / 60)
+  const endM = endMin % 60
+  const endTime = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
+  const endDateTime = `${booking.date}T${endTime}:00`
+
+  const event = {
+    summary: `Booking: ${booking.firstName} ${booking.lastName}`,
+    description: `Customer: ${booking.firstName} ${booking.lastName}\nEmail: ${booking.email}\nPhone: ${booking.phone}`,
+    location: store?.address || store?.name || '',
+    start: { dateTime: startDateTime, timeZone: 'Pacific/Auckland' },
+    end: { dateTime: endDateTime, timeZone: 'Pacific/Auckland' },
+  }
+
+  try {
+    const https = await import('https')
+    const postData = JSON.stringify(event)
+    const result = await new Promise((resolve, reject) => {
+      const r = https.request({
+        hostname: 'www.googleapis.com',
+        path: '/calendar/v3/calendars/primary/events',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${pro.googleCalendarTokens.accessToken}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData),
+        },
+      }, (resp) => {
+        let data = ''
+        resp.on('data', c => data += c)
+        resp.on('end', () => {
+          try { resolve(JSON.parse(data)) } catch { resolve({ error: data }) }
+        })
+      })
+      r.on('error', reject)
+      r.write(postData)
+      r.end()
+    })
+    res.json({ ok: true, event: result })
+  } catch (err) {
     res.status(500).json({ error: err.message })
   }
 })

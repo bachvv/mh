@@ -9,6 +9,8 @@ function DevPage() {
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
+    { label: 'Booking', path: '/booking' },
+    { label: 'Booking Admin', path: '/booking/admin' },
   ]
 
   return (
