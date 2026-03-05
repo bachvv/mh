@@ -186,6 +186,46 @@
 }
 
 /* ============================================
+   Sales Quote
+   ============================================ */
+
+.sales-quote {
+  margin-bottom: 2rem;
+  cursor: pointer;
+  user-select: none;
+  min-height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sales-quote__content {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sales-quote--visible {
+  opacity: 1;
+}
+
+.sales-quote__text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+
+.sales-quote__author {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
    Credit Calculator Page
    ============================================ */
 

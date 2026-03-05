@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import SalesQuote from '../components/SalesQuote'
 
 function HomePage() {
   const navigate = useNavigate()
@@ -72,6 +73,7 @@ function HomePage() {
       <div className="hero">
         <h1>MH Tools</h1>
         <p>Sales tools for Michael Hill professionals</p>
+        <SalesQuote />
         <div className="tool-cards">
           {tools.map((tool) => (
             <button
