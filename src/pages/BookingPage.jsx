@@ -3,6 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+const BOOKING_TYPES = [
+  { id: 'product-viewing', label: 'Product Viewing', icon: '💎', desc: 'Browse and try on our collection' },
+  { id: 'inspection', label: 'Inspection', icon: '🔍', desc: 'Have your jewellery professionally inspected' },
+  { id: 'repairs', label: 'Repairs', icon: '🔧', desc: 'Ring sizing, polishing, and repairs' },
+]
+
 function BookingPage() {
   const navigate = useNavigate()
   const { slug } = useParams()
@@ -10,6 +16,7 @@ function BookingPage() {
   const [professionals, setProfessionals] = useState([])
   const [selectedStore, setSelectedStore] = useState('')
   const [selectedPro, setSelectedPro] = useState('')
+  const [bookingType, setBookingType] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
   const [slots, setSlots] = useState([])
   const [selectedSlot, setSelectedSlot] = useState('')
@@ -74,8 +81,8 @@ function BookingPage() {
     setError('')
     if (!firstName.trim()) { setError('First name is required'); return }
     if (!email.trim() && !phone.trim()) { setError('Email or phone number is required'); return }
-    if (!selectedStore || !selectedPro || !selectedDate || !selectedSlot) {
-      setError('Please select store, professional, date and time slot')
+    if (!selectedStore || !selectedPro || !bookingType || !selectedDate || !selectedSlot) {
+      setError('Please select store, professional, type, date and time slot')
       return
     }
 
@@ -87,6 +94,7 @@ function BookingPage() {
         body: JSON.stringify({
           storeId: selectedStore,
           professionalId: selectedPro,
+          bookingType,
           date: selectedDate,
           time: selectedSlot,
           firstName: firstName.trim(),
@@ -118,7 +126,7 @@ function BookingPage() {
             </div>
             <h2>Booking Submitted!</h2>
             <p>Your appointment request has been sent. You will be notified once it is confirmed.</p>
-            <button className="booking-btn" onClick={() => { setSubmitted(false); setSelectedSlot(''); setSelectedDate('') }}>
+            <button className="booking-btn" onClick={() => { setSubmitted(false); setSelectedSlot(''); setSelectedDate(''); setBookingType('') }}>
               Book Another Appointment
             </button>
           </div>
@@ -171,8 +179,29 @@ function BookingPage() {
             </div>
           )}
 
-          {/* Date Selection */}
+          {/* Booking Type */}
           {selectedPro && (
+            <div className="booking-section">
+              <label className="booking-label">Type of Appointment</label>
+              <div className="booking-type-grid">
+                {BOOKING_TYPES.map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className={`booking-type-btn${bookingType === t.id ? ' booking-type-btn--selected' : ''}`}
+                    onClick={() => { setBookingType(t.id); setSelectedDate(''); setSelectedSlot('') }}
+                  >
+                    <span className="booking-type-icon">{t.icon}</span>
+                    <span className="booking-type-label">{t.label}</span>
+                    <span className="booking-type-desc">{t.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Date Selection */}
+          {selectedPro && bookingType && (
             <div className="booking-section">
               <label className="booking-label">Date</label>
               <select

@@ -431,6 +431,7 @@ function BookingAdminPage() {
                         {b.phone && <p>Phone: {b.phone}</p>}
                         <p>Store: {store?.name || b.storeId}</p>
                         <p>Professional: {pro?.name || b.professionalId}</p>
+                        {b.bookingType && <p>Type: {b.bookingType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>}
                       </div>
 
                       {b.status === 'pending' && (

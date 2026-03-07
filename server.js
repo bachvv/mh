@@ -1306,7 +1306,7 @@ app.get('/api/booking/bookings', (req, res) => {
 })
 
 app.post('/api/booking/bookings', async (req, res) => {
-  const { storeId, professionalId, date, time, firstName, lastName, email, phone } = req.body
+  const { storeId, professionalId, bookingType, date, time, firstName, lastName, email, phone } = req.body
   if (!firstName) return res.status(400).json({ error: 'First name is required' })
   if (!email && !phone) return res.status(400).json({ error: 'Email or phone number is required' })
   if (!storeId || !professionalId || !date || !time) return res.status(400).json({ error: 'Store, professional, date, and time are required' })
@@ -1323,6 +1323,7 @@ app.post('/api/booking/bookings', async (req, res) => {
     id: Date.now().toString(),
     storeId,
     professionalId,
+    bookingType: bookingType || 'product-viewing',
     date,
     time,
     firstName,
@@ -1348,6 +1349,7 @@ app.post('/api/booking/bookings', async (req, res) => {
       <p><strong>Customer:</strong> ${firstName} ${lastName || ''}</p>
       <p><strong>Email:</strong> ${email || 'N/A'}</p>
       <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
+      <p><strong>Type:</strong> ${(bookingType || 'product-viewing').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
       <p><strong>Store:</strong> ${store?.name || storeId}</p>
       <p><strong>Date:</strong> ${date}</p>
       <p><strong>Time:</strong> ${time}</p>
