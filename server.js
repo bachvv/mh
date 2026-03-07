@@ -1467,7 +1467,7 @@ app.post('/api/booking/google-calendar/sync', async (req, res) => {
   // Create Google Calendar event
   const startDateTime = `${booking.date}T${booking.time}:00`
   const [h, m] = booking.time.split(':').map(Number)
-  const endMin = m + 30
+  const endMin = m + 60
   const endH = h + Math.floor(endMin / 60)
   const endM = endMin % 60
   const endTime = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`

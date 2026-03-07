@@ -34,7 +34,7 @@ function BookingAdminPage() {
 
   // Availability form
   const [availDay, setAvailDay] = useState(1)
-  const [availSlots, setAvailSlots] = useState([{ start: '09:00', end: '09:30' }])
+  const [availSlots, setAvailSlots] = useState([{ start: '09:00', end: '10:00' }])
 
   // Booking action
   const [actionBooking, setActionBooking] = useState(null)
@@ -175,7 +175,7 @@ function BookingAdminPage() {
   const addSlotRow = () => {
     const lastEnd = availSlots.length > 0 ? availSlots[availSlots.length - 1].end : '09:00'
     const [h, m] = lastEnd.split(':').map(Number)
-    const newEnd = m + 30 >= 60 ? `${String(h + 1).padStart(2, '0')}:${String((m + 30) % 60).padStart(2, '0')}` : `${String(h).padStart(2, '0')}:${String(m + 30).padStart(2, '0')}`
+    const newEnd = m + 60 >= 60 ? `${String(h + Math.floor((m + 60) / 60)).padStart(2, '0')}:${String((m + 60) % 60).padStart(2, '0')}` : `${String(h).padStart(2, '0')}:${String(m + 60).padStart(2, '0')}`
     setAvailSlots([...availSlots, { start: lastEnd, end: newEnd }])
   }
 
@@ -188,7 +188,7 @@ function BookingAdminPage() {
     updated[idx] = { ...updated[idx], [field]: val }
     if (field === 'start') {
       const [h, m] = val.split(':').map(Number)
-      const endM = m + 30
+      const endM = m + 60
       updated[idx].end = `${String(h + Math.floor(endM / 60)).padStart(2, '0')}:${String(endM % 60).padStart(2, '0')}`
     }
     setAvailSlots(updated)
@@ -442,11 +442,14 @@ function BookingAdminPage() {
                         </div>
                       )}
 
-                      {b.status === 'accepted' && currentPro?.googleCalendarConnected && (
+                      {b.status === 'accepted' && (
                         <div className="booking-card-actions">
-                          <button className="booking-btn booking-btn--sync" onClick={() => syncBookingToCalendar(b.id)}>
-                            Sync to Google Calendar
-                          </button>
+                          <button className="booking-btn booking-btn--decline" onClick={() => { setActionBooking({ ...b, action: 'cancel' }) }}>Cancel</button>
+                          {currentPro?.googleCalendarConnected && (
+                            <button className="booking-btn booking-btn--sync" onClick={() => syncBookingToCalendar(b.id)}>
+                              Sync to Google Calendar
+                            </button>
+                          )}
                         </div>
                       )}
 
@@ -464,6 +467,15 @@ function BookingAdminPage() {
                               <div className="booking-action-btns">
                                 <button className="booking-btn booking-btn--submit" onClick={() => rescheduleBooking(b.id)}>Confirm Reschedule</button>
                                 <button className="booking-btn" onClick={() => setActionBooking(null)}>Cancel</button>
+                              </div>
+                            </>
+                          ) : actionBooking.action === 'cancel' ? (
+                            <>
+                              <h4>Cancel Booking</h4>
+                              <textarea className="booking-input" placeholder="Reason (optional, will be sent to customer)" value={actionNote} onChange={e => setActionNote(e.target.value)} rows={2} />
+                              <div className="booking-action-btns">
+                                <button className="booking-btn booking-btn--decline" onClick={() => updateBookingStatus(b.id, 'cancelled')}>Confirm Cancel</button>
+                                <button className="booking-btn" onClick={() => setActionBooking(null)}>Back</button>
                               </div>
                             </>
                           ) : (

@@ -329,10 +329,21 @@ function SPProfilePage() {
                   )}
                   {messages.map(m => (
                     <div key={m.id} className={`sp-chat-msg ${m.senderType === 'customer' ? 'sp-chat-msg--sent' : 'sp-chat-msg--received'}`}>
-                      <div className="sp-chat-msg-content" dangerouslySetInnerHTML={{ __html: m.content }} />
-                      <span className="sp-chat-msg-time">
-                        {new Date(m.createdAt).toLocaleTimeString('en-NZ', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+                      {m.senderType === 'professional' && (
+                        <div className="sp-chat-msg-avatar">
+                          {pro.profilePicture ? (
+                            <img src={pro.profilePicture} alt="" className="sp-chat-bubble-avatar" />
+                          ) : (
+                            <div className="sp-chat-bubble-avatar sp-avatar-placeholder-sm">{pro.name[0]}</div>
+                          )}
+                        </div>
+                      )}
+                      <div>
+                        <div className="sp-chat-msg-content" dangerouslySetInnerHTML={{ __html: m.content }} />
+                        <span className="sp-chat-msg-time">
+                          {new Date(m.createdAt).toLocaleTimeString('en-NZ', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
                     </div>
                   ))}
                   <div ref={messagesEndRef} />

@@ -6528,6 +6528,24 @@ textarea.booking-input {
   background: var(--color-bg);
   color: var(--color-text);
   border-bottom-left-radius: 2px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.sp-chat-msg-avatar {
+  flex-shrink: 0;
+}
+
+.sp-chat-bubble-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sp-chat-msg-content {
