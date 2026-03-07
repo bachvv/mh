@@ -1509,6 +1509,216 @@ app.post('/api/booking/google-calendar/sync', async (req, res) => {
   }
 })
 
+// ── SP Profile & Product Images ──────────────────────────────────
+const SP_UPLOADS_DIR = join(BOOKING_DIR, 'uploads')
+if (!existsSync(SP_UPLOADS_DIR)) mkdirSync(SP_UPLOADS_DIR, { recursive: true })
+
+// Upload profile picture for a professional
+app.post('/api/booking/professionals/:id/profile-picture', (req, res) => {
+  const { image } = req.body
+  if (!image) return res.status(400).json({ error: 'image required' })
+  const match = image.match(/^data:image\/(\w+);base64,(.+)$/)
+  if (!match) return res.status(400).json({ error: 'Invalid base64 image' })
+
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === req.params.id)
+  if (!pro) return res.status(404).json({ error: 'Professional not found' })
+
+  const ext = match[1] === 'jpeg' ? 'jpg' : match[1]
+  const filename = `profile-${pro.id}.${ext}`
+  const filepath = join(SP_UPLOADS_DIR, filename)
+  writeFileSync(filepath, Buffer.from(match[2], 'base64'))
+
+  // Also write to dist if it exists
+  const distUploadsDir = join(__dirname, 'dist', 'booking-uploads')
+  if (existsSync(join(__dirname, 'dist'))) {
+    if (!existsSync(distUploadsDir)) mkdirSync(distUploadsDir, { recursive: true })
+    writeFileSync(join(distUploadsDir, filename), Buffer.from(match[2], 'base64'))
+  }
+
+  pro.profilePicture = `/booking-uploads/${filename}`
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true, url: pro.profilePicture })
+})
+
+// Update professional bio/tagline
+app.put('/api/booking/professionals/:id/profile', (req, res) => {
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const idx = pros.findIndex(p => p.id === req.params.id)
+  if (idx < 0) return res.status(404).json({ error: 'Not found' })
+
+  const { bio, tagline, specialties } = req.body
+  if (bio !== undefined) pros[idx].bio = bio
+  if (tagline !== undefined) pros[idx].tagline = tagline
+  if (specialties !== undefined) pros[idx].specialties = specialties
+  saveJson(PROFESSIONALS_FILE, pros)
+  res.json({ ok: true, professional: pros[idx] })
+})
+
+// Serve uploads
+app.use('/booking-uploads', express.static(SP_UPLOADS_DIR))
+
+// ── Product Images for SP ──
+const PRODUCT_IMAGES_FILE = join(BOOKING_DIR, 'product-images.json')
+
+app.get('/api/booking/professionals/:id/products', (req, res) => {
+  const all = loadJson(PRODUCT_IMAGES_FILE, [])
+  res.json(all.filter(p => p.professionalId === req.params.id))
+})
+
+app.post('/api/booking/professionals/:id/products', (req, res) => {
+  const { image, title, description, price } = req.body
+  if (!image) return res.status(400).json({ error: 'image required' })
+
+  const match = image.match(/^data:image\/(\w+);base64,(.+)$/)
+  if (!match) return res.status(400).json({ error: 'Invalid base64 image' })
+
+  const ext = match[1] === 'jpeg' ? 'jpg' : match[1]
+  const id = Date.now().toString()
+  const filename = `product-${req.params.id}-${id}.${ext}`
+  writeFileSync(join(SP_UPLOADS_DIR, filename), Buffer.from(match[2], 'base64'))
+
+  const distUploadsDir = join(__dirname, 'dist', 'booking-uploads')
+  if (existsSync(join(__dirname, 'dist'))) {
+    if (!existsSync(distUploadsDir)) mkdirSync(distUploadsDir, { recursive: true })
+    writeFileSync(join(distUploadsDir, filename), Buffer.from(match[2], 'base64'))
+  }
+
+  const all = loadJson(PRODUCT_IMAGES_FILE, [])
+  const product = {
+    id,
+    professionalId: req.params.id,
+    imageUrl: `/booking-uploads/${filename}`,
+    title: title || '',
+    description: description || '',
+    price: price || '',
+    createdAt: new Date().toISOString(),
+  }
+  all.push(product)
+  saveJson(PRODUCT_IMAGES_FILE, all)
+  res.json({ ok: true, product })
+})
+
+app.put('/api/booking/products/:productId', (req, res) => {
+  const all = loadJson(PRODUCT_IMAGES_FILE, [])
+  const idx = all.findIndex(p => p.id === req.params.productId)
+  if (idx < 0) return res.status(404).json({ error: 'Not found' })
+  const { title, description, price } = req.body
+  if (title !== undefined) all[idx].title = title
+  if (description !== undefined) all[idx].description = description
+  if (price !== undefined) all[idx].price = price
+  saveJson(PRODUCT_IMAGES_FILE, all)
+  res.json({ ok: true, product: all[idx] })
+})
+
+app.delete('/api/booking/products/:productId', (req, res) => {
+  const all = loadJson(PRODUCT_IMAGES_FILE, [])
+  const product = all.find(p => p.id === req.params.productId)
+  if (product) {
+    const filename = product.imageUrl.split('/').pop()
+    const filepath = join(SP_UPLOADS_DIR, filename)
+    if (existsSync(filepath)) unlinkSync(filepath)
+    const distPath = join(__dirname, 'dist', 'booking-uploads', filename)
+    if (existsSync(distPath)) unlinkSync(distPath)
+  }
+  saveJson(PRODUCT_IMAGES_FILE, all.filter(p => p.id !== req.params.productId))
+  res.json({ ok: true })
+})
+
+// ── Messaging System ──────────────────────────────────────────────
+const CONVERSATIONS_FILE = join(BOOKING_DIR, 'conversations.json')
+const MESSAGES_FILE = join(BOOKING_DIR, 'messages.json')
+
+// Get or create a conversation between a customer and a professional
+app.post('/api/booking/conversations', (req, res) => {
+  const { professionalId, customerName, customerEmail, customerPhone } = req.body
+  if (!professionalId || !customerName) return res.status(400).json({ error: 'professionalId and customerName required' })
+
+  const convos = loadJson(CONVERSATIONS_FILE, [])
+
+  // Check if conversation already exists for this customer + pro
+  let existing = null
+  if (customerEmail) {
+    existing = convos.find(c => c.professionalId === professionalId && c.customerEmail === customerEmail)
+  }
+  if (!existing && customerPhone) {
+    existing = convos.find(c => c.professionalId === professionalId && c.customerPhone === customerPhone)
+  }
+
+  if (existing) return res.json(existing)
+
+  const convo = {
+    id: Date.now().toString(),
+    professionalId,
+    customerName,
+    customerEmail: customerEmail || '',
+    customerPhone: customerPhone || '',
+    createdAt: new Date().toISOString(),
+    lastMessageAt: new Date().toISOString(),
+  }
+  convos.push(convo)
+  saveJson(CONVERSATIONS_FILE, convos)
+  res.json(convo)
+})
+
+// Get conversations for a professional
+app.get('/api/booking/conversations/:professionalId', (req, res) => {
+  const convos = loadJson(CONVERSATIONS_FILE, [])
+  const messages = loadJson(MESSAGES_FILE, [])
+  const proConvos = convos
+    .filter(c => c.professionalId === req.params.professionalId)
+    .sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt))
+    .map(c => {
+      const lastMsg = messages.filter(m => m.conversationId === c.id).pop()
+      return { ...c, lastMessage: lastMsg?.content?.substring(0, 80) || '' }
+    })
+  res.json(proConvos)
+})
+
+// Get messages for a conversation
+app.get('/api/booking/messages/:conversationId', (req, res) => {
+  const messages = loadJson(MESSAGES_FILE, [])
+  res.json(messages.filter(m => m.conversationId === req.params.conversationId))
+})
+
+// Send a message
+app.post('/api/booking/messages', async (req, res) => {
+  const { conversationId, sender, senderType, content } = req.body
+  if (!conversationId || !content || !senderType) return res.status(400).json({ error: 'conversationId, content, senderType required' })
+
+  const messages = loadJson(MESSAGES_FILE, [])
+  const msg = {
+    id: Date.now().toString(),
+    conversationId,
+    sender: sender || 'Anonymous',
+    senderType, // 'customer' or 'professional'
+    content,
+    createdAt: new Date().toISOString(),
+  }
+  messages.push(msg)
+  saveJson(MESSAGES_FILE, messages)
+
+  // Update conversation lastMessageAt
+  const convos = loadJson(CONVERSATIONS_FILE, [])
+  const convo = convos.find(c => c.id === conversationId)
+  if (convo) {
+    convo.lastMessageAt = msg.createdAt
+    saveJson(CONVERSATIONS_FILE, convos)
+
+    // Email notify the other party
+    if (senderType === 'customer' && convo.professionalId) {
+      const pros = loadJson(PROFESSIONALS_FILE, [])
+      const pro = pros.find(p => p.id === convo.professionalId)
+      if (pro?.email) {
+        await sendBookingEmail(pro.email, `New message from ${sender || convo.customerName}`,
+          `<h2>New Message</h2><p><strong>${sender || convo.customerName}:</strong></p><p>${content.substring(0, 500)}</p>`)
+      }
+    }
+  }
+
+  res.json({ ok: true, message: msg })
+})
+
 // In production, serve the built Vite app
 const distDir = join(__dirname, 'dist')
 if (existsSync(distDir)) {
