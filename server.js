@@ -1509,6 +1509,86 @@ app.post('/api/booking/google-calendar/sync', async (req, res) => {
   }
 })
 
+// ============================================
+// Encrypted Messaging API
+// ============================================
+const MESSAGES_FILE = join(__dirname, 'data', 'messages.json')
+const CHANNELS_FILE = join(__dirname, 'data', 'channels.json')
+
+function readMessages() {
+  try { return JSON.parse(readFileSync(MESSAGES_FILE, 'utf8')) } catch { return [] }
+}
+function writeMessages(msgs) {
+  writeFileSync(MESSAGES_FILE, JSON.stringify(msgs))
+}
+function readChannels() {
+  try { return JSON.parse(readFileSync(CHANNELS_FILE, 'utf8')) } catch { return {} }
+}
+function writeChannels(ch) {
+  writeFileSync(CHANNELS_FILE, JSON.stringify(ch))
+}
+
+// Register/update public key for a user in a channel
+app.post('/api/msg/register', (req, res) => {
+  const { channel, userId, userName, publicKey } = req.body
+  if (!channel || !userId || !publicKey) return res.status(400).json({ error: 'missing fields' })
+  const channels = readChannels()
+  if (!channels[channel]) channels[channel] = { members: {} }
+  channels[channel].members[userId] = { userName: userName || userId, publicKey, joinedAt: Date.now() }
+  writeChannels(channels)
+  res.json({ ok: true })
+})
+
+// Get channel members & their public keys
+app.get('/api/msg/channel/:channel', (req, res) => {
+  const channels = readChannels()
+  const ch = channels[req.params.channel]
+  if (!ch) return res.json({ members: {} })
+  res.json({ members: ch.members })
+})
+
+// Send encrypted message
+app.post('/api/msg/send', (req, res) => {
+  const { channel, senderId, senderName, encryptedPayloads, timestamp } = req.body
+  if (!channel || !senderId || !encryptedPayloads) return res.status(400).json({ error: 'missing fields' })
+  const msgs = readMessages()
+  const msg = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    channel,
+    senderId,
+    senderName: senderName || senderId,
+    encryptedPayloads, // { [recipientId]: { iv, ciphertext } }
+    timestamp: timestamp || Date.now(),
+  }
+  msgs.push(msg)
+  // Keep last 500 messages per channel
+  const channelMsgs = msgs.filter(m => m.channel === channel)
+  const otherMsgs = msgs.filter(m => m.channel !== channel)
+  const trimmed = channelMsgs.length > 500 ? channelMsgs.slice(-500) : channelMsgs
+  writeMessages([...otherMsgs, ...trimmed])
+  res.json({ ok: true, id: msg.id })
+})
+
+// Poll messages (with since parameter for efficiency)
+app.get('/api/msg/messages/:channel', (req, res) => {
+  const since = parseInt(req.query.since) || 0
+  const msgs = readMessages()
+  const channelMsgs = msgs
+    .filter(m => m.channel === req.params.channel && m.timestamp > since)
+    .slice(-100)
+  res.json({ messages: channelMsgs })
+})
+
+// Delete all messages in a channel (admin only)
+app.delete('/api/msg/channel/:channel', (req, res) => {
+  const msgs = readMessages()
+  writeMessages(msgs.filter(m => m.channel !== req.params.channel))
+  const channels = readChannels()
+  delete channels[req.params.channel]
+  writeChannels(channels)
+  res.json({ ok: true })
+})
+
 // In production, serve the built Vite app
 const distDir = join(__dirname, 'dist')
 if (existsSync(distDir)) {

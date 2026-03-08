@@ -28,6 +28,7 @@ import MigrateSkusPage from './pages/MigrateSkusPage'
 import ManagersReportPage from './pages/ManagersReportPage'
 import BookingPage from './pages/BookingPage'
 import BookingAdminPage from './pages/BookingAdminPage'
+import MessagingPage from './pages/MessagingPage'
 import './App.css'
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
       <Route path="/booking" element={<BookingPage />} />
       <Route path="/booking/admin" element={<BookingAdminPage />} />
       <Route path="/booking/:slug" element={<BookingPage />} />
+      <Route path="/messaging" element={<MessagingPage />} />
     </Routes>
   )
 }
