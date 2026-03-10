@@ -51,6 +51,7 @@ function BookingAdminPage() {
   const [profileTagline, setProfileTagline] = useState('')
   const [profileSpecialties, setProfileSpecialties] = useState('')
   const [profileSaving, setProfileSaving] = useState(false)
+  const [bufferMinutes, setBufferMinutes] = useState(0)
   const profilePicRef = useRef(null)
 
   // Product images
@@ -124,6 +125,7 @@ function BookingAdminPage() {
       setProfileBio(currentPro.bio || '')
       setProfileTagline(currentPro.tagline || '')
       setProfileSpecialties((currentPro.specialties || []).join(', '))
+      setBufferMinutes(currentPro.bufferMinutes || 0)
     }
   }, [currentPro])
 
@@ -864,6 +866,31 @@ function BookingAdminPage() {
                     <button className="booking-btn booking-btn--small" onClick={() => navigator.clipboard.writeText(profileLink)}>Copy</button>
                   </div>
                   <p className="booking-hint">Your mini website with profile, products, messaging, and booking.</p>
+                </div>
+
+                <div className="settings-section">
+                  <h4>Buffer Time Between Bookings</h4>
+                  <p className="booking-hint" style={{ marginBottom: '0.5rem' }}>Add buffer time before and after each booking to prevent back-to-back appointments.</p>
+                  <select
+                    className="booking-select"
+                    value={bufferMinutes}
+                    onChange={async (e) => {
+                      const val = parseInt(e.target.value)
+                      setBufferMinutes(val)
+                      await fetch(`/api/booking/professionals/${currentPro.id}/profile`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ bufferMinutes: val }),
+                      })
+                      loadProfessionals()
+                    }}
+                  >
+                    <option value={0}>No buffer</option>
+                    <option value={15}>15 minutes</option>
+                    <option value={30}>30 minutes</option>
+                    <option value={45}>45 minutes</option>
+                    <option value={60}>1 hour</option>
+                  </select>
                 </div>
 
                 <div className="settings-section">

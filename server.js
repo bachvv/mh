@@ -1315,12 +1315,28 @@ app.get('/api/booking/slots/:professionalId/:date', (req, res) => {
 
   if (!avail || !avail.slots?.length) return res.json({ slots: [] })
 
-  // Filter out already booked slots
-  const bookedSlots = bookings
-    .filter(b => b.professionalId === professionalId && b.date === date && b.status !== 'declined')
+  // Filter out already booked slots (and slots within buffer time)
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === professionalId)
+  const buffer = pro?.bufferMinutes || 0
+
+  const bookedTimes = bookings
+    .filter(b => b.professionalId === professionalId && b.date === date && b.status !== 'declined' && b.status !== 'cancelled')
     .map(b => b.time)
 
-  const available = avail.slots.filter(s => !bookedSlots.includes(s.start))
+  const timeToMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
+
+  const available = avail.slots.filter(s => {
+    const slotStart = timeToMin(s.start)
+    const slotEnd = timeToMin(s.end)
+    for (const bt of bookedTimes) {
+      const bookedStart = timeToMin(bt)
+      const bookedEnd = bookedStart + 60 // 1 hour default duration
+      // Check if slot overlaps with booked time + buffer
+      if (slotStart < bookedEnd + buffer && slotEnd > bookedStart - buffer) return false
+    }
+    return true
+  })
   res.json({ slots: available })
 })
 
@@ -1578,10 +1594,11 @@ app.put('/api/booking/professionals/:id/profile', (req, res) => {
   const idx = pros.findIndex(p => p.id === req.params.id)
   if (idx < 0) return res.status(404).json({ error: 'Not found' })
 
-  const { bio, tagline, specialties } = req.body
+  const { bio, tagline, specialties, bufferMinutes } = req.body
   if (bio !== undefined) pros[idx].bio = bio
   if (tagline !== undefined) pros[idx].tagline = tagline
   if (specialties !== undefined) pros[idx].specialties = specialties
+  if (bufferMinutes !== undefined) pros[idx].bufferMinutes = parseInt(bufferMinutes) || 0
   saveJson(PROFESSIONALS_FILE, pros)
   res.json({ ok: true, professional: pros[idx] })
 })
