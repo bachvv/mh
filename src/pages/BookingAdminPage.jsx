@@ -13,7 +13,11 @@ for (let h = 8; h < 20; h++) {
 
 function BookingAdminPage() {
   const navigate = useNavigate()
-  const { user, isAdmin } = useAuth()
+  const { user, isAdmin, login, logout } = useAuth()
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPass, setLoginPass] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
+  const [loginError, setLoginError] = useState('')
 
   const [tab, setTab] = useState('bookings')
   const [stores, setStores] = useState([])
@@ -376,12 +380,46 @@ function BookingAdminPage() {
     </div>
   )
 
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoggingIn(true)
+    setLoginError('')
+    const result = await login(loginEmail, loginPass)
+    if (result?.error) setLoginError(result.error)
+    setLoggingIn(false)
+  }
+
+  if (!user) {
+    return (
+      <div className="booking-admin-page">
+        <div className="booking-container">
+          <div className="booking-header">
+            <button className="back-button" onClick={() => navigate('/')}>Home</button>
+            <h1>Booking Management</h1>
+          </div>
+          <div className="booking-section" style={{ maxWidth: 360, margin: '2rem auto' }}>
+            <h3>Sign In</h3>
+            <form onSubmit={handleLogin}>
+              <input type="email" className="booking-input" placeholder="Email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required />
+              <input type="password" className="booking-input" placeholder="Password" value={loginPass} onChange={e => setLoginPass(e.target.value)} required style={{ marginTop: '0.5rem' }} />
+              <button type="submit" className="booking-btn booking-btn--submit" disabled={loggingIn} style={{ marginTop: '0.75rem', width: '100%' }}>
+                {loggingIn ? 'Signing in...' : 'Sign In'}
+              </button>
+              {loginError && <p style={{ color: 'var(--color-danger)', marginTop: '0.5rem', fontSize: '0.85rem' }}>{loginError}</p>}
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="booking-admin-page">
       <div className="booking-container">
         <div className="booking-header">
           <button className="back-button" onClick={() => navigate('/')}>Home</button>
           <h1>Booking Management</h1>
+          <button className="auth-btn" onClick={logout} style={{ marginLeft: 'auto' }}>Sign Out</button>
         </div>
 
         {/* Tab Navigation */}

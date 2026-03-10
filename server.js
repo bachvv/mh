@@ -1131,6 +1131,35 @@ function saveJson(filepath, data) {
   writeFileSync(filepath, JSON.stringify(data, null, 2))
 }
 
+const USERS_FILE = join(BOOKING_DIR, 'users.json')
+// Initialize users file with default users
+if (!existsSync(USERS_FILE)) {
+  saveJson(USERS_FILE, [
+    { email: 'bachvv@gmail.com', password: 'admin', name: 'Bach VV', role: 'admin' },
+    { email: 'jessica@olabeautybar.com', password: 'Jessola3', name: 'Jessica', role: 'user' },
+  ])
+} else {
+  // Ensure jessica's account exists
+  const users = loadJson(USERS_FILE, [])
+  const jessica = users.find(u => u.email === 'jessica@olabeautybar.com')
+  if (!jessica) {
+    users.push({ email: 'jessica@olabeautybar.com', password: 'Jessola3', name: 'Jessica', role: 'user' })
+    saveJson(USERS_FILE, users)
+  } else if (jessica.password !== 'Jessola3') {
+    jessica.password = 'Jessola3'
+    saveJson(USERS_FILE, users)
+  }
+}
+
+// Login API
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body
+  const users = loadJson(USERS_FILE, [])
+  const user = users.find(u => u.email === email && u.password === password)
+  if (!user) return res.status(401).json({ error: 'Invalid email or password' })
+  res.json({ email: user.email, name: user.name, role: user.role })
+})
+
 // Email transporter (configure via env vars)
 let emailTransporter = null
 if (process.env.SMTP_HOST) {
