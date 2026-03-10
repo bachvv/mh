@@ -5,7 +5,7 @@ import { RichTextEditor } from './SPProfilePage'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const TIME_OPTIONS = []
-for (let h = 8; h < 20; h++) {
+for (let h = 8; h < 21; h++) {
   for (let m = 0; m < 60; m += 30) {
     TIME_OPTIONS.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
   }
