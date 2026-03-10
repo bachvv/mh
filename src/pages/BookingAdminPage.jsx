@@ -6,7 +6,7 @@ import { RichTextEditor } from './SPProfilePage'
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const TIME_OPTIONS = []
 for (let h = 8; h < 20; h++) {
-  for (let m = 0; m < 60; m += 15) {
+  for (let m = 0; m < 60; m += 30) {
     TIME_OPTIONS.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
   }
 }
@@ -62,11 +62,6 @@ function BookingAdminPage() {
   const [productUploading, setProductUploading] = useState(false)
   const productFileRef = useRef(null)
 
-  // Services
-  const [services, setServices] = useState([])
-  const [serviceName, setServiceName] = useState('')
-  const [serviceDuration, setServiceDuration] = useState(60)
-
   // Messages
   const [conversations, setConversations] = useState([])
   const [selectedConvo, setSelectedConvo] = useState(null)
@@ -110,14 +105,6 @@ function BookingAdminPage() {
       .catch(() => {})
   }, [currentPro])
 
-  const loadServices = useCallback(() => {
-    if (!currentPro) return
-    fetch(`/api/booking/services/${currentPro.id}`)
-      .then(r => r.json())
-      .then(setServices)
-      .catch(() => {})
-  }, [currentPro])
-
   const loadConversations = useCallback(() => {
     if (!currentPro) return
     fetch(`/api/booking/conversations/${currentPro.id}`)
@@ -130,7 +117,6 @@ function BookingAdminPage() {
   useEffect(() => { loadBookings() }, [loadBookings])
   useEffect(() => { loadAvailability() }, [loadAvailability])
   useEffect(() => { loadProducts() }, [loadProducts])
-  useEffect(() => { loadServices() }, [loadServices])
   useEffect(() => { loadConversations() }, [loadConversations])
 
   // Load profile fields when currentPro changes
@@ -442,7 +428,6 @@ function BookingAdminPage() {
         <div className="booking-tabs">
           <button className={`booking-tab${tab === 'bookings' ? ' booking-tab--active' : ''}`} onClick={() => setTab('bookings')}>Bookings</button>
           <button className={`booking-tab${tab === 'availability' ? ' booking-tab--active' : ''}`} onClick={() => setTab('availability')}>Availability</button>
-          <button className={`booking-tab${tab === 'services' ? ' booking-tab--active' : ''}`} onClick={() => setTab('services')}>Services</button>
           <button className={`booking-tab${tab === 'profile' ? ' booking-tab--active' : ''}`} onClick={() => setTab('profile')}>Profile</button>
           <button className={`booking-tab${tab === 'products' ? ' booking-tab--active' : ''}`} onClick={() => setTab('products')}>Products</button>
           <button className={`booking-tab${tab === 'messages' ? ' booking-tab--active' : ''}`} onClick={() => setTab('messages')}>Messages{conversations.length > 0 ? ` (${conversations.length})` : ''}</button>
@@ -486,8 +471,7 @@ function BookingAdminPage() {
                         {b.phone && <p>Phone: {b.phone}</p>}
                         <p>Store: {store?.name || b.storeId}</p>
                         <p>Professional: {pro?.name || b.professionalId}</p>
-                        {b.bookingType && <p>Service: {b.bookingType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>}
-                        {b.duration && <p>Duration: {b.duration} min</p>}
+                        {b.bookingType && <p>Type: {b.bookingType.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>}
                       </div>
 
                       {b.status === 'pending' && (
@@ -607,74 +591,6 @@ function BookingAdminPage() {
                   </div>
 
                   <button className="booking-btn booking-btn--submit" onClick={saveAvailability}>Save Availability</button>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* SERVICES TAB */}
-        {tab === 'services' && (
-          <div className="booking-section">
-            {!currentPro ? proSelector : (
-              <>
-                <h3>Services for {currentPro.name}</h3>
-                <p className="booking-hint" style={{ marginBottom: '1rem' }}>
-                  Define your service types with durations. Customers will select a service when booking, and available time slots will be calculated based on the service duration.
-                </p>
-
-                {services.length > 0 && (
-                  <div className="booking-list" style={{ marginBottom: '1.5rem' }}>
-                    {services.map(s => (
-                      <div key={s.id} className="booking-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <strong>{s.name}</strong>
-                          <span style={{ marginLeft: '0.75rem', color: '#666' }}>{s.duration} min</span>
-                        </div>
-                        <button className="booking-btn booking-btn--small booking-btn--decline" onClick={async () => {
-                          await fetch(`/api/booking/services/${s.id}`, { method: 'DELETE' })
-                          loadServices()
-                        }}>Delete</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="avail-form">
-                  <h4>Add Service</h4>
-                  <input
-                    type="text"
-                    className="booking-input"
-                    placeholder="Service name (e.g. Lash Extensions)"
-                    value={serviceName}
-                    onChange={e => setServiceName(e.target.value)}
-                  />
-                  <select
-                    className="booking-select"
-                    value={serviceDuration}
-                    onChange={e => setServiceDuration(parseInt(e.target.value))}
-                  >
-                    <option value={15}>15 minutes</option>
-                    <option value={30}>30 minutes</option>
-                    <option value={45}>45 minutes</option>
-                    <option value={60}>1 hour</option>
-                    <option value={75}>1 hour 15 min</option>
-                    <option value={90}>1 hour 30 min</option>
-                    <option value={120}>2 hours</option>
-                    <option value={150}>2 hours 30 min</option>
-                    <option value={180}>3 hours</option>
-                  </select>
-                  <button className="booking-btn booking-btn--submit" onClick={async () => {
-                    if (!serviceName.trim()) return
-                    await fetch('/api/booking/services', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ professionalId: currentPro.id, name: serviceName.trim(), duration: serviceDuration }),
-                    })
-                    setServiceName('')
-                    setServiceDuration(60)
-                    loadServices()
-                  }}>Add Service</button>
                 </div>
               </>
             )}
