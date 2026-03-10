@@ -1122,6 +1122,7 @@ const STORES_FILE = join(BOOKING_DIR, 'stores.json')
 const PROFESSIONALS_FILE = join(BOOKING_DIR, 'professionals.json')
 const AVAILABILITY_FILE = join(BOOKING_DIR, 'availability.json')
 const BOOKINGS_FILE = join(BOOKING_DIR, 'bookings.json')
+const SERVICES_FILE = join(BOOKING_DIR, 'services.json')
 
 function loadJson(filepath, fallback = []) {
   try { return JSON.parse(readFileSync(filepath, 'utf8')) }
@@ -1264,6 +1265,40 @@ app.delete('/api/booking/professionals/:id', (req, res) => {
   res.json({ ok: true })
 })
 
+// ── Services (booking types with durations) ──
+app.get('/api/booking/services/:professionalId', (req, res) => {
+  const all = loadJson(SERVICES_FILE, [])
+  res.json(all.filter(s => s.professionalId === req.params.professionalId))
+})
+
+app.post('/api/booking/services', (req, res) => {
+  const { professionalId, name, duration } = req.body
+  if (!professionalId || !name || !duration) return res.status(400).json({ error: 'professionalId, name, and duration required' })
+  const all = loadJson(SERVICES_FILE, [])
+  const service = { id: Date.now().toString(), professionalId, name, duration: parseInt(duration) }
+  all.push(service)
+  saveJson(SERVICES_FILE, all)
+  res.json({ ok: true, service })
+})
+
+app.put('/api/booking/services/:id', (req, res) => {
+  const all = loadJson(SERVICES_FILE, [])
+  const idx = all.findIndex(s => s.id === req.params.id)
+  if (idx < 0) return res.status(404).json({ error: 'Not found' })
+  const { name, duration } = req.body
+  if (name) all[idx].name = name
+  if (duration) all[idx].duration = parseInt(duration)
+  saveJson(SERVICES_FILE, all)
+  res.json({ ok: true, service: all[idx] })
+})
+
+app.delete('/api/booking/services/:id', (req, res) => {
+  let all = loadJson(SERVICES_FILE, [])
+  all = all.filter(s => s.id !== req.params.id)
+  saveJson(SERVICES_FILE, all)
+  res.json({ ok: true })
+})
+
 // ── Availability ──
 // Availability format: { professionalId, dayOfWeek (0-6), slots: [{start: "09:00", end: "09:30"}], date (optional for specific date overrides) }
 app.get('/api/booking/availability/:professionalId', (req, res) => {
@@ -1301,8 +1336,10 @@ app.delete('/api/booking/availability', (req, res) => {
 })
 
 // Get available slots for a professional on a specific date
+// Query param: ?duration=45 (minutes) to generate slots for a specific service duration
 app.get('/api/booking/slots/:professionalId/:date', (req, res) => {
   const { professionalId, date } = req.params
+  const requestedDuration = parseInt(req.query.duration) || 60
   const all = loadJson(AVAILABILITY_FILE, [])
   const bookings = loadJson(BOOKINGS_FILE, [])
 
@@ -1315,28 +1352,43 @@ app.get('/api/booking/slots/:professionalId/:date', (req, res) => {
 
   if (!avail || !avail.slots?.length) return res.json({ slots: [] })
 
-  // Filter out already booked slots (and slots within buffer time)
   const pros = loadJson(PROFESSIONALS_FILE, [])
   const pro = pros.find(p => p.id === professionalId)
   const buffer = pro?.bufferMinutes || 0
 
-  const bookedTimes = bookings
-    .filter(b => b.professionalId === professionalId && b.date === date && b.status !== 'declined' && b.status !== 'cancelled')
-    .map(b => b.time)
-
   const timeToMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
+  const minToTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 
-  const available = avail.slots.filter(s => {
-    const slotStart = timeToMin(s.start)
-    const slotEnd = timeToMin(s.end)
-    for (const bt of bookedTimes) {
-      const bookedStart = timeToMin(bt)
-      const bookedEnd = bookedStart + 60 // 1 hour default duration
-      // Check if slot overlaps with booked time + buffer
-      if (slotStart < bookedEnd + buffer && slotEnd > bookedStart - buffer) return false
+  // Get all booked time ranges (with actual durations)
+  const bookedRanges = bookings
+    .filter(b => b.professionalId === professionalId && b.date === date && b.status !== 'declined' && b.status !== 'cancelled')
+    .map(b => {
+      const start = timeToMin(b.time)
+      const dur = b.duration || 60
+      return { start, end: start + dur }
+    })
+
+  // Generate available slots in 15-min increments within each availability window
+  const available = []
+  for (const window of avail.slots) {
+    const winStart = timeToMin(window.start)
+    const winEnd = timeToMin(window.end)
+
+    for (let t = winStart; t + requestedDuration <= winEnd; t += 15) {
+      const slotEnd = t + requestedDuration
+      // Check if this slot overlaps with any booked range (+ buffer)
+      let conflict = false
+      for (const br of bookedRanges) {
+        if (t < br.end + buffer && slotEnd > br.start - buffer) {
+          conflict = true
+          break
+        }
+      }
+      if (!conflict) {
+        available.push({ start: minToTime(t), end: minToTime(slotEnd) })
+      }
     }
-    return true
-  })
+  }
   res.json({ slots: available })
 })
 
@@ -1351,24 +1403,36 @@ app.get('/api/booking/bookings', (req, res) => {
 })
 
 app.post('/api/booking/bookings', async (req, res) => {
-  const { storeId, professionalId, bookingType, date, time, firstName, lastName, email, phone } = req.body
+  const { storeId, professionalId, bookingType, date, time, duration, firstName, lastName, email, phone } = req.body
   if (!firstName) return res.status(400).json({ error: 'First name is required' })
   if (!email && !phone) return res.status(400).json({ error: 'Email or phone number is required' })
   if (!storeId || !professionalId || !date || !time) return res.status(400).json({ error: 'Store, professional, date, and time are required' })
 
   const bookings = loadJson(BOOKINGS_FILE, [])
+  const timeToMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
+  const reqDuration = parseInt(duration) || 60
 
-  // Check slot is still available
-  const conflict = bookings.find(b =>
-    b.professionalId === professionalId && b.date === date && b.time === time && b.status !== 'declined'
-  )
+  // Check slot doesn't overlap with existing bookings
+  const reqStart = timeToMin(time)
+  const reqEnd = reqStart + reqDuration
+  const pros = loadJson(PROFESSIONALS_FILE, [])
+  const pro = pros.find(p => p.id === professionalId)
+  const buffer = pro?.bufferMinutes || 0
+
+  const conflict = bookings.find(b => {
+    if (b.professionalId !== professionalId || b.date !== date || b.status === 'declined' || b.status === 'cancelled') return false
+    const bStart = timeToMin(b.time)
+    const bEnd = bStart + (b.duration || 60)
+    return reqStart < bEnd + buffer && reqEnd > bStart - buffer
+  })
   if (conflict) return res.status(409).json({ error: 'This time slot is no longer available' })
 
   const booking = {
     id: Date.now().toString(),
     storeId,
     professionalId,
-    bookingType: bookingType || 'product-viewing',
+    bookingType: bookingType || 'general',
+    duration: reqDuration,
     date,
     time,
     firstName,
@@ -1394,7 +1458,8 @@ app.post('/api/booking/bookings', async (req, res) => {
       <p><strong>Customer:</strong> ${firstName} ${lastName || ''}</p>
       <p><strong>Email:</strong> ${email || 'N/A'}</p>
       <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
-      <p><strong>Type:</strong> ${(bookingType || 'product-viewing').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+      <p><strong>Service:</strong> ${(bookingType || 'general').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+      <p><strong>Duration:</strong> ${reqDuration} minutes</p>
       <p><strong>Store:</strong> ${store?.name || storeId}</p>
       <p><strong>Date:</strong> ${date}</p>
       <p><strong>Time:</strong> ${time}</p>

@@ -3,6 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+const formatTime = (t) => {
+  const [h, m] = t.split(':').map(Number)
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+  return `${h12}:${String(m).padStart(2, '0')} ${ampm}`
+}
 
 function BookingPage() {
   const navigate = useNavigate()
@@ -11,6 +17,8 @@ function BookingPage() {
   const [professionals, setProfessionals] = useState([])
   const [selectedStore, setSelectedStore] = useState('')
   const [selectedPro, setSelectedPro] = useState('')
+  const [services, setServices] = useState([])
+  const [selectedService, setSelectedService] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
   const [slots, setSlots] = useState([])
   const [selectedSlot, setSelectedSlot] = useState('')
@@ -50,25 +58,45 @@ function BookingPage() {
       .catch(() => {})
   }, [selectedStore])
 
-  // Load slots when professional and date are selected
+  // Load services when professional is selected
+  useEffect(() => {
+    if (!selectedPro) { setServices([]); return }
+    fetch(`/api/booking/services/${selectedPro}`)
+      .then(r => r.json())
+      .then(setServices)
+      .catch(() => setServices([]))
+  }, [selectedPro])
+
+  // Load slots when professional, service, and date are selected
   useEffect(() => {
     if (!selectedPro || !selectedDate) { setSlots([]); return }
-    fetch(`/api/booking/slots/${selectedPro}/${selectedDate}`)
+    const svc = services.find(s => s.id === selectedService)
+    const duration = svc ? svc.duration : 60
+    fetch(`/api/booking/slots/${selectedPro}/${selectedDate}?duration=${duration}`)
       .then(r => r.json())
       .then(data => setSlots(data.slots || []))
       .catch(() => setSlots([]))
-  }, [selectedPro, selectedDate])
+  }, [selectedPro, selectedDate, selectedService, services])
 
-  // Generate next 30 days for date selection
+  // Generate today + next 30 days for date selection
   const dateOptions = []
   const today = new Date()
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 0; i <= 30; i++) {
     const d = new Date(today)
     d.setDate(d.getDate() + i)
     const iso = d.toISOString().split('T')[0]
-    const label = `${DAY_NAMES[d.getDay()]}, ${d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}`
+    const dayLabel = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : DAY_NAMES[d.getDay()]
+    const label = `${dayLabel}, ${d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}`
     dateOptions.push({ value: iso, label })
   }
+
+  // Auto-select today when professional (and service if needed) is ready
+  useEffect(() => {
+    if (selectedPro && !selectedDate && (services.length === 0 || selectedService)) {
+      const todayIso = new Date().toISOString().split('T')[0]
+      setSelectedDate(todayIso)
+    }
+  }, [selectedPro, selectedService, services.length, selectedDate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -88,6 +116,8 @@ function BookingPage() {
         body: JSON.stringify({
           storeId: selectedStore,
           professionalId: selectedPro,
+          bookingType: services.find(s => s.id === selectedService)?.name || 'general',
+          duration: services.find(s => s.id === selectedService)?.duration || 60,
           date: selectedDate,
           time: selectedSlot,
           firstName: firstName.trim(),
@@ -119,7 +149,7 @@ function BookingPage() {
             </div>
             <h2>Booking Submitted!</h2>
             <p>Your appointment request has been sent. You will be notified once it is confirmed.</p>
-            <button className="booking-btn" onClick={() => { setSubmitted(false); setSelectedSlot(''); setSelectedDate('') }}>
+            <button className="booking-btn" onClick={() => { setSubmitted(false); setSelectedSlot(''); setSelectedDate(''); setSelectedService('') }}>
               Book Another Appointment
             </button>
           </div>
@@ -143,7 +173,7 @@ function BookingPage() {
             <select
               className="booking-select"
               value={selectedStore}
-              onChange={e => { setSelectedStore(e.target.value); if (!proLocked) setSelectedPro(''); setSelectedDate(''); setSelectedSlot('') }}
+              onChange={e => { setSelectedStore(e.target.value); if (!proLocked) setSelectedPro(''); setSelectedService(''); setSelectedDate(''); setSelectedSlot('') }}
               disabled={proLocked}
             >
               <option value="">Select a store...</option>
@@ -163,7 +193,7 @@ function BookingPage() {
                 <select
                   className="booking-select"
                   value={selectedPro}
-                  onChange={e => { setSelectedPro(e.target.value); setSelectedDate(''); setSelectedSlot('') }}
+                  onChange={e => { setSelectedPro(e.target.value); setSelectedService(''); setSelectedDate(''); setSelectedSlot('') }}
                 >
                   <option value="">Select a professional...</option>
                   {professionals.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -172,8 +202,27 @@ function BookingPage() {
             </div>
           )}
 
+          {/* Service Selection */}
+          {selectedPro && services.length > 0 && (
+            <div className="booking-section">
+              <label className="booking-label">Service</label>
+              <select
+                className="booking-select"
+                value={selectedService}
+                onChange={e => { setSelectedService(e.target.value); setSelectedDate(''); setSelectedSlot('') }}
+              >
+                <option value="">Select a service...</option>
+                {services.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.duration} min)
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Date Selection */}
-          {selectedPro && (
+          {selectedPro && (services.length === 0 || selectedService) && (
             <div className="booking-section">
               <label className="booking-label">Date</label>
               <select
@@ -202,7 +251,7 @@ function BookingPage() {
                       className={`slot-btn${selectedSlot === s.start ? ' slot-btn--selected' : ''}`}
                       onClick={() => setSelectedSlot(s.start)}
                     >
-                      {s.start} - {s.end}
+                      {formatTime(s.start)} - {formatTime(s.end)}
                     </button>
                   ))}
                 </div>
