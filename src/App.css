@@ -5685,6 +5685,56 @@ textarea.booking-input {
   border-color: var(--color-primary);
 }
 
+/* Booking Type Selection */
+.booking-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.booking-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.25rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.booking-type-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.booking-type-btn--selected {
+  border-color: var(--color-primary);
+  background: var(--color-bg-warm);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.booking-type-icon {
+  font-size: 1.5rem;
+}
+
+.booking-type-label {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+}
+
+.booking-type-desc {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
 .booking-no-slots {
   color: var(--color-text-muted);
   font-size: 0.9rem;
@@ -6039,6 +6089,16 @@ textarea.booking-input {
     white-space: nowrap;
   }
 
+  .booking-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-type-btn {
+    flex-direction: row;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
   .booking-card-actions {
     flex-direction: column;
   }
@@ -6050,5 +6110,774 @@ textarea.booking-input {
 
   .avail-slot-row {
     flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   SP Profile Page (Mini Website)
+   ============================================ */
+
+.sp-profile-page {
+  min-height: 100vh;
+  background: var(--color-white);
+}
+
+/* Hero Section */
+.sp-hero {
+  background: linear-gradient(135deg, #fdfaf2 0%, #f5f0e8 100%);
+  padding: 4rem 1rem 3rem;
+  text-align: center;
+}
+
+.sp-hero-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sp-avatar-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.sp-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.sp-avatar-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.sp-name {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.sp-tagline {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.sp-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.sp-specialty-tag {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.8rem;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.sp-hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sp-btn {
+  padding: 0.8rem 2rem;
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+
+.sp-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.sp-btn--primary:hover {
+  opacity: 0.85;
+}
+
+.sp-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sp-btn--outline {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.sp-btn--outline:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.sp-btn--lg {
+  padding: 1rem 3rem;
+  font-size: 0.9rem;
+}
+
+/* Sections */
+.sp-section {
+  padding: 3rem 1rem;
+}
+
+.sp-section--alt {
+  background: var(--color-bg-warm);
+}
+
+.sp-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sp-section-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.sp-bio {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--color-text);
+}
+
+.sp-bio ul, .sp-bio ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Product Gallery */
+.sp-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.sp-gallery-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+  background: var(--color-white);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+}
+
+.sp-gallery-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.sp-gallery-img-wrap {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.sp-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sp-gallery-info {
+  padding: 0.75rem;
+}
+
+.sp-gallery-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.sp-gallery-price {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+/* CTA Section */
+.sp-cta-section {
+  text-align: center;
+}
+
+.sp-cta-text {
+  color: var(--color-text-light);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+/* Lightbox */
+.sp-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.sp-lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: var(--color-white);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sp-lightbox-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+}
+
+.sp-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  z-index: 2;
+  color: var(--color-primary);
+}
+
+.sp-lightbox-prev {
+  left: 0;
+}
+
+.sp-lightbox-next {
+  right: 0;
+}
+
+.sp-lightbox-img {
+  max-width: 100%;
+  max-height: 70vh;
+  display: block;
+}
+
+.sp-lightbox-info {
+  padding: 1.25rem;
+}
+
+.sp-lightbox-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.sp-lightbox-price {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+/* Chat Widget */
+.sp-chat-overlay {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.sp-chat-widget {
+  width: 380px;
+  max-height: 550px;
+  background: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sp-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.sp-chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sp-chat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sp-avatar-placeholder-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.sp-chat-status {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.sp-chat-close {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.sp-chat-start {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-chat-start p {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.sp-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sp-chat-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+.sp-chat-msg {
+  max-width: 80%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.sp-chat-msg--sent {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-bottom-right-radius: 2px;
+}
+
+.sp-chat-msg--received {
+  align-self: flex-start;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-bottom-left-radius: 2px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.sp-chat-msg-avatar {
+  flex-shrink: 0;
+}
+
+.sp-chat-bubble-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-chat-msg-content {
+  word-break: break-word;
+}
+
+.sp-chat-msg-content p {
+  margin: 0;
+}
+
+.sp-chat-msg-time {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}
+
+.sp-chat-input-area {
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sp-chat-send {
+  align-self: flex-end;
+}
+
+/* Rich Text Editor */
+.rich-editor-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-white);
+}
+
+.rich-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--color-border-light);
+  flex-wrap: wrap;
+}
+
+.re-btn {
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-radius: 2px;
+  color: var(--color-text);
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.re-btn:hover {
+  background: var(--color-bg);
+}
+
+.re-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border-light);
+  margin: 0 4px;
+}
+
+.re-size-select {
+  border: 1px solid var(--color-border-light);
+  background: transparent;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.3rem;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.re-emoji-wrap {
+  position: relative;
+}
+
+.re-emoji-picker {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 220px;
+}
+
+.re-emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.re-emoji-btn:hover {
+  background: var(--color-bg);
+}
+
+.rich-editor-content {
+  min-height: 80px;
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  outline: none;
+  color: var(--color-text);
+}
+
+.rich-editor-content:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-muted);
+}
+
+.rich-editor-content ul, .rich-editor-content ol {
+  margin-left: 1.5rem;
+}
+
+/* Admin Profile Styles */
+.sp-admin-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sp-admin-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border-light);
+}
+
+/* Admin Product Grid */
+.sp-admin-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.sp-admin-product-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sp-admin-product-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.sp-admin-product-info {
+  padding: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.sp-admin-product-price {
+  color: var(--color-text-light);
+  font-size: 0.75rem;
+}
+
+.sp-admin-product-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.sp-admin-product-card .booking-btn {
+  width: 100%;
+  border-radius: 0;
+}
+
+/* Messages Layout */
+.sp-messages-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1rem;
+  min-height: 500px;
+}
+
+.sp-convo-list {
+  border-right: 1px solid var(--color-border-light);
+  padding-right: 1rem;
+}
+
+.sp-convo-list h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.75rem;
+}
+
+.sp-convo-item {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 2px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sp-convo-item:hover {
+  background: var(--color-bg);
+}
+
+.sp-convo-item--active {
+  background: var(--color-bg-warm);
+  border-color: var(--color-primary);
+}
+
+.sp-convo-item strong {
+  font-size: 0.85rem;
+}
+
+.sp-convo-preview {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sp-convo-time {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.sp-message-thread {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-thread-header {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 0.85rem;
+}
+
+.sp-thread-header span {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.sp-thread-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 350px;
+}
+
+.sp-thread-reply {
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Mobile responsive for SP pages */
+@media (max-width: 600px) {
+  .sp-hero {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .sp-name {
+    font-size: 1.6rem;
+  }
+
+  .sp-avatar {
+    width: 90px;
+    height: 90px;
+  }
+
+  .sp-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .sp-chat-widget {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .sp-chat-overlay {
+    padding: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .sp-messages-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sp-convo-list {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-light);
+    padding-right: 0;
+    padding-bottom: 1rem;
+  }
+
+  .sp-admin-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rich-editor-toolbar {
+    gap: 1px;
+  }
+
+  .re-btn {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
   }
 }

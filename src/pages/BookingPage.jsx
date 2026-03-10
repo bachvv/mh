@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+
 function BookingPage() {
   const navigate = useNavigate()
   const { slug } = useParams()

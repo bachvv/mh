@@ -49,6 +49,26 @@ export function AuthProvider({ children }) {
     }
   }, [ready])
 
+  const login = useCallback(async (email, password) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        return { error: data.error || 'Login failed' }
+      }
+      const u = await res.json()
+      setUser(u)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
+      return { ok: true }
+    } catch {
+      return { error: 'Network error' }
+    }
+  }, [])
+
   const logout = useCallback(() => {
     setUser(null)
     localStorage.removeItem(STORAGE_KEY)
@@ -57,10 +77,10 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const isAdmin = user?.email === ADMIN_EMAIL
+  const isAdmin = user?.email === ADMIN_EMAIL || user?.role === 'admin'
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, renderButton, logout, ready }}>
+    <AuthContext.Provider value={{ user, isAdmin, renderButton, login, logout, ready }}>
       {children}
     </AuthContext.Provider>
   )
