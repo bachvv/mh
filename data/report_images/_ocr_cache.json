@@ -1,120 +1,82 @@
 {
-  "1772737742532_Screenshot_2026-03-04_175220.png": {
-    "type": "min",
-    "year": 2026,
-    "dateRange": "01 Mar 2026",
-    "kpis": {
-      "paid_hours": 213,
-      "black_dot_target": 48959,
-      "gold_star_target": 53216,
-      "nett_sales": 45068,
-      "pct_of_target": 85,
-      "stretch_platinum_target": 63860,
-      "pct_stretch_platinum": 71
-    }
-  },
-  "1772737741343_Screenshot_2026-03-04_175444.png": {
-    "type": "wps",
-    "year": 2025,
-    "dateRange": "24 Feb - 02 Mar",
-    "kpis": {
-      "paid_hours": 222.67,
-      "total_sales": 52396,
-      "nett_sales": 50616,
-      "num_transactions": 83,
-      "num_items": 105,
-      "avg_sale": 610,
-      "ips": 1.2,
-      "tph": 0.37,
-      "sph": 235,
-      "pct_off_retail": 19,
-      "above_min_sell_pct": 88,
-      "above_min_sell_count": 92,
-      "below_min_sell_pct": 32,
-      "below_min_sell_count": 34,
-      "credit_sales_count": 14,
-      "credit_sales_avg": 2459,
-      "pcp_attach_rate": 37
-    }
-  },
-  "1772737741146_Screenshot_2026-03-04_175528.png": {
-    "type": "wps",
-    "year": 2026,
-    "dateRange": "23 Feb - 01 Mar",
-    "kpis": {
-      "paid_hours": 212.6,
-      "total_sales": 65917,
-      "nett_sales": 45068,
-      "num_transactions": 85,
-      "num_items": 107,
-      "avg_sale": 530,
-      "ips": 1.07,
-      "tph": 0.4,
-      "sph": 310,
-      "pct_off_retail": 34,
-      "above_min_sell_pct": 75,
-      "above_min_sell_count": 80,
-      "below_min_sell_pct": 25,
-      "below_min_sell_count": 27,
-      "credit_sales_count": 17,
-      "credit_sales_avg": 2192,
-      "pcp_attach_rate": 19
-    }
-  },
-  "1772737740866_Screenshot_2026-03-04_175436.png": {
-    "type": "min",
-    "year": 2025,
-    "dateRange": "02 Mar 2025",
-    "kpis": {
-      "paid_hours": 223,
-      "black_dot_target": 49441,
-      "gold_star_target": 53740,
-      "nett_sales": 50815,
-      "pct_of_target": 94,
-      "stretch_platinum_target": 64488,
-      "pct_stretch_platinum": 78
-    }
-  },
-  "1772737740767_Screenshot_2026-03-04_175345.png": {
-    "type": "onyx",
-    "year": 2025,
-    "dateRange": "24 Feb - 02 Mar 2025",
-    "kpis": {
-      "net_sales": 50615,
-      "customer_orders": 1898,
-      "qty": 105,
-      "trans": 83,
-      "ips": 1.2,
-      "pcp_pct": 37.04,
-      "gs_gp_pct": 55.29
-    }
-  },
-  "1772737740498_Screenshot_2026-03-04_175306.png": {
+  "1773767085115_Screenshot_2026-03-17_100414.png": {
     "type": "onyx",
     "year": 2026,
-    "dateRange": "23 Feb - 01 Mar",
+    "dateRange": "09 Mar - 15 Mar 2026",
     "kpis": {
-      "net_sales": 45068,
-      "customer_orders": 9386,
-      "qty": 107,
-      "trans": 85,
-      "ips": 1.07,
-      "pcp_pct": 19.44,
-      "gs_gp_pct": 56.03
-    }
-  },
-  "1772737740331_Screenshot_2026-03-04_175650.png": {
-    "type": "min",
-    "year": 2026,
-    "dateRange": "01 Mar 2026",
-    "kpis": {
-      "paid_hours": 213,
-      "black_dot_target": 48959,
-      "gold_star_target": 53216,
-      "nett_sales": 45068,
-      "pct_of_target": 85,
-      "stretch_platinum_target": 63860,
-      "pct_stretch_platinum": 71
-    }
+      "net_sales": 100269,
+      "customer_orders": 1955,
+      "qty": 127,
+      "trans": 95,
+      "ips": 1.14,
+      "pcp_pct": 36,
+      "gs_gp_pct": 53.56
+    },
+    "staff": [
+      {
+        "name": "Ingrid Harada",
+        "gs_gp_pct": 50.71
+      },
+      {
+        "name": "Faye Sarmiento",
+        "gs_gp_pct": 59.18
+      },
+      {
+        "name": "Fangfei Sang",
+        "gs_gp_pct": 59.75
+      },
+      {
+        "name": "Arthur Shi",
+        "gs_gp_pct": 51.8
+      },
+      {
+        "name": "Yasmin Talaiyan",
+        "gs_gp_pct": 58.46
+      },
+      {
+        "name": "Mona Bahrami",
+        "gs_gp_pct": 50.28
+      },
+      {
+        "name": "Bach Vu",
+        "gs_gp_pct": 14.8
+      },
+      {
+        "name": "Ecommerce Import (CA)",
+        "gs_gp_pct": 73.92
+      },
+      {
+        "name": "Nicholas Kuhn",
+        "gs_gp_pct": -15.99
+      },
+      {
+        "name": "Grace Libuna",
+        "gs_gp_pct": 5.74
+      },
+      {
+        "name": "Joanna Dawson",
+        "gs_gp_pct": 63.42
+      },
+      {
+        "name": "Kawal Bolina",
+        "gs_gp_pct": 50.7
+      },
+      {
+        "name": "Ravleen Kaur",
+        "gs_gp_pct": 66.24
+      },
+      {
+        "name": "Esther Li",
+        "gs_gp_pct": 44.98
+      },
+      {
+        "name": "Mohamed Helmy",
+        "gs_gp_pct": 57.72
+      },
+      {
+        "name": "Dev Dagariya",
+        "gs_gp_pct": 57.72
+      }
+    ]
   }
 }

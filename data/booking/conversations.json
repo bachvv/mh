@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1772910250184",
+    "professionalId": "1772906918671",
+    "customerName": "Bach",
+    "customerEmail": "",
+    "customerPhone": "7787516889",
+    "createdAt": "2026-03-07T19:04:10.184Z",
+    "lastMessageAt": "2026-03-07T19:05:11.792Z"
+  },
+  {
+    "id": "1772920313952",
+    "professionalId": "1772906918671",
+    "customerName": "Bach",
+    "customerEmail": "bachvv@gmail.com",
+    "customerPhone": "",
+    "createdAt": "2026-03-07T21:51:53.952Z",
+    "lastMessageAt": "2026-03-07T21:53:03.610Z"
+  }
+]

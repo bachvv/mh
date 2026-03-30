@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 const AuthContext = createContext(null)
 const STORAGE_KEY = 'mh-auth-user'
 const CLIENT_ID = '565529210106-1561m2330dqaqks6116vekq35saorlgs.apps.googleusercontent.com'
-const ADMIN_EMAIL = 'bachvv@gmail.com'
+const ADMIN_EMAILS = ['bachvv@gmail.com', 'm.helmy86@gmail.com']
 
 function loadUser() {
   try {
@@ -57,10 +57,20 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const isAdmin = user?.email === ADMIN_EMAIL
+  const isAdmin = ADMIN_EMAILS.includes(user?.email)
+  const [managedStoreIds, setManagedStoreIds] = useState([])
+
+  useEffect(() => {
+    if (!user?.email || isAdmin) { setManagedStoreIds([]); return }
+    fetch('/api/booking/stores').then(r => r.json()).then(stores => {
+      setManagedStoreIds(stores.filter(s => s.managerEmail === user.email).map(s => s.id))
+    }).catch(() => setManagedStoreIds([]))
+  }, [user?.email, isAdmin])
+
+  const isManager = managedStoreIds.length > 0
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, renderButton, logout, ready }}>
+    <AuthContext.Provider value={{ user, isAdmin, isManager, managedStoreIds, renderButton, logout, ready }}>
       {children}
     </AuthContext.Provider>
   )

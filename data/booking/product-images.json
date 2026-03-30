@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1772910687448",
+    "professionalId": "1772906918671",
+    "imageUrl": "/booking-uploads/product-1772906918671-1772910687448.jpg",
+    "title": "3carats",
+    "description": "Solitaire ",
+    "price": "$8999",
+    "createdAt": "2026-03-07T19:11:27.448Z"
+  },
+  {
+    "id": "1772916283562",
+    "professionalId": "1772914882428",
+    "imageUrl": "/booking-uploads/product-1772914882428-1772916283562.jpg",
+    "title": "Diamond watches ",
+    "description": "",
+    "price": "$699",
+    "createdAt": "2026-03-07T20:44:43.582Z"
+  }
+]

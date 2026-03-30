@@ -1,0 +1,119 @@
+[
+  {
+    "professionalId": "1772906918671",
+    "dayOfWeek": 4,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:00"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772906918671",
+    "dayOfWeek": 5,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:00"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772906918671",
+    "dayOfWeek": 6,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:00"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772906918671",
+    "dayOfWeek": 0,
+    "date": null,
+    "slots": [
+      {
+        "start": "11:00",
+        "end": "18:00"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772914882428",
+    "dayOfWeek": 1,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:30"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772927674774",
+    "dayOfWeek": 1,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:30"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772927674774",
+    "dayOfWeek": 2,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:30"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772927674774",
+    "dayOfWeek": 5,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "17:30"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772927674774",
+    "dayOfWeek": 6,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "19:00"
+      }
+    ]
+  },
+  {
+    "professionalId": "1772927674774",
+    "dayOfWeek": 3,
+    "date": null,
+    "slots": [
+      {
+        "start": "10:00",
+        "end": "18:00"
+      }
+    ]
+  },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 1, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 2, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 3, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 4, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 5, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 6, "date": null, "slots": [{ "start": "10:00", "end": "21:00" }] },
+  { "professionalId": "metrotown-anyone", "dayOfWeek": 0, "date": null, "slots": [{ "start": "11:00", "end": "19:00" }] }
+]

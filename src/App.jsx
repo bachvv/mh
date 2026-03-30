@@ -26,9 +26,14 @@ import PendantBarFinderPage from './pages/PendantBarFinderPage'
 import CatalogProcessPage from './pages/CatalogProcessPage'
 import MigrateSkusPage from './pages/MigrateSkusPage'
 import ManagersReportPage from './pages/ManagersReportPage'
+import SpreadAnalysisPage from './pages/SpreadAnalysisPage'
 import BookingPage from './pages/BookingPage'
 import BookingAdminPage from './pages/BookingAdminPage'
 import SPProfilePage from './pages/SPProfilePage'
+import AdminPage from './pages/AdminPage'
+import AccessLogPage from './pages/AccessLogPage'
+import RepairsPage from './pages/RepairsPage'
+import CaratClubPage from './pages/CaratClubPage'
 import './App.css'
 
 function App() {
@@ -57,10 +62,17 @@ function App() {
       <Route path="/watches" element={<WatchesPage />} />
       <Route path="/watch-pair" element={<WatchPairPage />} />
       <Route path="/find-by-photo" element={<FindByPhotoPage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin/images" element={<ImageAdminPage />} />
+      <Route path="/admin/booking" element={<BookingAdminPage />} />
+      <Route path="/admin/migrate-skus" element={<MigrateSkusPage />} />
+      <Route path="/admin/access-log" element={<AccessLogPage />} />
+      <Route path="/repairs" element={<RepairsPage />} />
+      <Route path="/carat-club" element={<CaratClubPage />} />
       <Route path="/image-admin" element={<ImageAdminPage />} />
       <Route path="/catalog-process" element={<CatalogProcessPage />} />
-      <Route path="/admin/migrate-skus" element={<MigrateSkusPage />} />
       <Route path="/managers-report" element={<ManagersReportPage />} />
+      <Route path="/spread-analysis" element={<SpreadAnalysisPage />} />
       <Route path="/booking" element={<BookingPage />} />
       <Route path="/booking/admin" element={<BookingAdminPage />} />
       <Route path="/booking/:slug" element={<BookingPage />} />

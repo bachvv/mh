@@ -1,10 +1,61 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import SalesQuote from '../components/SalesQuote'
 
+const MH_PASS = 'mh123'
+const STORAGE_KEY = 'mh_unlocked'
+
 function HomePage() {
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
+  const { user, isAdmin } = useAuth()
+  const [isSP, setIsSP] = useState(false)
+  const [unlocked, setUnlocked] = useState(() => localStorage.getItem(STORAGE_KEY) === 'true')
+  const [passInput, setPassInput] = useState('')
+  const [error, setError] = useState(false)
+
+  const handleUnlock = (e) => {
+    e.preventDefault()
+    if (passInput === MH_PASS) {
+      localStorage.setItem(STORAGE_KEY, 'true')
+      setUnlocked(true)
+      setError(false)
+    } else {
+      setError(true)
+    }
+  }
+
+  useEffect(() => {
+    if (!user?.email) { setIsSP(false); return }
+    fetch('/api/booking/professionals')
+      .then(r => r.json())
+      .then(pros => setIsSP(pros.some(p => p.email === user.email)))
+      .catch(() => setIsSP(false))
+  }, [user?.email])
+
+  if (!unlocked) {
+    return (
+      <div className="home-page">
+        <div className="hero">
+          <h2>MH Tools</h2>
+          <form onSubmit={handleUnlock} className="mh-password-gate">
+            <input
+              type="password"
+              value={passInput}
+              onChange={e => { setPassInput(e.target.value); setError(false) }}
+              placeholder="Enter password"
+              autoFocus
+              className="mh-password-input"
+            />
+            <button type="submit" className="mh-password-btn">Enter</button>
+            {error && <p className="mh-password-error">Wrong password</p>}
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  const showBooking = isSP || isAdmin
 
   const tools = [
     {
@@ -48,31 +99,36 @@ function HomePage() {
       ),
       description: 'Spiffs & bonus programs',
     },
-    {
+    ...(showBooking ? [{
       label: 'Booking',
-      path: '/booking',
+      path: '/booking/admin',
       icon: (
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
           <line x1="8" y1="2" x2="8" y2="6" />
           <line x1="3" y1="10" x2="21" y2="10" />
-          <path d="M8 14h.01" />
-          <path d="M12 14h.01" />
-          <path d="M16 14h.01" />
-          <path d="M8 18h.01" />
-          <path d="M12 18h.01" />
         </svg>
       ),
-      description: 'Customer appointments',
+      description: 'Manage your bookings & profile',
+    }] : []),
+    {
+      label: 'SKU Finder',
+      path: '/findsku',
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      ),
+      description: 'Find products by SKU or category',
     },
   ]
 
   return (
     <div className="home-page">
       <div className="hero">
-        <h1>MH Tools</h1>
-        <p>Sales tools for Michael Hill professionals</p>
+        <h2>MH Tools</h2>
         <SalesQuote />
         <div className="tool-cards">
           {tools.map((tool) => (

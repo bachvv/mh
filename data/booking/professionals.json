@@ -1,0 +1,60 @@
+[
+  {
+    "id": "1772906918671",
+    "slug": "faye-sarmiento",
+    "name": "Faye Sarmiento",
+    "email": "fayesarmiento30603@gmail.com",
+    "storeId": "metrotown",
+    "phone": "",
+    "googleCalendarConnected": false,
+    "profilePicture": "/booking-uploads/profile-1772906918671.jpg",
+    "bio": "",
+    "tagline": "",
+    "specialties": [],
+    "notifyEmail": ""
+  },
+  {
+    "id": "1772914882428",
+    "slug": "mona",
+    "name": "Mona",
+    "email": "bahramimona2@gmail.com",
+    "storeId": "metrotown",
+    "phone": "",
+    "googleCalendarConnected": false,
+    "bio": "",
+    "tagline": "",
+    "specialties": [],
+    "notifyEmail": ""
+  },
+  {
+    "id": "1772927674774",
+    "slug": "elisa",
+    "name": "Elisa",
+    "email": "fangfeisang@gmail.com",
+    "storeId": "metrotown",
+    "phone": "",
+    "googleCalendarConnected": false
+  },
+  {
+    "id": "1773163331576",
+    "slug": "yasmin",
+    "name": "Yasmin",
+    "email": "yasmintalaiyan@gmail.com",
+    "storeId": "metrotown",
+    "phone": "",
+    "googleCalendarConnected": false
+  },
+  {
+    "id": "metrotown-anyone",
+    "slug": "metrotown-inspection",
+    "name": "Anyone",
+    "email": "",
+    "storeId": "metrotown",
+    "phone": "",
+    "googleCalendarConnected": false,
+    "defaultDuration": 30,
+    "bufferMinutes": 0,
+    "bookingTypes": ["Inspection"],
+    "isAnyone": true
+  }
+]

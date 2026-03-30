@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useCallback, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useAuth } from '../auth/AuthContext'
 import catalog from '../data/catalog.json'
 
@@ -85,26 +85,13 @@ function NewItemsSection() {
 
 function ConciergePage() {
   const navigate = useNavigate()
-  const { user, isAdmin, renderButton, logout } = useAuth()
-  const googleBtnRef = useCallback((el) => {
-    if (el) renderButton(el)
-  }, [renderButton])
+  const { isAdmin } = useAuth()
 
   return (
     <div className="dev-page">
       <div className="dev-header">
         <button className="back-button" onClick={() => navigate('/dev')}>Dev</button>
         <h1>SKU Finder</h1>
-        <div className="auth-controls">
-          {user ? (
-            <>
-              <img src={user.picture} alt="" className="auth-avatar" referrerPolicy="no-referrer" />
-              <button className="auth-btn" onClick={logout}>Sign Out</button>
-            </>
-          ) : (
-            <div ref={googleBtnRef} />
-          )}
-        </div>
       </div>
 
       {GROUPS.map((group, gi) => (

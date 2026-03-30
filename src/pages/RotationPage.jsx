@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function RotationPage({ embedded = false }) {
   const navigate = useNavigate()
   const [names, setNames] = useState(['', ''])
+  const dragItem = useRef(null)
+  const dragOverItem = useRef(null)
+  const [dragIndex, setDragIndex] = useState(null)
+  const [dragOverIndex, setDragOverIndex] = useState(null)
 
   const handleNameChange = (index, value) => {
     const updated = [...names]
@@ -26,6 +30,56 @@ function RotationPage({ embedded = false }) {
     setNames([...rest, first])
   }
 
+  const handleDragStart = (index) => {
+    dragItem.current = index
+    setDragIndex(index)
+  }
+
+  const handleDragEnter = (index) => {
+    dragOverItem.current = index
+    setDragOverIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    if (dragItem.current === null || dragOverItem.current === null) {
+      setDragIndex(null)
+      setDragOverIndex(null)
+      return
+    }
+    const updated = [...names]
+    const [dragged] = updated.splice(dragItem.current, 1)
+    updated.splice(dragOverItem.current, 0, dragged)
+    setNames(updated)
+    dragItem.current = null
+    dragOverItem.current = null
+    setDragIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleTouchStart = (index, e) => {
+    dragItem.current = index
+    setDragIndex(index)
+  }
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0]
+    const el = document.elementFromPoint(touch.clientX, touch.clientY)
+    if (el) {
+      const row = el.closest('.rotation-row')
+      if (row) {
+        const idx = parseInt(row.dataset.index, 10)
+        if (!isNaN(idx)) {
+          dragOverItem.current = idx
+          setDragOverIndex(idx)
+        }
+      }
+    }
+  }
+
+  const handleTouchEnd = () => {
+    handleDragEnd()
+  }
+
   return (
     <div className="rotation-page">
       {!embedded && (
@@ -35,7 +89,7 @@ function RotationPage({ embedded = false }) {
         </button>
         <h1>Sales Rotation</h1>
         <button className="rotate-btn" onClick={rotate} title="Next person">
-          &#x27A1;
+          Next &#x279C;
         </button>
       </div>
       )}
@@ -56,7 +110,20 @@ function RotationPage({ embedded = false }) {
 
         <div className="rotation-list">
           {names.map((name, index) => (
-            <div className="rotation-row" key={index}>
+            <div
+              className={`rotation-row${dragIndex === index ? ' dragging' : ''}${dragOverIndex === index && dragIndex !== index ? ' drag-over' : ''}`}
+              key={index}
+              data-index={index}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragOver={(e) => e.preventDefault()}
+              onDragEnd={handleDragEnd}
+              onTouchStart={(e) => handleTouchStart(index, e)}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <span className="rotation-drag-handle" title="Drag to reorder">&#x2630;</span>
               <span className="rotation-position">{index + 1}</span>
               <input
                 type="text"

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 
 const EMOJI_LIST = [
   '😊', '👋', '💎', '✨', '💍', '⌚', '🎁', '❤️', '🔥', '👌',
@@ -79,6 +79,7 @@ function RichTextEditor({ value, onChange, placeholder }) {
 function SPProfilePage() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [pro, setPro] = useState(null)
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -108,6 +109,22 @@ function SPProfilePage() {
       return fetch(`/api/booking/professionals/${proData.id}/products`).then(r => r.json())
     }).then(setProducts).catch(() => setError('Professional not found')).finally(() => setLoading(false))
   }, [slug])
+
+  // Auto-open chat from booking hash link
+  useEffect(() => {
+    const chatHash = searchParams.get('chat')
+    if (!chatHash) return
+    fetch(`/api/booking/verify-hash/${chatHash}`)
+      .then(r => { if (!r.ok) throw new Error(); return r.json() })
+      .then(data => {
+        setChatName(data.customerName)
+        setChatEmail(data.customerEmail || '')
+        setConvoId(data.conversationId)
+        setChatStarted(true)
+        setShowChat(true)
+      })
+      .catch(() => {})
+  }, [searchParams])
 
   // Poll for new messages
   useEffect(() => {
@@ -189,9 +206,6 @@ function SPProfilePage() {
             </div>
           )}
           <div className="sp-hero-actions">
-            <button className="sp-btn sp-btn--primary" onClick={() => navigate(`/booking/${slug}`)}>
-              Book Appointment
-            </button>
             <button className="sp-btn sp-btn--outline" onClick={() => setShowChat(true)}>
               Message Me
             </button>

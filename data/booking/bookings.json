@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1772908907327",
+    "storeId": "metrotown",
+    "professionalId": "1772906918671",
+    "bookingType": "product-viewing",
+    "date": "2026-03-14",
+    "time": "11:00",
+    "duration": 60,
+    "firstName": "Bach",
+    "lastName": "",
+    "email": "bachvv@gmail.com",
+    "phone": "",
+    "status": "cancelled",
+    "createdAt": "2026-03-07T18:41:47.327Z",
+    "updatedAt": "2026-03-07T21:06:02.679Z"
+  },
+  {
+    "id": "1772915380968",
+    "storeId": "metrotown",
+    "professionalId": "1772906918671",
+    "bookingType": "Inspection",
+    "date": "2026-03-12",
+    "time": "10:00",
+    "duration": 60,
+    "firstName": "Marina",
+    "lastName": "Robles",
+    "email": "marinarobles03@yahoo.com",
+    "phone": "6047654974",
+    "status": "accepted",
+    "createdAt": "2026-03-07T20:29:40.968Z",
+    "updatedAt": "2026-03-07T21:08:54.256Z",
+    "hash": "e701265e22da6755"
+  },
+  {
+    "id": "1772927067400",
+    "storeId": "metrotown",
+    "professionalId": "1772914882428",
+    "bookingType": "Inspection",
+    "date": "2026-09-07",
+    "time": "13:00",
+    "duration": 60,
+    "firstName": "Sharanpreet",
+    "lastName": "kaur",
+    "email": "sharanchatha168@gmail.com",
+    "phone": "7052558606",
+    "status": "accepted",
+    "createdAt": "2026-03-07T23:44:27.400Z",
+    "hash": "da1ac13f51bc730d",
+    "updatedAt": "2026-03-07T23:49:41.870Z"
+  }
+]

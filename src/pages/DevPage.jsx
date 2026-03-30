@@ -1,26 +1,41 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { useCallback } from 'react'
+import DevQuote from '../components/DevQuote'
 
 function DevPage() {
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
+  const { user, isAdmin, renderButton, logout } = useAuth()
+  const googleBtnRef = useCallback((el) => {
+    if (el) renderButton(el)
+  }, [renderButton])
 
   const links = [
-    { label: 'SKU Finder', path: '/findsku' },
     { label: 'Rotation', path: '/rotation' },
     { label: 'Conversion', path: '/conversion' },
     { label: 'Observation', path: '/observation' },
     { label: 'Clockwork', path: '/clockwork' },
-    ...(isAdmin ? [{ label: "Manager's Report", path: '/managers-report' }] : []),
+    ...(isAdmin ? [{ label: 'Admin', path: '/admin' }] : []),
     { label: 'Booking', path: '/booking' },
-    ...(isAdmin ? [{ label: 'Booking Admin', path: '/booking/admin' }] : []),
+    { label: 'Repairs', path: '/repairs' },
+    { label: 'Carat Club', path: '/carat-club' },
   ]
 
   return (
     <div className="dev-page">
       <div className="dev-header">
         <button className="back-button" onClick={() => navigate('/')}>Home</button>
-        <h1>Dev Tools</h1>
+        <h1>Development</h1>
+        <div className="auth-controls">
+          {user ? (
+            <>
+              <img src={user.picture} alt="" className="auth-avatar" referrerPolicy="no-referrer" />
+              <button className="auth-btn" onClick={logout}>Sign Out</button>
+            </>
+          ) : (
+            <div ref={googleBtnRef} />
+          )}
+        </div>
       </div>
       <div className="dev-links">
         {links.map((link) => (
@@ -32,6 +47,9 @@ function DevPage() {
             {link.label}
           </button>
         ))}
+      </div>
+      <div style={{ marginTop: 'auto' }}>
+        <DevQuote />
       </div>
     </div>
   )

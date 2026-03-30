@@ -815,7 +815,7 @@ export default function CatalogProcessPage() {
       <div className="wc-catalog-info">
         <button className="wc-btn wc-btn--sm wc-btn--outline" onClick={() => navigate('/findsku')}>Back</button>
         <span className="wc-catalog-label">Catalog Processor</span>
-        <button className="wc-btn wc-btn--sm wc-btn--outline" onClick={() => navigate('/image-admin')}>Image Admin</button>
+        <button className="wc-btn wc-btn--sm wc-btn--outline" onClick={() => navigate('/admin/images')}>Image Admin</button>
       </div>
 
       <p className="wc-instructions">

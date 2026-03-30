@@ -1,0 +1,80 @@
+[
+  {
+    "id": "metrotown",
+    "name": "Metrotown",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "pacific-centre",
+    "name": "Pacific Centre",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "seven-oaks",
+    "name": "Seven Oaks",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "mayfair",
+    "name": "Mayfair",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "hillside",
+    "name": "Hillside",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "mcarthur-glen",
+    "name": "McArthur Glen",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "guildford-town-centre",
+    "name": "Guildford Town Centre",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "cottonwood",
+    "name": "Cottonwood",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "park-royal",
+    "name": "Park Royal",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "lougheed",
+    "name": "Lougheed",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "tsawwassen",
+    "name": "Tsawwassen",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "richmond-centre",
+    "name": "Richmond Centre",
+    "address": "",
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "woodgrove",
+    "name": "Woodgrove",
+    "address": "",
+    "timezone": "America/Vancouver"
+  }
+]

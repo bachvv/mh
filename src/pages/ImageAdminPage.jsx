@@ -167,7 +167,7 @@ function ImageAdminPage() {
   return (
     <div className="img-admin-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/findsku')}>SKU Finder</button>
+        <button className="back-button" onClick={() => navigate('/admin')}>Admin</button>
         <h1>Image Admin</h1>
       </div>
 

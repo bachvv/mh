@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1772910253892",
+    "conversationId": "1772910250184",
+    "sender": "Bach",
+    "senderType": "customer",
+    "content": "Test",
+    "createdAt": "2026-03-07T19:04:13.892Z"
+  },
+  {
+    "id": "1772910311792",
+    "conversationId": "1772910250184",
+    "sender": "Faye Sarmiento",
+    "senderType": "professional",
+    "content": "Hi",
+    "createdAt": "2026-03-07T19:05:11.792Z"
+  },
+  {
+    "id": "1772920313953",
+    "conversationId": "1772920313952",
+    "sender": "Bach",
+    "senderType": "customer",
+    "content": "Test Reminder - Michael Hill",
+    "createdAt": "2026-03-07T21:51:53.953Z",
+    "source": "email"
+  },
+  {
+    "id": "1772920320295",
+    "conversationId": "1772920313952",
+    "sender": "Bach",
+    "senderType": "customer",
+    "content": "hello test reply",
+    "createdAt": "2026-03-07T21:52:00.295Z",
+    "source": "email"
+  },
+  {
+    "id": "1772920383610",
+    "conversationId": "1772920313952",
+    "sender": "Bach",
+    "senderType": "customer",
+    "content": "Test Reminder - Michael Hill",
+    "createdAt": "2026-03-07T21:53:03.610Z",
+    "source": "email"
+  }
+]

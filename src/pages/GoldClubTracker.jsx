@@ -44,7 +44,8 @@ function GoldClubTracker() {
       const remaining = Math.max(0, tier.target - gpAmount)
       const pace = yearProgress > 0 ? gpAmount / yearProgress : 0
       const projectedYear = pace
-      const dailyNeeded = daysRemaining > 0 ? remaining / daysRemaining : 0
+      const weeksRemaining = daysRemaining / 7
+      const weeklyNeeded = weeksRemaining > 0 ? remaining / weeksRemaining : 0
       const achieved = gpAmount >= tier.target
 
       return {
@@ -54,7 +55,7 @@ function GoldClubTracker() {
         remaining,
         pace,
         projectedYear,
-        dailyNeeded,
+        weeklyNeeded,
         achieved,
       }
     })
@@ -172,8 +173,8 @@ function GoldClubTracker() {
                     <span className="tier-detail-value">{formatCurrency(tier.remaining)}</span>
                   </div>
                   <div className="tier-detail-item">
-                    <span className="tier-detail-label">Daily GP Needed</span>
-                    <span className="tier-detail-value">{formatCurrency(tier.dailyNeeded)}/day</span>
+                    <span className="tier-detail-label">Weekly GP Needed</span>
+                    <span className="tier-detail-value">{formatCurrency(tier.weeklyNeeded)}/week</span>
                   </div>
                   <div className="tier-detail-item">
                     <span className="tier-detail-label">Projected Year-End</span>
