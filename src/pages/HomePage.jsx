@@ -18,7 +18,7 @@ function HomePage() {
           <line x1="10" y1="14" x2="14" y2="14" />
         </svg>
       ),
-      description: 'Flexiti & MHC monthly payments',
+      description: 'Calculate Flexiti & MHC monthly payment plans with tax by province',
     },
     {
       label: 'Gold Club Tracker',
@@ -31,7 +31,7 @@ function HomePage() {
           <path d="M12 14v4" />
         </svg>
       ),
-      description: 'Gold, Ruby & Emerald tiers',
+      description: 'Track your progress toward Gold, Ruby & Emerald tier targets',
       accent: true,
     },
     {
@@ -46,7 +46,7 @@ function HomePage() {
           <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
         </svg>
       ),
-      description: 'Spiffs & bonus programs',
+      description: 'Check your incentive tier and calculate spiffs & bonus payouts',
     },
     {
       label: 'Booking',
@@ -64,7 +64,7 @@ function HomePage() {
           <path d="M12 18h.01" />
         </svg>
       ),
-      description: 'Customer appointments',
+      description: 'Schedule and manage customer appointments by store',
     },
   ]
 
