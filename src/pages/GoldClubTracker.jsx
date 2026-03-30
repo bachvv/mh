@@ -44,7 +44,8 @@ function GoldClubTracker() {
       const remaining = Math.max(0, tier.target - gpAmount)
       const pace = yearProgress > 0 ? gpAmount / yearProgress : 0
       const projectedYear = pace
-      const dailyNeeded = daysRemaining > 0 ? remaining / daysRemaining : 0
+      const weeksRemaining = daysRemaining / 7
+      const weeklyNeeded = weeksRemaining > 0 ? remaining / weeksRemaining : 0
       const achieved = gpAmount >= tier.target
 
       return {
@@ -54,7 +55,7 @@ function GoldClubTracker() {
         remaining,
         pace,
         projectedYear,
-        dailyNeeded,
+        weeklyNeeded,
         achieved,
       }
     })
@@ -101,7 +102,7 @@ function GoldClubTracker() {
           <span className="tracker-separator">|</span>
           <span>{Math.round(yearProgress * 100)}% of year elapsed</span>
           <span className="tracker-separator">|</span>
-          <span>{daysRemaining} days remaining</span>
+          <span>{Math.round(daysRemaining / 7)} weeks remaining</span>
         </div>
       </div>
 
@@ -172,8 +173,8 @@ function GoldClubTracker() {
                     <span className="tier-detail-value">{formatCurrency(tier.remaining)}</span>
                   </div>
                   <div className="tier-detail-item">
-                    <span className="tier-detail-label">Daily GP Needed</span>
-                    <span className="tier-detail-value">{formatCurrency(tier.dailyNeeded)}/day</span>
+                    <span className="tier-detail-label">Weekly GP Needed</span>
+                    <span className="tier-detail-value">{formatCurrency(tier.weeklyNeeded)}/week</span>
                   </div>
                   <div className="tier-detail-item">
                     <span className="tier-detail-label">Projected Year-End</span>
@@ -197,7 +198,7 @@ function GoldClubTracker() {
                 ? ' You are on pace for Ruby Club but need to increase for Emerald.'
                 : tierResults[0].projectedYear >= tierResults[0].target
                   ? ' You are on pace for Gold Club. Push harder for Ruby and Emerald!'
-                  : ' You need to increase your daily GP to reach any club tier.'}
+                  : ' You need to increase your weekly GP to reach any club tier.'}
           </p>
         </div>
       )}
