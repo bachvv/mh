@@ -122,7 +122,7 @@ function IncentivesPage() {
     <div className="incentives-page">
       <div className="incentives-header">
         <button className="back-button" onClick={() => navigate('/')}>Home</button>
-        <h1>Incentive Calculator</h1>
+        <h1>FY 26 Incentive Calculator</h1>
       </div>
 
       <div className="incentives-input-card">
@@ -335,68 +335,43 @@ function IncentivesPage() {
 
       <div className="incentives-table-card">
         <h2>
-          {monthType === '4week' ? '4-Week' : '5-Week'} Tiers
-          {isDfo && <span className="dfo-table-badge">DFO Outlet</span>}
-        </h2>
-        <div className="payment-table-wrapper">
-          <table className="payment-table">
-            <thead>
-              <tr>
-                <th>Tier</th>
-                <th>GP$ Benchmark</th>
-                <th>Commission %</th>
-                <th>Approx Incentive</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tiers.map((t) => (
-                <tr
-                  key={t.tier}
-                  className={t.tier === result.currentTier && result.baseIncentive > 0 ? 'active-tier-row' : ''}
-                >
-                  <td>Tier {t.tier}</td>
-                  <td>{fmt(t.benchmark)}</td>
-                  <td>{t.commission.toFixed(2)}%</td>
-                  <td>{fmt(t.incentive)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="incentives-table-card">
-        <h2>
-          GP% Qualifier
+          FY 26 — {monthType === '4week' ? '4-Week' : '5-Week'} Tiers
           {isDfo && <span className="dfo-table-badge">DFO Outlet</span>}
         </h2>
         <p className="gp-qualifier-note">
-          Meet the minimum GP% threshold to earn your commission at 100%. Below the minimum, no incentive is paid.
+          Meet the minimum GP% threshold for your tier to earn commission at 100%. Below the minimum, no incentive is paid.
         </p>
         <div className="payment-table-wrapper">
           <table className="payment-table">
             <thead>
               <tr>
                 <th>Tier</th>
-                <th>Min. GP% Required</th>
-                <th>Status</th>
+                <th>GP$</th>
+                <th>Comm%</th>
+                <th>Amount</th>
+                <th>GP%</th>
+                <th>Acc%</th>
               </tr>
             </thead>
             <tbody>
-              {gpTiers.map((t) => (
-                <tr
-                  key={t.tier}
-                  className={
-                    parseFloat(gpPercent) > 0 && t.tier === result.gpPctTier
-                      ? 'active-tier-row'
-                      : ''
-                  }
-                >
-                  <td>Tier {t.tier}</td>
-                  <td>{t.gpRange > 0 ? t.gpRange.toFixed(1) + '%' : '—'}</td>
-                  <td>{t.accelerator > 0 ? 'Qualifies ✓' : 'No incentive'}</td>
-                </tr>
-              ))}
+              {tiers.map((t, i) => {
+                const gp = gpTiers[i] || { gpRange: 0, accelerator: 0 }
+                const isActiveTier = t.tier === result.currentTier && result.baseIncentive > 0
+                const isActiveGpTier = parseFloat(gpPercent) > 0 && t.tier === result.gpPctTier
+                return (
+                  <tr
+                    key={t.tier}
+                    className={isActiveTier ? 'active-tier-row' : isActiveGpTier ? 'active-gp-row' : ''}
+                  >
+                    <td>Tier {t.tier}</td>
+                    <td>{t.benchmark > 0 ? fmt(t.benchmark) : '—'}</td>
+                    <td>{t.commission.toFixed(1)}%</td>
+                    <td>{t.incentive > 0 ? fmt(t.incentive) : '—'}</td>
+                    <td>{gp.gpRange > 0 ? gp.gpRange.toFixed(2) + '%' : '0.00%'}</td>
+                    <td>{gp.accelerator > 0 ? '100.00%' : '0.00%'}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

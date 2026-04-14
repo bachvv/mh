@@ -1154,6 +1154,14 @@
   color: var(--color-accent);
 }
 
+.active-gp-row {
+  background: #f5f8ff !important;
+}
+
+.active-gp-row td {
+  color: var(--color-info);
+}
+
 .store-status-toggle {
   display: flex;
   border: 1px solid var(--color-border);
