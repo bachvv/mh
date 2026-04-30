@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Payment Calculator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-dark: #f7f8fa;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f3f7;
+    --border: #e1e4ea;
+    --text-primary: #1a1d24;
+    --text-secondary: #4a5160;
+    --text-muted: #8a8f99;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --green: #16a34a;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg-dark); color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px; line-height: 1.5;
+  }
+  .calculator-page { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .calc-header h1 { font-size: 24px; margin: 0 0 24px 0; font-weight: 600; }
+
+  .input-section-wrapper {
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 800px) {
+    .input-section-wrapper { grid-template-columns: 1fr; }
+  }
+  .input-section {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .province-selector { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .province-selector label { color: var(--text-secondary); font-size: 13px; min-width: 130px; }
+  .province-selector select {
+    background: var(--bg-dark); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px; font-size: 14px; flex: 1; max-width: 360px;
+  }
+
+  .items-section { margin-top: 20px; }
+  .items-section h3 { margin: 0 0 12px 0; font-size: 15px; color: var(--text-secondary); font-weight: 500; }
+
+  .item-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .item-name {
+    flex: 1; background: var(--bg-dark); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px; font-size: 14px;
+  }
+  .amount-input {
+    display: flex; align-items: center; background: var(--bg-dark); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0 12px; min-width: 140px;
+  }
+  .amount-input:focus-within { border-color: var(--accent); }
+  .amount-input .dollar-sign { color: var(--text-muted); margin-right: 4px; font-size: 14px; }
+  .amount-input input {
+    background: none; border: none; outline: none; color: var(--text-primary);
+    padding: 8px 0; font-size: 14px; width: 100%; min-width: 0;
+  }
+  .amount-input input::-webkit-outer-spin-button,
+  .amount-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .amount-input input[type=number] { -moz-appearance: textfield; }
+
+  .remove-btn {
+    background: none; border: none; color: var(--red); cursor: pointer; font-size: 22px;
+    padding: 0 8px; line-height: 1;
+  }
+  .add-btn {
+    background: none; border: 1px dashed var(--border); color: var(--accent); cursor: pointer;
+    padding: 8px 16px; border-radius: 6px; font-size: 13px; margin-top: 4px;
+  }
+  .add-btn:hover { border-color: var(--accent); }
+
+  .totals-summary {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px;
+  }
+  .totals-summary p { margin: 4px 0; color: var(--text-secondary); }
+  .totals-summary strong { color: var(--text-primary); }
+
+  .down-payment-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .down-payment-label-text { color: var(--text-secondary); font-size: 14px; }
+  .down-payment-input { min-width: 130px; }
+  .down-payment-label { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); cursor: pointer; }
+  .credit-amount-line { margin-top: 8px !important; }
+
+  .longest-plan-blocks { display: flex; gap: 12px; flex-wrap: wrap; }
+  .longest-plan-block {
+    background: var(--bg-card); border: 1px solid rgba(37,99,235,0.35); border-radius: 12px;
+    padding: 16px 20px; min-width: 140px; display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .longest-plan-block--mhc { border-color: rgba(22,163,74,0.35); }
+  .longest-plan-label { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .longest-plan-amount { font-size: 24px; font-weight: 700; color: var(--text-primary); margin: 4px 0; }
+  .longest-plan-detail { color: var(--text-secondary); font-size: 13px; }
+
+  .tables-section { display: flex; flex-direction: column; gap: 24px; }
+  .table-section h2 { font-size: 17px; margin: 0 0 12px 0; font-weight: 600; }
+
+  .payment-table-wrapper { overflow-x: auto; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .payment-table { width: 100%; border-collapse: collapse; }
+  .payment-table th, .payment-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .payment-table th { background: var(--bg-hover); color: var(--text-secondary); font-weight: 600; white-space: nowrap; }
+  .payment-table th .admin-fee-note { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+  .payment-table .items-label { color: var(--text-secondary); }
+  .payment-table .subtotal-cell { color: var(--text-primary); font-weight: 600; white-space: nowrap; }
+  .payment-table .monthly-cell { color: var(--accent); font-weight: 500; white-space: nowrap; }
+  .payment-table .below-min { color: var(--text-muted); font-style: italic; font-size: 12px; }
+  .payment-table .min-warning { cursor: help; }
+  .payment-table tbody tr:hover { background: var(--bg-hover); }
+
+  .show-chart-row { text-align: center; }
+  .show-chart-btn {
+    background: none; border: 1px solid var(--border); color: var(--accent); cursor: pointer;
+    padding: 10px 24px; border-radius: 6px; font-size: 14px;
+  }
+  .show-chart-btn:hover { border-color: var(--accent); background: var(--bg-hover); }
+
+  .chart-container {
+    background: var(--bg-card); border-radius: 8px; padding: 16px; margin-top: 16px;
+    height: 360px; border: 1px solid var(--border);
+  }
+  .no-data { color: var(--text-muted); font-style: italic; padding: 12px; }
+</style>
+</head>
+<body>
+<div class="calculator-page">
+  <div class="calc-header"><h1>Credit Payment Calculator</h1></div>
+
+  <div class="input-section-wrapper">
+    <div class="input-section">
+      <div class="province-selector">
+        <label for="maxMonths">Max Plan Length:</label>
+        <select id="maxMonths">
+          <option value="6">6 months or less</option>
+          <option value="12">12 months or less</option>
+          <option value="18">18 months or less</option>
+          <option value="24">24 months or less</option>
+          <option value="45">45 months or less</option>
+        </select>
+      </div>
+
+      <div class="province-selector">
+        <label for="province">Province:</label>
+        <select id="province"></select>
+      </div>
+
+      <div class="items-section">
+        <h3>Enter Item Amounts (before tax)</h3>
+        <div id="itemsList"></div>
+        <button class="add-btn" id="addItemBtn">+ Add Item</button>
+      </div>
+
+      <div id="totalsSummary" class="totals-summary" style="display:none;"></div>
+    </div>
+
+    <div id="longestBlocks" class="longest-plan-blocks"></div>
+  </div>
+
+  <div id="tablesSection" class="tables-section" style="display:none;">
+    <section class="table-section">
+      <h2>Flexiti Financing</h2>
+      <div id="flexitiTable"></div>
+      <div id="flexitiChartContainer" style="display:none;"></div>
+    </section>
+
+    <section class="table-section">
+      <h2>MHC Financing</h2>
+      <div id="mhcTable"></div>
+      <div id="mhcChartContainer" style="display:none;"></div>
+    </section>
+
+    <div class="show-chart-row">
+      <button class="show-chart-btn" id="toggleChartBtn">Show Projected Balance</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =========================================================================
+// Data — provinces, Flexiti terms, MHC terms (mirrors src/data/taxRates.js)
+// =========================================================================
+const PROVINCES = [
+  { code: 'BC', name: 'British Columbia', rate: 0.12 },
+  { code: 'AB', name: 'Alberta', rate: 0.05 },
+  { code: 'SK', name: 'Saskatchewan', rate: 0.11 },
+  { code: 'MB', name: 'Manitoba', rate: 0.12 },
+  { code: 'ON', name: 'Ontario', rate: 0.13 },
+  { code: 'QC', name: 'Quebec', rate: 0.14975 },
+  { code: 'NB', name: 'New Brunswick', rate: 0.15 },
+  { code: 'NS', name: 'Nova Scotia', rate: 0.15 },
+  { code: 'PE', name: 'Prince Edward Island', rate: 0.15 },
+  { code: 'NL', name: 'Newfoundland and Labrador', rate: 0.15 },
+  { code: 'NT', name: 'Northwest Territories', rate: 0.05 },
+  { code: 'NU', name: 'Nunavut', rate: 0.05 },
+  { code: 'YT', name: 'Yukon', rate: 0.05 },
+];
+
+const FLEXITI_TERMS = [
+  { months: 3,  adminFee: 0,      minAmount: 0    },
+  { months: 6,  adminFee: 24.99,  minAmount: 500  },
+  { months: 12, adminFee: 49.99,  minAmount: 1000 },
+  { months: 18, adminFee: 74.99,  minAmount: 1500 },
+  { months: 24, adminFee: 99.99,  minAmount: 2000 },
+  { months: 45, adminFee: 249.99, minAmount: 4500 },
+];
+
+const MHC_TERMS = [
+  { months: 6,  adminFee: 0, annualFee: 25, minAmount: 500  },
+  { months: 12, adminFee: 0, annualFee: 25, minAmount: 1000 },
+  { months: 18, adminFee: 0, annualFee: 25, minAmount: 1500 },
+  { months: 24, adminFee: 0, annualFee: 25, minAmount: 2000 },
+];
+
+const BLUE_COLORS  = ['#36a2eb','#4bc0c0','#9966ff','#ff9f40','#ff6384','#c9cbcf'];
+const GREEN_COLORS = ['#4bc04b','#228b22','#008080','#3cb371','#2e8b57','#90ee90'];
+
+// =========================================================================
+// State
+// =========================================================================
+const state = {
+  province: 'BC',
+  items: [
+    { name: 'Item 1', amount: '' },
+    { name: 'Item 2', amount: '' },
+    { name: 'Item 3', amount: '' },
+  ],
+  downPaymentInput: '',
+  is20Percent: false,
+  maxMonths: 6,
+  showChart: false,
+};
+
+let flexitiChart = null;
+let mhcChart = null;
+
+// =========================================================================
+// Helpers
+// =========================================================================
+function getTaxRate() {
+  const p = PROVINCES.find(p => p.code === state.province);
+  return p ? p.rate : 0.12;
+}
+
+function fmtPct(rate) {
+  const pct = rate * 100;
+  return pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(3);
+}
+
+function fmt(n) { return n.toFixed(2); }
+
+function cumulativeRows() {
+  const rows = [];
+  let running = 0;
+  for (let i = 0; i < state.items.length; i++) {
+    const amt = parseFloat(state.items[i].amount) || 0;
+    running += amt;
+    if (running > 0) {
+      const label = i === 0
+        ? (state.items[0].name || 'Item 1')
+        : state.items.slice(0, i + 1)
+            .map((it, idx) => it.name || `Item ${idx + 1}`).join(' + ');
+      rows.push({ label, subtotal: running });
+    }
+  }
+  return rows;
+}
+
+function totalBeforeTax() {
+  const rows = cumulativeRows();
+  return rows.length ? rows[rows.length - 1].subtotal : 0;
+}
+
+function totalWithTax() { return totalBeforeTax() * (1 + getTaxRate()); }
+
+function downPayment() { return parseFloat(state.downPaymentInput) || 0; }
+
+function creditAmount() { return Math.max(0, totalWithTax() - downPayment()); }
+
+function filteredFlexiti() { return FLEXITI_TERMS.filter(t => t.months <= state.maxMonths); }
+
+function filteredMhc() { return MHC_TERMS.filter(t => t.months <= state.maxMonths); }
+
+// Longest eligible Flexiti term given the credit amount
+function longestFlexiti() {
+  const credit = creditAmount();
+  if (credit <= 0) return null;
+  const eligible = filteredFlexiti().filter(t => credit >= t.minAmount);
+  if (!eligible.length) return null;
+  const best = eligible.reduce((a, b) => b.months > a.months ? b : a);
+  return { ...best, monthly: (credit + best.adminFee) / best.months };
+}
+
+// Longest eligible MHC term — annual fee accrues per started year of plan
+function longestMhc() {
+  const credit = creditAmount();
+  if (credit <= 0) return null;
+  const eligible = filteredMhc().filter(t => credit >= t.minAmount);
+  if (!eligible.length) return null;
+  const best = eligible.reduce((a, b) => b.months > a.months ? b : a);
+  const annualFeeTotal = (best.annualFee || 0) * Math.ceil(best.months / 12);
+  return { ...best, monthly: (credit + annualFeeTotal) / best.months };
+}
+
+// Per-row monthly payment for a specific term
+function calcMonthly(subtotal, term) {
+  const tax = getTaxRate();
+  const total = subtotal * (1 + tax);
+  const credit = Math.max(0, total - downPayment());
+  if (credit < term.minAmount && term.minAmount > 0) return null;
+  const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12);
+  const totalWithFees = credit + (term.adminFee || 0) + annualFeeTotal;
+  return totalWithFees / term.months;
+}
+
+// =========================================================================
+// Render
+// =========================================================================
+function renderProvinceSelect() {
+  const sel = document.getElementById('province');
+  sel.innerHTML = PROVINCES.map(p =>
+    `<option value="${p.code}">${p.name} (${fmtPct(p.rate)}%)</option>`
+  ).join('');
+  sel.value = state.province;
+}
+
+function renderItems() {
+  const list = document.getElementById('itemsList');
+  list.innerHTML = state.items.map((item, idx) => `
+    <div class="item-row">
+      <input type="text" class="item-name" data-idx="${idx}" data-field="name"
+             value="${escapeHtml(item.name)}" placeholder="Item ${idx + 1}">
+      <div class="amount-input">
+        <span class="dollar-sign">$</span>
+        <input type="number" min="0" step="0.01" data-idx="${idx}" data-field="amount"
+               value="${item.amount}" placeholder="0.00">
+      </div>
+      ${state.items.length > 1
+        ? `<button class="remove-btn" data-action="remove" data-idx="${idx}" title="Remove item">&times;</button>`
+        : ''}
+    </div>`).join('');
+
+  // Wire up listeners
+  list.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', e => {
+      const idx = +e.target.dataset.idx;
+      const field = e.target.dataset.field;
+      state.items[idx] = { ...state.items[idx], [field]: e.target.value };
+      onItemsChanged();
+    });
+  });
+  list.querySelectorAll('button[data-action="remove"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = +e.currentTarget.dataset.idx;
+      if (state.items.length <= 1) return;
+      state.items.splice(idx, 1);
+      renderItems();
+      onItemsChanged();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+}
+
+function renderTotals() {
+  const sub = totalBeforeTax();
+  const taxRate = getTaxRate();
+  const total = totalWithTax();
+  const dp = downPayment();
+  const credit = creditAmount();
+  const wrap = document.getElementById('totalsSummary');
+
+  if (sub <= 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  const defaultDp = total * 0.20;
+  wrap.innerHTML = `
+    <p>Subtotal: <strong>$${fmt(sub)}</strong></p>
+    <p>Tax (${fmtPct(taxRate)}%): <strong>$${fmt(sub * taxRate)}</strong></p>
+    <p>Total (incl. tax): <strong>$${fmt(total)}</strong></p>
+    <div class="down-payment-row">
+      <span class="down-payment-label-text">Down Payment:</span>
+      <div class="amount-input down-payment-input">
+        <span class="dollar-sign">$</span>
+        <input id="downPaymentInput" type="number" min="0" step="0.01"
+               value="${state.downPaymentInput}" placeholder="0.00">
+      </div>
+      <label class="down-payment-label">
+        <input id="is20PercentChk" type="checkbox" ${state.is20Percent ? 'checked' : ''}>
+        20%
+      </label>
+    </div>
+    ${dp > 0 ? `<p class="credit-amount-line">Credit Amount: <strong>$${fmt(credit)}</strong></p>` : ''}
+  `;
+
+  document.getElementById('downPaymentInput').addEventListener('input', e => {
+    state.downPaymentInput = e.target.value;
+    state.is20Percent = false;
+    document.getElementById('is20PercentChk').checked = false;
+    renderTotals();
+    renderTables();
+    renderLongestBlocks();
+    if (state.showChart) renderCharts();
+  });
+  document.getElementById('is20PercentChk').addEventListener('change', e => {
+    state.is20Percent = e.target.checked;
+    state.downPaymentInput = e.target.checked ? defaultDp.toFixed(2) : '';
+    renderTotals();
+    renderTables();
+    renderLongestBlocks();
+    if (state.showChart) renderCharts();
+  });
+}
+
+function renderLongestBlocks() {
+  const wrap = document.getElementById('longestBlocks');
+  const lf = longestFlexiti();
+  const lm = longestMhc();
+
+  if (!lf && !lm) { wrap.innerHTML = ''; return; }
+
+  let html = '';
+  if (lf) html += `
+    <div class="longest-plan-block">
+      <span class="longest-plan-label">Flexiti</span>
+      <span class="longest-plan-amount">$${fmt(lf.monthly)}</span>
+      <span class="longest-plan-detail">${lf.months} mo</span>
+    </div>`;
+  if (lm) html += `
+    <div class="longest-plan-block longest-plan-block--mhc">
+      <span class="longest-plan-label">MHC</span>
+      <span class="longest-plan-amount">$${fmt(lm.monthly)}</span>
+      <span class="longest-plan-detail">${lm.months} mo</span>
+    </div>`;
+  wrap.innerHTML = html;
+}
+
+function renderTable(containerId, terms, type) {
+  const rows = cumulativeRows();
+  const container = document.getElementById(containerId);
+  const dp = downPayment();
+
+  let thead = `<th>Items</th><th>${dp > 0 ? 'Credit Amount' : 'Subtotal (incl. tax)'}</th>`;
+  for (const t of terms) {
+    thead += `<th>${t.months} mo`;
+    if (t.adminFee > 0) thead += `<div class="admin-fee-note">+$${t.adminFee} fee</div>`;
+    if (t.annualFee > 0) thead += `<div class="admin-fee-note">$${t.annualFee}/yr fee</div>`;
+    thead += '</th>';
+  }
+
+  const taxRate = getTaxRate();
+  const tbody = rows.map(row => {
+    const total = row.subtotal * (1 + taxRate);
+    const credit = Math.max(0, total - dp);
+    const cells = terms.map(t => {
+      const monthly = calcMonthly(row.subtotal, t);
+      if (monthly === null) {
+        return `<td class="below-min"><span class="min-warning" title="Minimum $${t.minAmount} required">Min $${t.minAmount}</span></td>`;
+      }
+      return `<td class="monthly-cell">$${fmt(monthly)}/mo</td>`;
+    }).join('');
+    return `<tr>
+      <td class="items-label">${escapeHtml(row.label)}</td>
+      <td class="subtotal-cell">$${fmt(credit)}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="payment-table-wrapper">
+      <table class="payment-table">
+        <thead><tr>${thead}</tr></thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderTables() {
+  const rows = cumulativeRows();
+  const tablesSection = document.getElementById('tablesSection');
+  if (!rows.length) { tablesSection.style.display = 'none'; return; }
+  tablesSection.style.display = 'flex';
+
+  renderTable('flexitiTable', filteredFlexiti(), 'flexiti');
+  renderTable('mhcTable',     filteredMhc(),     'mhc');
+}
+
+function renderCharts() {
+  if (!state.showChart) {
+    document.getElementById('flexitiChartContainer').style.display = 'none';
+    document.getElementById('mhcChartContainer').style.display = 'none';
+    if (flexitiChart) { flexitiChart.destroy(); flexitiChart = null; }
+    if (mhcChart) { mhcChart.destroy(); mhcChart = null; }
+    return;
+  }
+
+  buildChart('flexitiChartContainer', 'flexitiCanvas',
+    filteredFlexiti(), true, 'Flexiti', BLUE_COLORS, c => flexitiChart = c, () => flexitiChart);
+  buildChart('mhcChartContainer', 'mhcCanvas',
+    filteredMhc(), false, 'MHC', GREEN_COLORS, c => mhcChart = c, () => mhcChart);
+}
+
+function buildChart(containerId, canvasId, terms, includeAdminFees, label, colors, setRef, getRef) {
+  const container = document.getElementById(containerId);
+  const credit = creditAmount();
+  const eligible = terms.filter(t => t.minAmount === 0 || credit >= t.minAmount);
+
+  if (!eligible.length) {
+    container.style.display = 'block';
+    container.innerHTML = `<p class="no-data">Total amount does not meet minimum requirements for any term.</p>`;
+    if (getRef()) { getRef().destroy(); setRef(null); }
+    return;
+  }
+
+  const total = totalWithTax();
+  const maxM = Math.max(...eligible.map(t => t.months));
+  const labels = Array.from({ length: maxM + 1 }, (_, i) => `Month ${i}`);
+
+  const datasets = eligible.map((term, idx) => {
+    const annualFeeTotal = (term.annualFee || 0) * Math.ceil(term.months / 12);
+    const totalOwed = credit + (includeAdminFees ? term.adminFee : 0) + annualFeeTotal;
+    const monthlyPayment = totalOwed / term.months;
+    const balances = [];
+    for (let m = 0; m <= maxM; m++) {
+      balances.push(m <= term.months ? Math.max(0, totalOwed - monthlyPayment * m) : 0);
+    }
+    return {
+      label: `${term.months} months ($${monthlyPayment.toFixed(2)}/mo)`,
+      data: balances,
+      borderColor: colors[idx % colors.length],
+      backgroundColor: colors[idx % colors.length] + '22',
+      tension: 0.1, pointRadius: 2,
+    };
+  });
+
+  container.style.display = 'block';
+  container.innerHTML = `<div class="chart-container"><canvas id="${canvasId}"></canvas></div>`;
+  if (getRef()) getRef().destroy();
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { color: '#1a1d24' } },
+        title: { display: true, text: `${label} - Balance Decline Over Time`, font: { size: 16 }, color: '#1a1d24' },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: $${c.raw.toFixed(2)}` } },
+      },
+      scales: {
+        x: { title: { display: true, text: 'Month', color: '#4a5160' },
+             ticks: { color: '#4a5160' }, grid: { color: 'rgba(0,0,0,0.06)' } },
+        y: { title: { display: true, text: 'Remaining Balance ($)', color: '#4a5160' },
+             beginAtZero: true,
+             ticks: { color: '#4a5160', callback: v => '$' + v.toLocaleString() },
+             grid: { color: 'rgba(0,0,0,0.06)' } },
+      },
+    },
+  });
+  setRef(chart);
+}
+
+// Re-render reactive bits whenever inputs change
+function onItemsChanged() {
+  // Mirror React's useEffect that resets down payment when total changes
+  state.downPaymentInput = '';
+  state.is20Percent = false;
+  renderTotals();
+  renderLongestBlocks();
+  renderTables();
+  if (state.showChart) renderCharts();
+}
+
+// =========================================================================
+// Wire up static controls + initial render
+// =========================================================================
+document.getElementById('maxMonths').addEventListener('change', e => {
+  state.maxMonths = +e.target.value;
+  renderLongestBlocks();
+  renderTables();
+  if (state.showChart) renderCharts();
+});
+
+document.getElementById('addItemBtn').addEventListener('click', () => {
+  state.items.push({ name: `Item ${state.items.length + 1}`, amount: '' });
+  renderItems();
+  onItemsChanged();
+});
+
+document.getElementById('toggleChartBtn').addEventListener('click', () => {
+  state.showChart = !state.showChart;
+  document.getElementById('toggleChartBtn').textContent =
+    state.showChart ? 'Hide Projected Balance' : 'Show Projected Balance';
+  renderCharts();
+});
+
+renderProvinceSelect();
+document.getElementById('province').addEventListener('change', e => {
+  state.province = e.target.value;
+  renderTotals();
+  renderLongestBlocks();
+  renderTables();
+  if (state.showChart) renderCharts();
+});
+
+renderItems();
+renderTotals();
+renderLongestBlocks();
+renderTables();
+</script>
+</body>
+</html>
