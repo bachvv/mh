@@ -62,6 +62,19 @@ export const dfoFiveWeekTiers = [
   { tier: 8, benchmark: 53400, commission: 7.0, incentive: 3738 },
 ]
 
+// Large Regional Mall — May 2026 rules (graduated accelerators)
+export const may2026LrmGpPercentTiers = [
+  { tier: 0, gpRange: 0, accelerator: 0 },
+  { tier: 1, gpRange: 50, accelerator: 90 },
+  { tier: 2, gpRange: 54, accelerator: 100 },
+  { tier: 3, gpRange: 56, accelerator: 101 },
+  { tier: 4, gpRange: 58, accelerator: 102 },
+  { tier: 5, gpRange: 59, accelerator: 103 },
+  { tier: 6, gpRange: 60, accelerator: 104 },
+  { tier: 7, gpRange: 61, accelerator: 105 },
+  { tier: 8, gpRange: 63, accelerator: 107 },
+]
+
 // GP% qualifier tiers — DFO (lower thresholds)
 export const dfoGpPercentTiers = [
   { tier: 0, gpRange: 0, accelerator: 0 },

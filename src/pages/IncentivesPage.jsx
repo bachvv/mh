@@ -7,11 +7,15 @@ import {
   dfoFourWeekTiers,
   dfoFiveWeekTiers,
   dfoGpPercentTiers,
+  may2026LrmGpPercentTiers,
 } from '../data/incentiveTiers'
 
 function IncentivesPage() {
   const navigate = useNavigate()
-  const currentMonth = new Date().getMonth() // 0-indexed
+  const now = new Date()
+  const currentMonth = now.getMonth() // 0-indexed
+  const currentYear = now.getFullYear()
+  const isMay2026 = currentMonth === 4 && currentYear === 2026
   const isFiveWeek = [1, 4, 7, 10].includes(currentMonth) // Feb, May, Aug, Nov
   const [monthType, setMonthType] = useState(isFiveWeek ? '5week' : '4week')
   const [inputMode, setInputMode] = useState('sales') // 'gp' | 'sales'
@@ -20,12 +24,15 @@ function IncentivesPage() {
   const [gpPercent, setGpPercent] = useState('')
   const [storeStatus, setStoreStatus] = useState('red')
   const [isDfo, setIsDfo] = useState(false)
+  const [useMay2026Rules, setUseMay2026Rules] = useState(isMay2026)
 
   const tiers = isDfo
     ? (monthType === '4week' ? dfoFourWeekTiers : dfoFiveWeekTiers)
     : (monthType === '4week' ? fourWeekTiers : fiveWeekTiers)
 
-  const gpTiers = isDfo ? dfoGpPercentTiers : gpPercentTiers
+  const gpTiers = isDfo
+    ? dfoGpPercentTiers
+    : (useMay2026Rules ? may2026LrmGpPercentTiers : gpPercentTiers)
 
   const result = useMemo(() => {
     const gpPct = parseFloat(gpPercent) || 0
@@ -56,17 +63,15 @@ function IncentivesPage() {
     }
     const accelerator = gpTiers[gpPctTierIndex].accelerator
 
-    // GP% is now a binary qualifier: meet threshold = 100%, below = 0%
     const gpEntered = gpPct > 0
     const gpQualified = gpEntered && accelerator > 0
 
     // Calculate incentive
     const baseIncentive = gp * (currentTier.commission / 100)
 
-    // When GP% entered: qualified = full incentive, not qualified = 0
-    // When GP% not entered: show base as estimate
+    // accelerator is a % multiplier: 0 = no incentive, 100 = full, 101+ = boosted
     const effectiveBase = gpEntered
-      ? (gpQualified ? baseIncentive : 0)
+      ? baseIncentive * (accelerator / 100)
       : baseIncentive
 
     // Store status bonus
@@ -78,9 +83,8 @@ function IncentivesPage() {
     const upcomingTiers = tiers.slice(currentTierIndex + 1).map((t) => {
       const needed = t.benchmark - gp
       const potentialIncentive = t.benchmark * (t.commission / 100)
-      // With all accelerators = 100%, potential is same as base when qualified
       const potentialEffective = gpEntered
-        ? (gpQualified ? potentialIncentive : 0)
+        ? potentialIncentive * (accelerator / 100)
         : potentialIncentive
       const potentialFinal = potentialEffective * storeBonus
       const salesNeeded = gpPct > 0 ? needed / (gpPct / 100) : null
@@ -244,6 +248,23 @@ function IncentivesPage() {
           </label>
         </div>
 
+        {!isDfo && (
+          <div className="incentives-row">
+            <label>May 2026 LRM Rules</label>
+            <label className="dfo-checkbox-label">
+              <input
+                type="checkbox"
+                className="dfo-checkbox"
+                checked={useMay2026Rules}
+                onChange={(e) => setUseMay2026Rules(e.target.checked)}
+              />
+              <span className={`dfo-badge${useMay2026Rules ? ' dfo-badge--active' : ''}`}>
+                {useMay2026Rules ? 'On' : 'Off'}
+              </span>
+            </label>
+          </div>
+        )}
+
         {inputMode === 'sales' && parseFloat(salesDollars) > 0 && parseFloat(gpPercent) > 0 && (
           <div className="incentives-row">
             <label>Computed GP$</label>
@@ -272,7 +293,11 @@ function IncentivesPage() {
             {result.gpEntered && (
               <div className={`result-line gp-qualifier-line${result.gpQualified ? ' gp-qualified' : ' gp-not-qualified'}`}>
                 <span>GP% Qualifier</span>
-                <strong>{result.gpQualified ? 'Met ✓' : 'Not Met ✗'}</strong>
+                <strong>
+                  {result.gpQualified
+                    ? `${result.accelerator}% ✓`
+                    : 'Not Met ✗'}
+                </strong>
               </div>
             )}
             {result.gpEntered && !result.gpQualified && (
@@ -337,9 +362,12 @@ function IncentivesPage() {
         <h2>
           FY 26 — {monthType === '4week' ? '4-Week' : '5-Week'} Tiers
           {isDfo && <span className="dfo-table-badge">DFO Outlet</span>}
+          {!isDfo && useMay2026Rules && <span className="dfo-table-badge">May 2026 LRM</span>}
         </h2>
         <p className="gp-qualifier-note">
-          Meet the minimum GP% threshold for your tier to earn commission at 100%. Below the minimum, no incentive is paid.
+          {useMay2026Rules && !isDfo
+            ? 'May 2026 LRM rules: GP% determines your accelerator multiplier. Below Tier 1 minimum, no incentive is paid.'
+            : 'Meet the minimum GP% threshold for your tier to earn commission at 100%. Below the minimum, no incentive is paid.'}
         </p>
         <div className="payment-table-wrapper">
           <table className="payment-table">
@@ -368,7 +396,7 @@ function IncentivesPage() {
                     <td>{t.commission.toFixed(1)}%</td>
                     <td>{t.incentive > 0 ? fmt(t.incentive) : '—'}</td>
                     <td>{gp.gpRange > 0 ? gp.gpRange.toFixed(2) + '%' : '0.00%'}</td>
-                    <td>{gp.accelerator > 0 ? '100.00%' : '0.00%'}</td>
+                    <td>{gp.accelerator > 0 ? `${gp.accelerator.toFixed(1)}%` : '0.0%'}</td>
                   </tr>
                 )
               })}
